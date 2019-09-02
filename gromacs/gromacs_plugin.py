@@ -1,0 +1,27 @@
+from force_bdss.api import BaseExtensionPlugin, plugin_id
+
+PLUGIN_VERSION = 0
+
+
+class GromacsPlugin(BaseExtensionPlugin):
+    """This plugin provides useful classes and DatsSource subclasses
+    for creating and running Gromacs MD simulations.
+    """
+
+    id = plugin_id("gromacs", "plugin", PLUGIN_VERSION)
+
+    def get_name(self):
+        return "Gromacs Plugin"
+
+    def get_description(self):
+        return (
+            "A plugin containing useful objects for running "
+            "Gromacs simulations"
+        )
+
+    def get_version(self):
+        return PLUGIN_VERSION
+
+    #: Define the factory classes that you want to export to this list.
+    def get_factory_classes(self):
+        return []
