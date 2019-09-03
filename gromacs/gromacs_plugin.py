@@ -1,5 +1,9 @@
 from force_bdss.api import BaseExtensionPlugin, plugin_id
 
+from gromacs.data_sources.chemical.chemical_factory import (
+    ChemicalFactory
+)
+
 PLUGIN_VERSION = 0
 
 
@@ -24,4 +28,6 @@ class GromacsPlugin(BaseExtensionPlugin):
 
     #: Define the factory classes that you want to export to this list.
     def get_factory_classes(self):
-        return []
+        return [
+            ChemicalFactory
+        ]

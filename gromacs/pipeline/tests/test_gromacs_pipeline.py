@@ -88,7 +88,6 @@ class TestGromacsPipeline(TestCase):
             )
         self.assertEqual(4, len(self.pipeline))
 
-
     def test_pipeline_build_command(self):
 
         commands = self.pipeline.bash_script().split('\n')

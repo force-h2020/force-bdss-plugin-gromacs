@@ -10,7 +10,7 @@ from gromacs.core.base_gromacs_command import (
 class TestBaseGromacsCommand(TestCase):
 
     def setUp(self):
-        #: Create Gromacs command objects
+        # Create Gromacs command objects
         self.gromacs_command = BaseGromacsCommand(
             name='gmx',
             flags=['-c', '-o', '-flag'],
