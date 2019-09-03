@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from gromacs.core.gromacs_simulation_builder import (
+from gromacs.pipeline.gromacs_simulation_builder import (
     GromacsSimulationBuilder
 )
 from gromacs.pipeline.gromacs_pipeline import GromacsPipeline

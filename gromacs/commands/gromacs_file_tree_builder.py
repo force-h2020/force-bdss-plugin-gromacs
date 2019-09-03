@@ -3,7 +3,7 @@ import os
 
 from traits.api import List, Unicode
 
-from .base_gromacs_process import BaseGromacsProcess
+from gromacs.core.base_gromacs_process import BaseGromacsProcess
 
 log = logging.getLogger(__name__)
 

@@ -14,11 +14,11 @@ class GromacsTopologyReader(HasTraits):
     # Protected Attributes
     # --------------------
 
-    #: Character representing a comment in a Gromacs topology file
-    comment = ReadOnly(';')
+    #: Character representing a _comment in a Gromacs topology file
+    _comment = ReadOnly(';')
 
     #: Extension of accepted file types
-    ext = ReadOnly('itp')
+    _ext = ReadOnly('itp')
 
     # ------------------
     #  Private Methods
@@ -38,8 +38,8 @@ class GromacsTopologyReader(HasTraits):
         """Removes comments and whitespace from parsed topology
         file lines"""
 
-        file_lines = [line.split(self.comment)[0] for line in file_lines
-                      if not line.startswith(self.comment)]
+        file_lines = [line.split(self._comment)[0] for line in file_lines
+                      if not line.startswith(self._comment)]
 
         file_lines = [line.strip() for line in file_lines
                       if not line.isspace()]
@@ -73,7 +73,7 @@ class GromacsTopologyReader(HasTraits):
         start_indices = mol_indices
         end_indices = mol_indices[1:] + [None]
 
-        # Extract the relevent lines in the topology file that correspond
+        # Extract the relevant lines in the topology file that correspond
         # to each molecule
         for start, end in zip(start_indices, end_indices):
             mol_sections.append(file_lines[start:end])
@@ -126,7 +126,7 @@ class GromacsTopologyReader(HasTraits):
                 if line.startswith('['):
                     break
                 else:
-                    file_line = line.split(self.comment)[0]
+                    file_line = line.split(self._comment)[0]
                     file_line = file_line.split()
 
                     atom.append(file_line[4])
@@ -149,7 +149,7 @@ class GromacsTopologyReader(HasTraits):
         expected format"""
 
         space_check = file_path.isspace()
-        ext_check = not file_path.endswith(f'.{self.ext}')
+        ext_check = not file_path.endswith(f'.{self._ext}')
 
         if space_check or ext_check:
             raise IOError(
