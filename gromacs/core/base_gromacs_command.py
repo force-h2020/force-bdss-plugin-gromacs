@@ -57,6 +57,8 @@ class BaseGromacsCommand(BaseGromacsProcess):
     # ------------------
 
     def _get__flags(self):
+        """Private attribute `_flags` contains unique set of command
+        line options that is readonly."""
         return set(self.flags)
 
     @on_trait_change('command_options')

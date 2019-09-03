@@ -1,6 +1,6 @@
 from unittest import TestCase, mock
 
-from gromacs.api import (
+from gromacs.io.gromacs_topology_writer import (
     GromacsTopologyWriter
 )
 

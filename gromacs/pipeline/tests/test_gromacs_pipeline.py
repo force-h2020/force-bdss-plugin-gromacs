@@ -2,8 +2,13 @@ from unittest import TestCase
 
 from traits.api import TraitError
 
-from gromacs.api import (
-    Gromacs_genbox, Gromacs_genion, GromacsFileTreeBuilder,
+from gromacs.commands.gromacs_commands import (
+    Gromacs_genbox, Gromacs_genion
+)
+from gromacs.commands.gromacs_file_tree_builder import (
+    GromacsFileTreeBuilder
+)
+from gromacs.io.gromacs_topology_writer import (
     GromacsTopologyWriter
 )
 from gromacs.tests.dummy_classes import (

@@ -79,4 +79,9 @@ class GromacsSimulationBuilder(HasTraits):
         return self.name + '_state.cpt'
 
     def build_pipeline(self):
-        raise NotImplementedError
+        """Method to be implemented that returns a `GromacsPipeline` object containing
+        all commands required to set up and perform a simulation"""
+        raise NotImplementedError(
+            'Subclass does not contain an implementation of '
+            '`build_pipeline` method'
+        )

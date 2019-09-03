@@ -37,8 +37,8 @@ class TestGromacsFileTreeBuilder(TestCase):
             self.builder._make_directory('')
             mock_mkdir.assert_called()
 
-    def test__create_directories(self):
-        directory_list = self.builder._create_directories()
+    def test__create_directory_list(self):
+        directory_list = self.builder._create_directory_list()
 
         self.assertEqual(4, len(directory_list))
         self.assertEqual(

@@ -1,1 +1,0 @@
-from .gromacs_pipeline import GromacsPipeline # noqa

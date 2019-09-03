@@ -29,13 +29,19 @@ class BaseGromacsProcess(HasTraits):
         return self._stdout.decode('unicode_escape')
 
     def bash_script(self):
+        """Method to be implemented that returns a string containing
+        the equivalent bash command to invoke the `run` method directly
+        from the command line."""
         raise NotImplementedError(
-            'Subclass does not contain an implementation of'
+            'Subclass does not contain an implementation of '
             '`bash_script` method'
         )
 
     def run(self):
+        """Method to be implemented that will either call a Gromacs
+        command using the subprocess library or perform the equivalent
+        operation during runtime."""
         raise NotImplementedError(
-            'Subclass does not contain an implementation of'
+            'Subclass does not contain an implementation of '
             '`run` method'
         )
