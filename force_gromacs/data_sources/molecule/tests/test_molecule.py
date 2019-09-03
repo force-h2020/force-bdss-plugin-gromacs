@@ -1,10 +1,10 @@
 from unittest import mock, TestCase
 
 from force_gromacs.gromacs_plugin import GromacsPlugin
-from force_gromacs.data_sources.chemical import Chemical
+from force_gromacs.data_sources.molecule import Molecule
 
 
-class TestChemicalDataSource(TestCase):
+class TestMoleculeDataSource(TestCase):
 
     def setUp(self):
         self.plugin = GromacsPlugin()
@@ -31,18 +31,18 @@ class TestChemicalDataSource(TestCase):
             mockreadtop.return_value = top_lines
 
             res = self.data_source.run(model, data_values)
-            self.assertEqual(res[0].type, "CHEMICAL")
+            self.assertEqual(res[0].type, "MOLECULE")
 
-            chemical = res[0].value
-            self.assertEqual(chemical.name, "Water")
-            self.assertEqual(chemical.symbol, "W")
-            self.assertEqual(chemical.mass, 18.0)
-            self.assertEqual(chemical.charge, 0)
-            self.assertEqual(chemical.topology, "test_top.itp")
-            self.assertEqual(chemical.coordinate, "test_coord.gro")
+            molecule = res[0].value
+            self.assertEqual(molecule.name, "Water")
+            self.assertEqual(molecule.symbol, "W")
+            self.assertEqual(molecule.mass, 18.0)
+            self.assertEqual(molecule.charge, 0)
+            self.assertEqual(molecule.topology, "test_top.itp")
+            self.assertEqual(molecule.coordinate, "test_coord.gro")
 
 
-class TestChemical(TestCase):
+class TestMolecule(TestCase):
 
     def setUp(self):
 
@@ -53,7 +53,7 @@ class TestChemical(TestCase):
         topology = "test_top.itp"
         coordinate = "test_coord.gro"
 
-        self.chemical = Chemical(
+        self.molecule = Molecule(
             name=name,
             symbol=symbol,
             mass=mass,
@@ -64,16 +64,16 @@ class TestChemical(TestCase):
 
     def test___init__(self):
 
-        self.assertEqual("Water", self.chemical.name)
-        self.assertEqual("W", self.chemical.symbol)
-        self.assertEqual(18.0, self.chemical.mass)
-        self.assertEqual(0, self.chemical.charge)
-        self.assertEqual("test_top.itp", self.chemical.topology)
-        self.assertEqual("test_coord.gro", self.chemical.coordinate)
+        self.assertEqual("Water", self.molecule.name)
+        self.assertEqual("W", self.molecule.symbol)
+        self.assertEqual(18.0, self.molecule.mass)
+        self.assertEqual(0, self.molecule.charge)
+        self.assertEqual("test_top.itp", self.molecule.topology)
+        self.assertEqual("test_coord.gro", self.molecule.coordinate)
 
     def test_get_data_values(self):
 
-        data = self.chemical.get_data_values()
+        data = self.molecule.get_data_values()
 
         self.assertEqual("Water", data[0].value)
         self.assertEqual("NAME", data[0].type)

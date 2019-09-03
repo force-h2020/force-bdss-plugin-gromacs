@@ -4,22 +4,26 @@ from force_bdss.api import BaseDataSourceModel
 from force_bdss.core.verifier import VerifierError
 
 
-class ChemicalDataSourceModel(BaseDataSourceModel):
-    """Class containing all parameters for a single chemical
+class MoleculeDataSourceModel(BaseDataSourceModel):
+    """Class containing all parameters for a single molecule
     ingredient (molecular species) in a Gromacs
     simulation"""
 
+    #: Name of the molecule
     name = Unicode(
-        desc='Name of molecular chemical')
+        desc='Name of molecule')
 
+    #: Reference symbol of molecule in Gromacs files
     symbol = Unicode(
         desc='Reference symbol in input Gromacs topology file')
 
+    #: Location of Gromacs topology file containing molecular data
     topology = File(
         desc='File path for Gromacs topology file',
         verify=True
     )
 
+    #: Location of Gromacs coordinate file containing molecular data
     coordinate = File(
         desc='File path for Gromacs coordinate file',
         verify=True
@@ -76,7 +80,7 @@ class ChemicalDataSourceModel(BaseDataSourceModel):
     # and counter-ion status upon activation of verify_workflow_event.
     def verify(self):
 
-        errors = super(ChemicalDataSourceModel, self).verify()
+        errors = super(MoleculeDataSourceModel, self).verify()
         errors += self._file_check(self.topology, 'itp')
         errors += self._file_check(self.coordinate, 'gro')
 

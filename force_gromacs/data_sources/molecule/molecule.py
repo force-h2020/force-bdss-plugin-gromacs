@@ -3,8 +3,8 @@ from traits.api import HasTraits, Unicode, Float, File
 from force_bdss.api import DataValue
 
 
-class Chemical(HasTraits):
-    """Contains all input values for each chemical"""
+class Molecule(HasTraits):
+    """Contains all input values for each molecule"""
 
     name = Unicode()
 

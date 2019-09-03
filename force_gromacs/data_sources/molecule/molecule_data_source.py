@@ -4,12 +4,12 @@ from force_gromacs.io.gromacs_topology_reader import (
     GromacsTopologyReader
 )
 
-from .chemical import Chemical
+from .molecule import Molecule
 
 
-class ChemicalDataSource(BaseDataSource):
+class MoleculeDataSource(BaseDataSource):
     """Class takes in all data required to define each
-    separate chemical chemical in a Gromacs experiment. Gromacs topology
+    separate molecule molecule in a Gromacs experiment. Gromacs topology
     files must be included for all species, however coordinate files
     are not necessary for atoms or molecules represented by single beads.
     """
@@ -23,7 +23,7 @@ class ChemicalDataSource(BaseDataSource):
         charge = data[model.symbol]['charge']
         mass = data[model.symbol]['mass']
 
-        chemical = Chemical(
+        chemical = Molecule(
             name=model.name,
             symbol=model.symbol,
             mass=mass,
@@ -33,7 +33,7 @@ class ChemicalDataSource(BaseDataSource):
         )
 
         return [
-            DataValue(type="CHEMICAL", value=chemical)]
+            DataValue(type="MOLECULE", value=chemical)]
 
     def slots(self, model):
 
@@ -41,7 +41,7 @@ class ChemicalDataSource(BaseDataSource):
             (
             ),
             (
-                Slot(type="CHEMICAL",
-                     description="Chemical chemical data object"),
+                Slot(type="MOLECULE",
+                     description="Gromacs Molecule data object"),
             )
         )
