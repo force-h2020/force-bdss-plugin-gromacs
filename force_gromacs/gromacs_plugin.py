@@ -3,6 +3,9 @@ from force_bdss.api import BaseExtensionPlugin, plugin_id
 from force_gromacs.data_sources.molecule.molecule_factory import (
     MoleculeFactory
 )
+from force_gromacs.notification_listeners.hpc_writer\
+    .hpc_writer_factory import HPCWriterFactory
+
 
 PLUGIN_VERSION = 0
 
@@ -29,5 +32,6 @@ class GromacsPlugin(BaseExtensionPlugin):
     #: Define the factory classes that you want to export to this list.
     def get_factory_classes(self):
         return [
-            MoleculeFactory
+            MoleculeFactory,
+            HPCWriterFactory
         ]
