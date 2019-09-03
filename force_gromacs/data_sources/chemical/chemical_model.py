@@ -1,7 +1,7 @@
 from traits.api import Unicode, File
 
-from force_bdss.core.verifier import VerifierError
 from force_bdss.api import BaseDataSourceModel
+from force_bdss.core.verifier import VerifierError
 
 
 class ChemicalDataSourceModel(BaseDataSourceModel):

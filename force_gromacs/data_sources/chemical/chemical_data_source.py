@@ -1,6 +1,8 @@
 from force_bdss.api import BaseDataSource, DataValue, Slot
 
-from force_gromacs.api import GromacsTopologyReader
+from force_gromacs.io.gromacs_topology_reader import (
+    GromacsTopologyReader
+)
 
 from .chemical import Chemical
 

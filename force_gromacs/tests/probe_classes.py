@@ -1,6 +1,14 @@
-from force_gromacs.api import (
-    GromacsPipeline, GromacsFileTreeBuilder, Gromacs_genbox,
-    Gromacs_genion, GromacsTopologyWriter
+from force_gromacs.commands.gromacs_commands import (
+    Gromacs_genbox, Gromacs_genion
+)
+from force_gromacs.commands.gromacs_file_tree_builder import (
+    GromacsFileTreeBuilder
+)
+from force_gromacs.io.gromacs_topology_writer import (
+    GromacsTopologyWriter
+)
+from force_gromacs.pipeline.gromacs_pipeline import (
+    GromacsPipeline
 )
 
 
