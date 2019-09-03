@@ -10,7 +10,7 @@ subclasses:
 The `name` and `flags` attributes of these subclasses have been overridden as
 ReadOnly traits, and so cannot be mutated during runtime. Developers wishing to
 create further wrappers around additional Gromacs commands are encouraged to do
- so in a similar way.
+so in a similar way.
 
 Note - all objects are tested on Gromacs version 4.6.7
 """
