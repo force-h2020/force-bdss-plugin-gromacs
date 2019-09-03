@@ -14,11 +14,11 @@ class GromacsTopologyReader(HasTraits):
     # Protected Attributes
     # --------------------
 
-    #: Character representing a comment in a Gromacs topology file
-    comment = ReadOnly(';')
+    #: Character representing a _comment in a Gromacs topology file
+    _comment = ReadOnly(';')
 
     #: Extension of accepted file types
-    ext = ReadOnly('itp')
+    _ext = ReadOnly('itp')
 
     # ------------------
     #  Private Methods
@@ -38,8 +38,8 @@ class GromacsTopologyReader(HasTraits):
         """Removes comments and whitespace from parsed topology
         file lines"""
 
-        file_lines = [line.split(self.comment)[0] for line in file_lines
-                      if not line.startswith(self.comment)]
+        file_lines = [line.split(self._comment)[0] for line in file_lines
+                      if not line.startswith(self._comment)]
 
         file_lines = [line.strip() for line in file_lines
                       if not line.isspace()]
@@ -73,7 +73,7 @@ class GromacsTopologyReader(HasTraits):
         start_indices = mol_indices
         end_indices = mol_indices[1:] + [None]
 
-        # Extract the relevent lines in the topology file that correspond
+        # Extract the relevant lines in the topology file that correspond
         # to each molecule
         for start, end in zip(start_indices, end_indices):
             mol_sections.append(file_lines[start:end])
@@ -126,7 +126,7 @@ class GromacsTopologyReader(HasTraits):
                 if line.startswith('['):
                     break
                 else:
-                    file_line = line.split(self.comment)[0]
+                    file_line = line.split(self._comment)[0]
                     file_line = file_line.split()
 
                     atom.append(file_line[4])
@@ -149,33 +149,35 @@ class GromacsTopologyReader(HasTraits):
         expected format"""
 
         space_check = file_path.isspace()
-        ext_check = not file_path.endswith(f'.{self.ext}')
+        ext_check = not file_path.endswith(f'.{self._ext}')
 
         if space_check or ext_check:
             raise IOError(
                 '{} not a valid Gromacs file type'.format(
                     file_path))
 
-    def read(self, gromacs_file):
-        """ Open Gromacs topology file and return processed data
+    def read(self, file_path):
+        """ Open Gromacs topology file located at `file_path` and return
+         processed data
 
         Parameters
         ----------
-        topology : str
+        file_path : str
             File path of Gromacs topology file
 
         Returns
         -------
-        data : dict ('size': [list of int], 'mass': [list of floats])
-            Dictionary containing data extracted and processed by
-            handler. Keys 'size' refers to the number of atoms in each
-            molecule and 'masses' the mass in atomic units.
+        data : dict
+            Dictionary containing data (including constituent atoms, mass
+            and charge) extracted from Gromacs topology file. Keys refer
+            to the symbol of each
+            molecular species.
         """
 
         try:
-            file_lines = self._read_file(gromacs_file)
+            file_lines = self._read_file(file_path)
         except IOError as e:
-            log.exception('unable to open "{}"'.format(gromacs_file))
+            log.exception('unable to open "{}"'.format(file_path))
             raise e
 
         file_lines = self._remove_comments(file_lines)
@@ -183,7 +185,7 @@ class GromacsTopologyReader(HasTraits):
         try:
             iterator = self._get_data(file_lines)
         except (IndexError, IOError) as e:
-            log.exception('unable to load data from "{}"'.format(gromacs_file))
+            log.exception('unable to load data from "{}"'.format(file_path))
             raise e
 
         data = {

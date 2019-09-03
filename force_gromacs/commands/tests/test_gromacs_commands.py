@@ -2,7 +2,7 @@ from unittest import TestCase
 
 from traits.trait_errors import TraitError
 
-from force_gromacs.api import (
+from force_gromacs.commands.gromacs_commands import (
     Gromacs_genbox, Gromacs_grompp, Gromacs_genion,
     Gromacs_mdrun, Gromacs_genconf
 )

@@ -1,8 +1,26 @@
-from traits.api import (
-    ReadOnly
-)
+""" This submodule implements the following :class:`BaseGromacsCommand`
+subclasses:
 
+<<<<<<< HEAD:force_gromacs/commands/gromacs_commands.py
 from force_gromacs.api import BaseGromacsCommand
+=======
+* :class:`Gromacs_genconf` provides a wrapper around Gromacs genconf command.
+* :class:`Gromacs_genbox` provides a wrapper around Gromacs genbox command.
+* :class:`Gromacs_grompp` provides a wrapper around Gromacs genmpp command.
+* :class:`Gromacs_genion` provides a wrapper around Gromacs genion command.
+* :class:`Gromacs_mdrun` provides a wrapper around Gromacs mdrun command.
+
+The `name` and `flags` attributes of these subclasses have been overridden as
+ReadOnly traits, and so cannot be mutated during runtime. Developers wishing to
+create further wrappers around additional Gromacs commands are encouraged to do
+ so in a similar way.
+
+Note - all objects are tested on Gromacs version 4.6.7
+"""
+
+from traits.api import ReadOnly
+
+from force_gromacs.core.base_gromacs_command import BaseGromacsCommand
 
 
 class Gromacs_genconf(BaseGromacsCommand):
@@ -74,7 +92,19 @@ class Gromacs_genion(BaseGromacsCommand):
 
 class Gromacs_mdrun(BaseGromacsCommand):
     """Wrapper around Gromacs mdrun command
-    http://manual.gromacs.org/documentation/2018/onlinehelp/gmx-mdrun.html"""
+    http://manual.gromacs.org/documentation/2018/onlinehelp/gmx-mdrun.html
+
+    Extra boolean attribute `mpi_run` signals whether to perform a
+    simulation using MPI parallel processing (default is `False`). The number
+    of cores can also be set using the `n_proc` attribute (default is `1`).
+
+    Example
+    ------
+    Calling simulation run in series:
+        md_run = Gromacs_mdrun()
+    Calling a MPI run on 2 cores:
+        mpi_mdrun = Gromacs_mdrun(mpi_run=True, n_proc=2)
+    """
 
     #: Name of Gromacs genion command
     name = ReadOnly()

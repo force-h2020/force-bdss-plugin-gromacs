@@ -1,8 +1,6 @@
 import os
 
-from traits.api import (
-    List, Unicode, Int
-)
+from traits.api import List, Unicode, Int
 
 from force_gromacs.core.base_gromacs_process import BaseGromacsProcess
 
