@@ -1,6 +1,6 @@
 from force_bdss.api import BaseExtensionPlugin, plugin_id
 
-from gromacs.data_sources.chemical.chemical_factory import (
+from force_gromacs.data_sources.chemical.chemical_factory import (
     ChemicalFactory
 )
 
@@ -12,7 +12,7 @@ class GromacsPlugin(BaseExtensionPlugin):
     for creating and running Gromacs MD simulations.
     """
 
-    id = plugin_id("gromacs", "plugin", PLUGIN_VERSION)
+    id = plugin_id("force_gromacs", "plugin", PLUGIN_VERSION)
 
     def get_name(self):
         return "Gromacs Plugin"

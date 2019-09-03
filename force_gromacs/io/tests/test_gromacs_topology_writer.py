@@ -1,11 +1,11 @@
 from unittest import TestCase, mock
 
-from gromacs.api import (
+from force_gromacs.api import (
     GromacsTopologyWriter
 )
 
 GROMACS_WRITER_OPEN_PATH = (
-    "gromacs.io.gromacs_topology_writer.open"
+    "force_gromacs.io.gromacs_topology_writer.open"
 )
 
 

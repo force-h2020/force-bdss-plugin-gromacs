@@ -2,7 +2,7 @@ from traits.api import (
     ReadOnly
 )
 
-from gromacs.api import BaseGromacsCommand
+from force_gromacs.api import BaseGromacsCommand
 
 
 class Gromacs_genconf(BaseGromacsCommand):

@@ -1,6 +1,6 @@
 from traits.api import HasTraits, Unicode, Int, Bool, Instance
 
-from gromacs.pipeline.gromacs_pipeline import (
+from force_gromacs.pipeline.gromacs_pipeline import (
     GromacsPipeline
 )
 

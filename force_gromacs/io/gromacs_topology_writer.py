@@ -4,7 +4,7 @@ from traits.api import (
     List, Unicode, Int
 )
 
-from gromacs.core.base_gromacs_process import BaseGromacsProcess
+from force_gromacs.core.base_gromacs_process import BaseGromacsProcess
 
 
 class GromacsTopologyWriter(BaseGromacsProcess):

@@ -12,7 +12,7 @@ with open('README.md', 'r') as readme:
 def write_version_py():
     filename = os.path.join(
         os.path.dirname(__file__),
-        'gromacs',
+        'force_gromacs',
         'version.py')
     ver = "__version__ = '{}'\n"
     with open(filename, 'w') as fh:
@@ -22,12 +22,12 @@ def write_version_py():
 write_version_py()
 
 setup(
-    name="gromacs",
+    name="force_gromacs",
     version=VERSION,
     entry_points={
             "force.bdss.extensions": [
-                "gromacs = "
-                "gromacs.gromacs_plugin:GromacsPlugin"
+                "force_gromacs = "
+                "force_gromacs.gromacs_plugin:GromacsPlugin"
             ]
         },
     packages=find_packages(),

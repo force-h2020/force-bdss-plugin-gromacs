@@ -1,6 +1,6 @@
 from unittest import TestCase, mock
 
-from gromacs.io.gromacs_topology_reader import (
+from force_gromacs.io.gromacs_topology_reader import (
     GromacsTopologyReader
 )
 
@@ -21,7 +21,7 @@ class TestGromacsTopologyReader(TestCase):
                      '1 F 1 I I 1 1.0 24 \n', '\n'
                      ]
         mock_method = (
-            "gromacs.io.gromacs_topology_reader"
+            "force_gromacs.io.gromacs_topology_reader"
             ".GromacsTopologyReader._read_file")
 
         with mock.patch(mock_method) as mockreadtop:

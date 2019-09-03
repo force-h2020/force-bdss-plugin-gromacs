@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from gromacs.core.base_gromacs_process import (
+from force_gromacs.core.base_gromacs_process import (
     BaseGromacsProcess
 )
 

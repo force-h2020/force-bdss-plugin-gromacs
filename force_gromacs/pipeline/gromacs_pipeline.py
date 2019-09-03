@@ -4,7 +4,7 @@ from traits.api import (
     List, Tuple, Unicode, on_trait_change, Dict
 )
 
-from gromacs.core.base_gromacs_process import BaseGromacsProcess
+from force_gromacs.core.base_gromacs_process import BaseGromacsProcess
 
 
 class GromacsPipeline(BaseGromacsProcess):

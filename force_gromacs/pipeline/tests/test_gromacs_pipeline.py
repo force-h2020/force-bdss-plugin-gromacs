@@ -2,14 +2,14 @@ from unittest import TestCase
 
 from traits.api import TraitError
 
-from gromacs.api import (
+from force_gromacs.api import (
     Gromacs_genbox, Gromacs_genion, GromacsFileTreeBuilder,
     GromacsTopologyWriter
 )
-from gromacs.tests.dummy_classes import (
+from force_gromacs.tests.dummy_classes import (
     DummyCommand, DummyCommand_2, DummyCommand_3
 )
-from gromacs.tests.probe_classes import (
+from force_gromacs.tests.probe_classes import (
     ProbeGromacsPipeline
 )
 

@@ -1,7 +1,7 @@
 from unittest import mock, TestCase
 
-from gromacs.gromacs_plugin import GromacsPlugin
-from gromacs.data_sources.chemical import Chemical
+from force_gromacs.gromacs_plugin import GromacsPlugin
+from force_gromacs.data_sources.chemical import Chemical
 
 
 class TestChemicalDataSource(TestCase):
@@ -24,7 +24,7 @@ class TestChemicalDataSource(TestCase):
                      ' W 1\n', '\n' '[ atoms]\n', ';\n',
                      '1 P 1 W W 1 0 18.0 \n', '\n']
         mock_method = (
-            "gromacs.io.gromacs_topology_reader"
+            "force_gromacs.io.gromacs_topology_reader"
             ".GromacsTopologyReader._read_file")
 
         with mock.patch(mock_method) as mockreadtop:

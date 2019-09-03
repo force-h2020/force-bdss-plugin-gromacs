@@ -1,9 +1,9 @@
 from unittest import TestCase
 
-from gromacs.core.gromacs_simulation_builder import (
+from force_gromacs.core.gromacs_simulation_builder import (
     GromacsSimulationBuilder
 )
-from gromacs.pipeline.gromacs_pipeline import GromacsPipeline
+from force_gromacs.pipeline.gromacs_pipeline import GromacsPipeline
 
 
 class TestGromacsSimulationBuilder(TestCase):
