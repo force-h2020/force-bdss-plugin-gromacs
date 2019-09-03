@@ -23,7 +23,7 @@ class MoleculeDataSource(BaseDataSource):
         charge = data[model.symbol]['charge']
         mass = data[model.symbol]['mass']
 
-        chemical = Molecule(
+        molecule = Molecule(
             name=model.name,
             symbol=model.symbol,
             mass=mass,
@@ -33,7 +33,7 @@ class MoleculeDataSource(BaseDataSource):
         )
 
         return [
-            DataValue(type="MOLECULE", value=chemical)]
+            DataValue(type="MOLECULE", value=molecule)]
 
     def slots(self, model):
 

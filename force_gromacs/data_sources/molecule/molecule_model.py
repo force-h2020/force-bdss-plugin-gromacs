@@ -29,14 +29,16 @@ class MoleculeDataSourceModel(BaseDataSourceModel):
         verify=True
     )
 
-    def _file_check(self, file_path, ext):
-        """Performs a series of checks on selected Gromacs
-        file
+    def _file_check(self, file_path, ext=None):
+        """Performs a series of checks on selected Gromacs file located
+        at file_path
 
         Parameters
         ----------
         file_path: str
             File path for Gromacs input file
+        ext: str, optional
+            Expected extension of Gromacs input file
         """
         errors = []
         if file_path.isspace():
@@ -50,16 +52,18 @@ class MoleculeDataSourceModel(BaseDataSourceModel):
                 )
             )
 
-        elif not file_path.endswith('.{}'.format(ext)):
-            errors.append(
-                VerifierError(
-                    subject=self,
-                    local_error="File extension does not match required.",
-                    global_error=(
-                        "File is not a valid Gromacs file type."
-                    ),
+        if ext is not None:
+            if not file_path.endswith('.{}'.format(ext)):
+                errors.append(
+                    VerifierError(
+                        subject=self,
+                        local_error="File extension does not match required.",
+                        global_error=(
+                            "File is not a valid Gromacs file type."
+                        ),
+                    )
                 )
-            )
+
         try:
             with open(file_path, 'r'):
                 pass
@@ -76,9 +80,9 @@ class MoleculeDataSourceModel(BaseDataSourceModel):
 
         return errors
 
-    # Overloads BaseDataSourceModel verify method to check file names
-    # and counter-ion status upon activation of verify_workflow_event.
     def verify(self):
+        """Overloads BaseDataSourceModel verify method to check file names
+        status upon activation of verify_workflow_event."""
 
         errors = super(MoleculeDataSourceModel, self).verify()
         errors += self._file_check(self.topology, 'itp')
