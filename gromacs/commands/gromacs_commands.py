@@ -15,9 +15,7 @@ create further wrappers around additional Gromacs commands are encouraged to do
 Note - all objects are tested on Gromacs version 4.6.7
 """
 
-from traits.api import (
-    ReadOnly
-)
+from traits.api import ReadOnly
 
 from gromacs.core.base_gromacs_command import BaseGromacsCommand
 
