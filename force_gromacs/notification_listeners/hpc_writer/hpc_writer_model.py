@@ -6,14 +6,14 @@ from force_bdss.api import BaseNotificationListenerModel
 
 class HPCWriterModel(BaseNotificationListenerModel):
 
-    header = Code()
+    prefix = Unicode("hpc_sub_script")
 
-    path = Unicode("hpc_sub_script")
+    header = Code()
 
     dry_run = Bool(True)
 
     traits_view = View(
         Item('header'),
-        Item("path"),
+        Item("prefix"),
         Item("dry_run")
     )

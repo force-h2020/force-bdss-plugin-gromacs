@@ -1,8 +1,6 @@
 from force_bdss.api import BaseNotificationListenerFactory
 
-from .hpc_writer_notification_listener import (
-    HPCWriterNotificationListener
-)
+from .hpc_writer import HPCWriter
 from .hpc_writer_model import HPCWriterModel
 
 
@@ -17,4 +15,4 @@ class HPCWriterFactory(BaseNotificationListenerFactory):
         return HPCWriterModel
 
     def get_listener_class(self):
-        return HPCWriterNotificationListener
+        return HPCWriter

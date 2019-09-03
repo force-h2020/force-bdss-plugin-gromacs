@@ -1,4 +1,4 @@
-from unittest import TestCase
+from unittest import TestCase, mock
 
 from traits.testing.unittest_tools import UnittestTools
 
@@ -9,8 +9,12 @@ from force_gromacs.notification_listeners.driver_events import (
     SimulationProgressEvent
 )
 
+HPC_WRITER_OPEN_PATH = (
+    "force_gromacs.notification_listeners.hpc_writer.hpc_writer.open"
+)
 
-class TestHPCWriterNotificationListener(TestCase, UnittestTools):
+
+class TestHPCWriter(TestCase, UnittestTools):
 
     def setUp(self):
         self.plugin = GromacsPlugin()
@@ -34,6 +38,30 @@ class TestHPCWriterNotificationListener(TestCase, UnittestTools):
             self.model, self.notification_listener.model
         )
 
+    def test__extract_simulation_name(self):
+
+        name = self.notification_listener._extract_simulation_name(
+            self.script
+        )
+        self.assertEqual('experiment_5.0', name)
+
+        name = self.notification_listener._extract_simulation_name(
+            'mdrun -s test_topol.tpr\n'
+        )
+        self.assertIn('gromacs-sim-', name)
+
+        name = self.notification_listener._extract_simulation_name(
+            '\n\nmdrun -s test_topol.tpr\n'
+        )
+        self.assertIn('gromacs-sim-', name)
+
+    def test_create_file_path(self):
+
+        file_path = self.notification_listener.create_file_path(
+            'experiment_5.0'
+        )
+        self.assertEqual('hpc_sub_script_experiment_5.0.sh', file_path)
+
     def test_create_hpc_script(self):
 
         res = self.notification_listener.create_hpc_script(
@@ -41,14 +69,21 @@ class TestHPCWriterNotificationListener(TestCase, UnittestTools):
         )
         self.assertEqual(self.hpc_script, res)
 
-    def test_write_hpc_script(self):
+    def test__write_hpc_script(self):
+        mock_open = mock.mock_open()
 
-        file_path = self.notification_listener.write_hpc_script(
-            self.hpc_script, 'test_experiment'
-        )
-        self.assertEqual(
-            'hpc_sub_script_test_experiment.sh', file_path
-        )
+        with mock.patch(HPC_WRITER_OPEN_PATH, mock_open, create=True):
+            self.notification_listener._write_hpc_script(
+                'some_path', self.hpc_script
+            )
+            mock_open.assert_not_called()
+
+        self.model.dry_run = False
+        with mock.patch(HPC_WRITER_OPEN_PATH, mock_open, create=True):
+            self.notification_listener._write_hpc_script(
+                'some_path', self.hpc_script
+            )
+            mock_open.assert_called_once()
 
     def test_progress_event_handling(self):
 
