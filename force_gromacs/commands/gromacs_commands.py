@@ -1,9 +1,6 @@
 """ This submodule implements the following :class:`BaseGromacsCommand`
 subclasses:
 
-<<<<<<< HEAD:force_gromacs/commands/gromacs_commands.py
-from force_gromacs.api import BaseGromacsCommand
-=======
 * :class:`Gromacs_genconf` provides a wrapper around Gromacs genconf command.
 * :class:`Gromacs_genbox` provides a wrapper around Gromacs genbox command.
 * :class:`Gromacs_grompp` provides a wrapper around Gromacs genmpp command.
