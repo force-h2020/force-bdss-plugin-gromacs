@@ -36,8 +36,6 @@ class TestMoleculeDataSource(TestCase):
             molecule = res[0].value
             self.assertEqual(molecule.name, "Water")
             self.assertEqual(molecule.symbol, "W")
-            self.assertEqual(molecule.mass, 18.0)
-            self.assertEqual(molecule.charge, 0)
             self.assertEqual(molecule.topology, "test_top.itp")
             self.assertEqual(molecule.coordinate, "test_coord.gro")
 
@@ -48,16 +46,12 @@ class TestMolecule(TestCase):
 
         name = "Water"
         symbol = "W"
-        mass = 18.0
-        charge = 0
         topology = "test_top.itp"
         coordinate = "test_coord.gro"
 
         self.molecule = Molecule(
             name=name,
             symbol=symbol,
-            mass=mass,
-            charge=charge,
             topology=topology,
             coordinate=coordinate
         )
@@ -66,8 +60,6 @@ class TestMolecule(TestCase):
 
         self.assertEqual("Water", self.molecule.name)
         self.assertEqual("W", self.molecule.symbol)
-        self.assertEqual(18.0, self.molecule.mass)
-        self.assertEqual(0, self.molecule.charge)
         self.assertEqual("test_top.itp", self.molecule.topology)
         self.assertEqual("test_coord.gro", self.molecule.coordinate)
 
@@ -77,13 +69,9 @@ class TestMolecule(TestCase):
 
         self.assertEqual("Water", data[0].value)
         self.assertEqual("NAME", data[0].type)
-        self.assertEqual(18.0, data[1].value)
-        self.assertEqual("MASS", data[1].type)
-        self.assertEqual(0, data[2].value)
-        self.assertEqual("CHARGE", data[2].type)
-        self.assertEqual("W", data[3].value)
-        self.assertEqual("SYMBOL", data[3].type)
-        self.assertEqual("test_top.itp", data[4].value)
-        self.assertEqual("TOPOLOGY", data[4].type)
-        self.assertEqual("test_coord.gro", data[5].value)
-        self.assertEqual("COORDINATE", data[5].type)
+        self.assertEqual("W", data[1].value)
+        self.assertEqual("SYMBOL", data[1].type)
+        self.assertEqual("test_top.itp", data[2].value)
+        self.assertEqual("TOPOLOGY", data[2].type)
+        self.assertEqual("test_coord.gro", data[3].value)
+        self.assertEqual("COORDINATE", data[3].type)
