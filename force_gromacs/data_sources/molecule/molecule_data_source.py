@@ -14,20 +14,25 @@ class MoleculeDataSource(BaseDataSource):
     are not necessary for atoms or molecules represented by single beads.
     """
 
+    # --------------------
+    #  Regular Attributes
+    # --------------------
+
+    #: Topology reader that can be used to parse '.itp' files. Currently
+    #: unused, but can be referred to by any subclass that would like to
+    #: provide additional pre-processing functionality.
+    reader = GromacsTopologyReader()
+
     def run(self, model, parameters):
-
-        reader = GromacsTopologyReader()
-
-        data = reader.read(model.topology)
-
-        charge = data[model.symbol]['charge']
-        mass = data[model.symbol]['mass']
+        """Simply wraps all user input in a `Molecule` object for further
+        processing. Consequently, it is expected that either this method
+        can be overloaded by a subclass to perform more specific actions,
+        of additional `DataSource` objects can perform this in the next
+        `ExecutionLayer`"""
 
         molecule = Molecule(
             name=model.name,
             symbol=model.symbol,
-            mass=mass,
-            charge=charge,
             topology=model.topology,
             coordinate=model.coordinate
         )
@@ -36,7 +41,6 @@ class MoleculeDataSource(BaseDataSource):
             DataValue(type="MOLECULE", value=molecule)]
 
     def slots(self, model):
-
         return (
             (
             ),

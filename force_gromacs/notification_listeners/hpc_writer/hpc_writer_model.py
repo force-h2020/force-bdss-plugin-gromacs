@@ -1,19 +1,18 @@
 from traits.api import Unicode, Bool, Code
-from traitsui.api import View, Item
 
 from force_bdss.api import BaseNotificationListenerModel
 
 
 class HPCWriterModel(BaseNotificationListenerModel):
 
-    prefix = Unicode("hpc_sub_script")
+    #: Header to include in all HPC submission scripts
+    header = Code(desc="Header to include in all HPC submission scripts")
 
-    header = Code()
+    #: Prefix to include at beginning of all HPC submission files
+    prefix = Unicode(
+        "hpc_sub_script",
+        desc="Prefix to include at beginning of all HPC submission files")
 
+    #: Whether or not to perform a dry run - i.e, generate but do not
+    #: write bash files
     dry_run = Bool(True)
-
-    traits_view = View(
-        Item('header'),
-        Item("prefix"),
-        Item("dry_run")
-    )

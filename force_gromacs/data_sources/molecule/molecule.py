@@ -1,4 +1,4 @@
-from traits.api import HasTraits, Unicode, Float, File
+from traits.api import HasTraits, Unicode, File
 
 from force_bdss.api import DataValue
 
@@ -6,16 +6,16 @@ from force_bdss.api import DataValue
 class Molecule(HasTraits):
     """Contains all input values for each molecule"""
 
+    #: Human readable name for reference
     name = Unicode()
 
+    #: Symbol referring to molecule in Gromacs input files
     symbol = Unicode()
 
-    mass = Float()
-
-    charge = Float()
-
+    #: Gromacs topology '.itp' file
     topology = File()
 
+    #: Gromacs coordinate '.gro' file
     coordinate = File()
 
     def get_data_values(self):
@@ -23,8 +23,6 @@ class Molecule(HasTraits):
 
         return [
             DataValue(type="NAME", value=self.name),
-            DataValue(type="MASS", value=self.mass),
-            DataValue(type="CHARGE", value=self.charge),
             DataValue(type="SYMBOL", value=self.symbol),
             DataValue(type="TOPOLOGY", value=self.topology),
             DataValue(type="COORDINATE", value=self.coordinate)
