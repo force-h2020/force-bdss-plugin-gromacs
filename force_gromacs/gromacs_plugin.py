@@ -15,7 +15,7 @@ class GromacsPlugin(BaseExtensionPlugin):
     for creating and running Gromacs MD simulations.
     """
 
-    id = plugin_id("force_gromacs", "plugin", PLUGIN_VERSION)
+    id = plugin_id("gromacs", "wrapper", PLUGIN_VERSION)
 
     def get_name(self):
         return "Gromacs Plugin"
