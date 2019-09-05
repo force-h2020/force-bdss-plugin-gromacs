@@ -33,6 +33,13 @@ class GromacsSimulationBuilder(HasTraits):
 
     pipeline = Instance(GromacsPipeline)
 
+    # --------------------
+    #  Regular Attributes
+    # --------------------
+
+    #: Base folder for simulation data
+    _folder = Unicode()
+
     #: Output coordinate file name
     _coord_file = Unicode()
 
@@ -56,6 +63,9 @@ class GromacsSimulationBuilder(HasTraits):
 
     def _pipeline_default(self):
         return GromacsPipeline(dry_run=self.dry_run)
+
+    def __folder_default(self):
+        return '/'.join([self.directory, self.name])
 
     def __coord_file_default(self):
         return self.name + '_coord.gro'
