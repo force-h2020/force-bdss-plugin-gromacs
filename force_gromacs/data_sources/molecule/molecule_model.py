@@ -9,6 +9,10 @@ class MoleculeDataSourceModel(BaseDataSourceModel):
     ingredient (molecular species) in a Gromacs
     simulation"""
 
+    # --------------------
+    #  Required Attributes
+    # --------------------
+
     #: Name of the molecule
     name = Unicode(
         desc='Name of molecule')
@@ -28,6 +32,10 @@ class MoleculeDataSourceModel(BaseDataSourceModel):
         desc='File path for Gromacs coordinate file',
         verify=True
     )
+
+    # --------------------
+    #    Private Methods
+    # --------------------
 
     def _file_check(self, file_path, ext=None):
         """Performs a series of checks on selected Gromacs file located
@@ -79,6 +87,10 @@ class MoleculeDataSourceModel(BaseDataSourceModel):
             )
 
         return errors
+
+    # --------------------
+    #    Public Methods
+    # --------------------
 
     def verify(self):
         """Overloads BaseDataSourceModel verify method to check file names
