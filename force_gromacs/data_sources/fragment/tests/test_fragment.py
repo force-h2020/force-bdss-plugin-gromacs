@@ -1,7 +1,7 @@
 from unittest import mock, TestCase
 
 from force_gromacs.gromacs_plugin import GromacsPlugin
-from force_gromacs.data_sources.fragment import Fragment
+from force_gromacs.tests.probe_classes import ProbeFragment
 
 
 class TestFragmentDataSource(TestCase):
@@ -31,47 +31,58 @@ class TestFragmentDataSource(TestCase):
             mockreadtop.return_value = top_lines
 
             res = self.data_source.run(model, data_values)
-            self.assertEqual(res[0].type, "FRAGMENT")
+            self.assertEqual("FRAGMENT", res[0].type)
 
             molecule = res[0].value
-            self.assertEqual(molecule.name, "Water")
-            self.assertEqual(molecule.symbol, "W")
-            self.assertEqual(molecule.topology, "test_top.itp")
-            self.assertEqual(molecule.coordinate, "test_coord.gro")
+            self.assertEqual("Water", molecule.name)
+            self.assertEqual("W", molecule.symbol)
+            self.assertEqual(["W"], molecule.atoms, )
+            self.assertEqual(18.0, molecule.mass, )
+            self.assertEqual(0, molecule.charge)
+            self.assertEqual("test_top.itp", molecule.topology)
+            self.assertEqual("test_coord.gro", molecule.coordinate)
 
 
 class TestFragment(TestCase):
 
     def setUp(self):
 
-        name = "Water"
-        symbol = "W"
-        topology = "test_top.itp"
-        coordinate = "test_coord.gro"
+        top_lines = ['; Water \n', '[moleculetype]\n', ';\n',
+                     ' W 1\n', '\n' '[ atoms]\n', ';\n',
+                     '1 P 1 W W 1 0 18.0 \n', '\n']
+        mock_method = (
+            "force_gromacs.io.gromacs_topology_reader"
+            ".GromacsTopologyReader._read_file")
 
-        self.molecule = Fragment(
-            name=name,
-            symbol=symbol,
-            topology=topology,
-            coordinate=coordinate
-        )
+        with mock.patch(mock_method) as mockreadtop:
+            mockreadtop.return_value = top_lines
+            self.fragment = ProbeFragment()
 
     def test___init__(self):
 
-        self.assertEqual("Water", self.molecule.name)
-        self.assertEqual("W", self.molecule.symbol)
-        self.assertEqual("test_top.itp", self.molecule.topology)
-        self.assertEqual("test_coord.gro", self.molecule.coordinate)
+        self.assertEqual("Water", self.fragment.name)
+        self.assertEqual("W", self.fragment.symbol)
+        self.assertEqual(["W"], self.fragment.atoms, )
+        self.assertEqual(18.0, self.fragment.mass, )
+        self.assertEqual(0, self.fragment.charge)
+        self.assertEqual("test_top.itp", self.fragment.topology)
+        self.assertEqual("test_coord.gro", self.fragment.coordinate)
 
     def test_get_data_values(self):
 
-        data = self.molecule.get_data_values()
+        data = self.fragment.get_data_values()
 
         self.assertEqual("Water", data[0].value)
         self.assertEqual("NAME", data[0].type)
         self.assertEqual("W", data[1].value)
         self.assertEqual("SYMBOL", data[1].type)
-        self.assertEqual("test_top.itp", data[2].value)
-        self.assertEqual("TOPOLOGY", data[2].type)
-        self.assertEqual("test_coord.gro", data[3].value)
-        self.assertEqual("COORDINATE", data[3].type)
+        self.assertEqual(["W"], data[2].value)
+        self.assertEqual("ATOMS", data[2].type)
+        self.assertEqual(18.0, data[3].value)
+        self.assertEqual("MASS", data[3].type)
+        self.assertEqual(0, data[4].value)
+        self.assertEqual("CHARGE", data[4].type)
+        self.assertEqual("test_top.itp", data[5].value)
+        self.assertEqual("TOPOLOGY", data[5].type)
+        self.assertEqual("test_coord.gro", data[6].value)
+        self.assertEqual("COORDINATE", data[6].type)
