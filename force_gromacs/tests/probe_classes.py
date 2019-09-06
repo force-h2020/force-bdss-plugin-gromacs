@@ -1,15 +1,82 @@
+from unittest import mock
+
 from force_gromacs.commands.gromacs_commands import (
     Gromacs_genbox, Gromacs_genion
 )
 from force_gromacs.commands.gromacs_file_tree_builder import (
     GromacsFileTreeBuilder
 )
+from force_gromacs.data_sources.fragment import Fragment
 from force_gromacs.io.gromacs_topology_writer import (
     GromacsTopologyWriter
 )
 from force_gromacs.pipeline.gromacs_pipeline import (
     GromacsPipeline
 )
+from force_gromacs.pipeline.gromacs_simulation_builder import (
+    GromacsSimulationBuilder
+)
+
+
+data = {
+    'W': {
+        'atoms': ['W'],
+        'charge': 0,
+        'mass': 18
+    },
+    'PI': {
+        'atoms': ['PI'],
+        'charge': 1,
+        'mass': 23
+    },
+    'NI': {
+        'atoms': ['NI'],
+        'charge': -1,
+        'mass': 35
+    }
+}
+
+mock_method = (
+    "force_gromacs.io.gromacs_topology_reader"
+    ".GromacsTopologyReader.read"
+)
+
+
+class ProbeFragment(Fragment):
+    def __init__(self, name="Water", symbol='W'):
+
+        with mock.patch(mock_method) as mockreadtop:
+            mockreadtop.return_value = data
+            super(ProbeFragment, self).__init__(
+                name=name,
+                symbol=symbol,
+                topology="test_top.itp",
+                coordinate="test_coord.gro"
+            )
+
+
+class ProbeMolecule(Fragment):
+
+    def __init__(self, name):
+        with mock.patch(mock_method) as mockreadtop:
+            mockreadtop.return_value = data
+            if name == 'Water':
+                fragments = [
+                    ProbeFragment(name='Water',
+                                  symbol='W')
+                ]
+            elif name == 'Salt':
+                fragments = [
+                    ProbeFragment(name='Positive Ion',
+                                  symbol='PI'),
+                    ProbeFragment(name='Negative Ion',
+                                  symbol='NI')
+                ]
+
+        super(ProbeMolecule, self).__init__(
+            name=name,
+            fragments=fragments
+        )
 
 
 class ProbeGromacsPipeline(GromacsPipeline):
@@ -65,3 +132,9 @@ class ProbeGromacsPipeline(GromacsPipeline):
         ]
 
         super(ProbeGromacsPipeline, self).__init__(steps=steps)
+
+
+class ProbeSimulationBuilder(GromacsSimulationBuilder):
+
+    def build_pipeline(self):
+        return ProbeGromacsPipeline()
