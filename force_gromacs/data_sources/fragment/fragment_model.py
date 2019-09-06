@@ -4,20 +4,19 @@ from force_bdss.api import BaseDataSourceModel
 from force_bdss.core.verifier import VerifierError
 
 
-class MoleculeDataSourceModel(BaseDataSourceModel):
-    """Class containing all parameters for a single molecule
-    ingredient (molecular species) in a Gromacs
-    simulation"""
+class FragmentDataSourceModel(BaseDataSourceModel):
+    """Class containing all input parameters for a single molecular
+    fragment in a Gromacs simulation"""
 
     # --------------------
     #  Required Attributes
     # --------------------
 
-    #: Name of the molecule
+    #: Name of the fragment
     name = Unicode(
-        desc='Name of molecule')
+        desc='Name of fragment')
 
-    #: Reference symbol of molecule in Gromacs files
+    #: Reference symbol of fragment in Gromacs files
     symbol = Unicode(
         desc='Reference symbol in input Gromacs topology file')
 
@@ -96,7 +95,7 @@ class MoleculeDataSourceModel(BaseDataSourceModel):
         """Overloads BaseDataSourceModel verify method to check file names
         status upon activation of verify_workflow_event."""
 
-        errors = super(MoleculeDataSourceModel, self).verify()
+        errors = super(FragmentDataSourceModel, self).verify()
         errors += self._file_check(self.topology, 'itp')
         errors += self._file_check(self.coordinate, 'gro')
 

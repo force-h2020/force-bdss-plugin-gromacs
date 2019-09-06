@@ -4,12 +4,12 @@ from force_gromacs.io.gromacs_topology_reader import (
     GromacsTopologyReader
 )
 
-from .molecule import Molecule
+from .fragment import Fragment
 
 
-class MoleculeDataSource(BaseDataSource):
+class FragmentDataSource(BaseDataSource):
     """Class takes in all data required to define each
-    separate molecule molecule in a Gromacs experiment. Gromacs topology
+    separate molecular fragment in a Gromacs experiment. Gromacs topology
     files must be included for all species, however coordinate files
     are not necessary for atoms or molecules represented by single beads.
     """
@@ -24,13 +24,13 @@ class MoleculeDataSource(BaseDataSource):
     reader = GromacsTopologyReader()
 
     def run(self, model, parameters):
-        """Simply wraps all user input in a `Molecule` object for further
+        """Simply wraps all user input in a `Fragment` object for further
         processing. Consequently, it is expected that either this method
         can be overloaded by a subclass to perform more specific actions,
         of additional `DataSource` objects can perform this in the next
         `ExecutionLayer`"""
 
-        molecule = Molecule(
+        fragment = Fragment(
             name=model.name,
             symbol=model.symbol,
             topology=model.topology,
@@ -38,14 +38,14 @@ class MoleculeDataSource(BaseDataSource):
         )
 
         return [
-            DataValue(type="MOLECULE", value=molecule)]
+            DataValue(type="FRAGMENT", value=fragment)]
 
     def slots(self, model):
         return (
             (
             ),
             (
-                Slot(type="MOLECULE",
-                     description="Gromacs Molecule data object"),
+                Slot(type="FRAGMENT",
+                     description="Gromacs Fragment data object"),
             )
         )

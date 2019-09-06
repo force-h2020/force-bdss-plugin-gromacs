@@ -3,13 +3,16 @@ from traits.api import HasTraits, Unicode, File
 from force_bdss.api import DataValue
 
 
-class Molecule(HasTraits):
-    """Contains all input values for each molecule"""
+class Fragment(HasTraits):
+    """Contains all input values for each molecular fragment. A
+    fragment is defined as a part of a molecule that may become
+    dissociated (i.e - an ion) and therefore requires its own set
+    of chemical / structural information"""
 
     #: Human readable name for reference
     name = Unicode()
 
-    #: Symbol referring to molecule in Gromacs input files
+    #: Symbol referring to fragment in Gromacs input files
     symbol = Unicode()
 
     #: Gromacs topology '.itp' file

@@ -1,10 +1,10 @@
 from unittest import mock, TestCase
 
 from force_gromacs.gromacs_plugin import GromacsPlugin
-from force_gromacs.data_sources.molecule import Molecule
+from force_gromacs.data_sources.fragment import Fragment
 
 
-class TestMoleculeDataSource(TestCase):
+class TestFragmentDataSource(TestCase):
 
     def setUp(self):
         self.plugin = GromacsPlugin()
@@ -31,7 +31,7 @@ class TestMoleculeDataSource(TestCase):
             mockreadtop.return_value = top_lines
 
             res = self.data_source.run(model, data_values)
-            self.assertEqual(res[0].type, "MOLECULE")
+            self.assertEqual(res[0].type, "FRAGMENT")
 
             molecule = res[0].value
             self.assertEqual(molecule.name, "Water")
@@ -40,7 +40,7 @@ class TestMoleculeDataSource(TestCase):
             self.assertEqual(molecule.coordinate, "test_coord.gro")
 
 
-class TestMolecule(TestCase):
+class TestFragment(TestCase):
 
     def setUp(self):
 
@@ -49,7 +49,7 @@ class TestMolecule(TestCase):
         topology = "test_top.itp"
         coordinate = "test_coord.gro"
 
-        self.molecule = Molecule(
+        self.molecule = Fragment(
             name=name,
             symbol=symbol,
             topology=topology,
