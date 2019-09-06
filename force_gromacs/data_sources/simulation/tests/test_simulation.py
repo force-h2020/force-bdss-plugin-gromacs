@@ -55,6 +55,7 @@ class TestSimulationDataSource(TestCase, UnittestTools):
         self.assertEqual(0, len(res))
 
     def test_slots(self):
+
         self.model.n_molecules = 4
         in_slots = self.data_source.slots(self.model)[0]
         self.assertEqual(4, len(in_slots))
@@ -70,6 +71,11 @@ class TestSimulationDataSource(TestCase, UnittestTools):
             "Number of molecule types must be at least 1",
             messages
         )
+
+    def test_not_implemented_error(self):
+
+        with self.assertRaises(NotImplementedError):
+            self.data_source.create_simulation_builder(None, None)
 
     def test_create_bash_script(self):
 
