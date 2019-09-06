@@ -47,7 +47,7 @@ class GromacsTopologyReader(HasTraits):
         return file_lines
 
     def _get_molecule_sections(self, file_lines):
-        """ Find file location and molecule type of each section
+        """ Find file location and fragment type of each section
 
         Parameters
         ----------
@@ -58,30 +58,30 @@ class GromacsTopologyReader(HasTraits):
         -------
         mol_sections : list of str
             List containing relevant lines of topology file for
-            each molecule in self.symbols
+            each fragment in self.symbols
         """
 
-        # Get indices for beginning of sections of all molecule types
+        # Get indices for beginning of sections of all fragment types
         # in topology
         mol_indices = [index for index, line in enumerate(file_lines)
                        if "moleculetype" in line]
 
         if len(mol_indices) == 0:
             raise IOError('Gromacs topology file does not include any'
-                          ' molecule types')
+                          ' fragment types')
         mol_sections = []
         start_indices = mol_indices
         end_indices = mol_indices[1:] + [None]
 
         # Extract the relevant lines in the topology file that correspond
-        # to each molecule
+        # to each fragment
         for start, end in zip(start_indices, end_indices):
             mol_sections.append(file_lines[start:end])
 
         return mol_sections
 
     def _get_data(self, file_lines):
-        """ Load data for each target molecule type in Gromacs topology
+        """ Load data for each target fragment type in Gromacs topology
 
         Parameters
         ----------
@@ -108,10 +108,10 @@ class GromacsTopologyReader(HasTraits):
 
         for section in mol_sections:
 
-            # Get symbols that correspond to each molecule type
+            # Get symbols that correspond to each fragment type
             symbol = section[1].split()[0]
 
-            # Find file location of atom list for target molecule
+            # Find file location of atom list for target fragment
             atom_indices = [index + 1 for index, line
                             in enumerate(section) if "atoms" in line]
 
