@@ -25,7 +25,7 @@ class TestSimulationDataSource(TestCase, UnittestTools):
         self.md_prod_parameters = 'test_prod_parm.mdp'
 
         self.model = self.factory.create_model()
-        self.model.n_molecules = 2
+        self.model.n_molecule_types = 2
         self.model.martini_parameters = self.martini_parameters
         self.model.md_prod_parameters = self.md_prod_parameters
         self.model.md_min_parameters = self.md_min_parameters
@@ -56,14 +56,14 @@ class TestSimulationDataSource(TestCase, UnittestTools):
 
     def test_slots(self):
 
-        self.model.n_molecules = 4
+        self.model.n_molecule_types = 4
         in_slots = self.data_source.slots(self.model)[0]
         self.assertEqual(4, len(in_slots))
 
-    def test_n_molecules_check(self):
+    def test__n_molecule_types_check(self):
 
         model = self.factory.create_model()
-        model.n_molecules = 0
+        model.n_molecule_types = 0
         errors = model.verify()
 
         messages = [error.local_error for error in errors]

@@ -108,7 +108,8 @@ class SimulationDataSource(BaseDataSource):
 
         input_slots = tuple(
                 Slot(description=f"Molecule {index + 1} data",
-                     type="MOLECULE") for index in range(model.n_molecules)
+                     type="MOLECULE")
+                for index in range(model.n_molecule_types)
             )
 
         return (

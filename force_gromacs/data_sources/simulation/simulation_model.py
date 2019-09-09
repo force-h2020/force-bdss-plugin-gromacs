@@ -10,13 +10,17 @@ class SimulationDataSourceModel(BaseDataSourceModel):
     """Class that inputs all required parameters for a single
     Gromacs simulation"""
 
+    # --------------------
+    #  Required Attributes
+    # --------------------
+
     #: Name of simulation
     name = Unicode('simulation')
 
     #: Number of Molecules
-    n_molecules = Int(1,
-                      desc='Number of constituent molecules',
-                      changes_slots=True, verify=True)
+    n_molecule_types = Int(
+        1, desc='Number of types of constiuent molecules',
+        changes_slots=True, verify=True)
 
     #: Total number of fragments in simulation
     size = Int(1000)
@@ -42,8 +46,16 @@ class SimulationDataSourceModel(BaseDataSourceModel):
     md_prod_parameters = File(
         desc='File path for Gromacs MD Parameter file')
 
+    # --------------------
+    #  Regular Attributes
+    # --------------------
+
     #: Propagation channel for events from the SimulationDataSource
     driver_event = Instance(BaseDriverEvent)
+
+    # --------------------
+    #        View
+    # --------------------
 
     traits_view = View(
         Item('name'),
@@ -56,12 +68,16 @@ class SimulationDataSourceModel(BaseDataSourceModel):
         Item("dry_run")
     )
 
-    def _n_molecules_check(self):
+    # --------------------
+    #   Private Methods
+    # --------------------
+
+    def _n_molecule_types_check(self):
         """Makes sure there is at least 1 Molecule type in the
         Simulation"""
 
         errors = []
-        if self.n_molecules < 1:
+        if self.n_molecule_types < 1:
             errors.append(
                 VerifierError(
                     subject=self,
@@ -74,11 +90,15 @@ class SimulationDataSourceModel(BaseDataSourceModel):
 
         return errors
 
+    # --------------------
+    #    Public Methods
+    # --------------------
+
     def verify(self):
         """Overloads BaseDataSourceModel verify method to check the
         number of Molecules during a verify_workflow_event"""
 
         errors = super(SimulationDataSourceModel, self).verify()
-        errors += self._n_molecules_check()
+        errors += self._n_molecule_types_check()
 
         return errors
