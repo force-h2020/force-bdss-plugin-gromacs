@@ -1,4 +1,7 @@
+import numpy as np
+
 from traits.api import Int, List, on_trait_change
+from traitsui.api import View, Item, ListEditor
 
 from force_bdss.api import BaseDataSourceModel, VerifierError
 
@@ -17,18 +20,33 @@ class MoleculeDataSourceModel(BaseDataSourceModel):
         Int, desc='Stoichiometric numbers of each fragment in molecule'
     )
 
+    # ------------------
+    #       View
+    # ------------------
+
+    def default_traits_view(self):
+        """Provides view with display information for fragment_numbers
+        trait"""
+        list_editor = ListEditor(mutable=False)
+        return View(
+            Item('n_fragments'),
+            Item('fragment_numbers', editor=list_editor)
+        )
+
     def _fragment_numbers_default(self):
-        return [1 for _ in range(self.n_fragments)]
+        return [1] * self.n_fragments
 
     @on_trait_change('n_fragments')
     def update_fragment_numbers(self):
         """Updates length of fragment_numbers list to equal
         n_fragments"""
-        while len(self.fragment_numbers) != self.n_fragments:
-            if len(self.fragment_numbers) < self.n_fragments:
-                self.fragment_numbers.append(1)
-            else:
-                self.fragment_numbers = self.fragment_numbers[:-1]
+
+        n = self.n_fragments - len(self.fragment_numbers)
+
+        if n > 0:
+            self.fragment_numbers += [1] * n
+        elif n < 0:
+            self.fragment_numbers = self.fragment_numbers[:n]
 
     def _n_fragments_check(self):
         """Makes sure there is at least 1 molecular fragment in

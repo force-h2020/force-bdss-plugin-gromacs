@@ -72,7 +72,7 @@ class SimulationDataSource(BaseDataSource):
         of generating a `GromacsPipeline`"""
         raise NotImplementedError(
             "Class needs to implement create_simulation_builder`"
-            "method"
+            "method that returns a GromacsSimulationBuilder instance"
         )
 
     def run(self, model, parameters):

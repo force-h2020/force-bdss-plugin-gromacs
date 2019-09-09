@@ -32,6 +32,8 @@ class MoleculeDataSource(BaseDataSource):
         """Takes in all constituent fragments and assigns stoichiometric
         numbers to produce a Molecule object"""
 
+        # Make a copy of any `FragmentDataSource`, so that stoichiometric
+        # numbers are only assigned locally
         self._make_local_parameter_copy(parameters)
 
         self._assign_stoichiometry(model, parameters)

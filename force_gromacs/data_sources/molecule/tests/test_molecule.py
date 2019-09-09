@@ -156,3 +156,21 @@ class TestMoleculeDataSource(TestCase):
 
         self.assertEqual(2, self.positive_ion.number)
         self.assertEqual(3, self.negative_ion.number)
+
+    def test_update_fragment_numbers(self):
+
+        model = self.factory.create_model()
+
+        model.fragment_numbers[0] = 3
+        model.n_fragments = 5
+        in_slots = self.data_source.slots(model)[0]
+        self.assertEqual(5, len(in_slots))
+        self.assertEqual(5, len(model.fragment_numbers))
+        self.assertEqual(3, model.fragment_numbers[0])
+
+        model.fragment_numbers[1] = 5
+        model.n_fragments = 2
+        in_slots = self.data_source.slots(model)[0]
+        self.assertEqual(2, len(in_slots))
+        self.assertEqual(2, len(model.fragment_numbers))
+        self.assertEqual(5, model.fragment_numbers[1])

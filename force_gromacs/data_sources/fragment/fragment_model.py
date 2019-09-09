@@ -71,20 +71,6 @@ class FragmentDataSourceModel(BaseDataSourceModel):
                     )
                 )
 
-        try:
-            with open(file_path, 'r'):
-                pass
-        except IOError:
-            errors.append(
-                VerifierError(
-                    subject=self,
-                    local_error="Opening file returns IOError.",
-                    global_error=(
-                        "Unable to open Gromacs file."
-                    ),
-                )
-            )
-
         return errors
 
     # --------------------

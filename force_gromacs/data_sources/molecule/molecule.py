@@ -44,6 +44,10 @@ class Molecule(HasTraits):
     # --------------------
 
     def _name_default(self):
+        """Naive naming procedure, based on name and charge of constituent
+        fragments. Follows general chemical nomenclature of naming an
+        ionic compound first by its positive ion, followed by its negative
+        ion."""
         name = ''
         for fragment in self.fragments:
             if fragment.charge < 0:
@@ -67,6 +71,7 @@ class Molecule(HasTraits):
                     for fragment in self.fragments])
 
     def _get_neutral(self):
+        """Check whether molecule is neutral"""
         return self.charge == 0
 
     # --------------------
