@@ -1,88 +1,80 @@
-from traits.api import Unicode, File
+from traits.api import Int, List, on_trait_change
+from traitsui.api import View, Item, ListEditor
 
-from force_bdss.api import BaseDataSourceModel
-from force_bdss.core.verifier import VerifierError
+from force_bdss.api import BaseDataSourceModel, VerifierError
 
 
 class MoleculeDataSourceModel(BaseDataSourceModel):
-    """Class containing all parameters for a single molecule
-    ingredient (molecular species) in a Gromacs
-    simulation"""
+    """Class containing all fragments to create for a single Gromacs
+    `Molecule` object"""
 
     # --------------------
     #  Required Attributes
     # --------------------
 
-    #: Name of the molecule
-    name = Unicode(
-        desc='Name of molecule')
+    #: Number of molecular fragments
+    n_fragments = Int(1,
+                      desc='Number of constituent fragments',
+                      changes_slots=True, verify=True)
 
-    #: Reference symbol of molecule in Gromacs files
-    symbol = Unicode(
-        desc='Reference symbol in input Gromacs topology file')
-
-    #: Location of Gromacs topology file containing molecular data
-    topology = File(
-        desc='File path for Gromacs topology file',
-        verify=True
+    #: Stoichiometric numbers of each molecular fragment
+    fragment_numbers = List(
+        Int, desc='Stoichiometric numbers of each fragment in molecule'
     )
 
-    #: Location of Gromacs coordinate file containing molecular data
-    coordinate = File(
-        desc='File path for Gromacs coordinate file',
-        verify=True
-    )
+    # ------------------
+    #       View
+    # ------------------
 
-    # --------------------
-    #    Private Methods
-    # --------------------
+    def default_traits_view(self):
+        """Provides view with display information for fragment_numbers
+        trait"""
+        list_editor = ListEditor(mutable=False)
+        return View(
+            Item('n_fragments'),
+            Item('fragment_numbers', editor=list_editor)
+        )
 
-    def _file_check(self, file_path, ext=None):
-        """Performs a series of checks on selected Gromacs file located
-        at file_path
+    # ------------------
+    #     Defaults
+    # ------------------
 
-        Parameters
-        ----------
-        file_path: str
-            File path for Gromacs input file
-        ext: str, optional
-            Expected extension of Gromacs input file
-        """
+    def _fragment_numbers_default(self):
+        return [1] * self.n_fragments
+
+    # ------------------
+    #     Listeners
+    # ------------------
+
+    @on_trait_change('n_fragments')
+    def update_fragment_numbers(self):
+        """Updates length of fragment_numbers list to equal
+        n_fragments"""
+
+        n = self.n_fragments - len(self.fragment_numbers)
+
+        if n > 0:
+            self.fragment_numbers += [1] * n
+        elif n < 0:
+            self.fragment_numbers = self.fragment_numbers[:n]
+
+    # ------------------
+    #   Private Methods
+    # ------------------
+
+    def _n_fragments_check(self):
+        """Makes sure there is at least 1 molecular fragment in
+        the Ingredient"""
+
         errors = []
-        if file_path.isspace():
+        if self.n_fragments < 1:
             errors.append(
                 VerifierError(
                     subject=self,
-                    local_error="Gromacs file name is white space.",
-                    global_error=(
-                        "Gromacs file not specified."
-                    ),
-                )
-            )
-
-        if ext is not None:
-            if not file_path.endswith('.{}'.format(ext)):
-                errors.append(
-                    VerifierError(
-                        subject=self,
-                        local_error="File extension does not match required.",
-                        global_error=(
-                            "File is not a valid Gromacs file type."
-                        ),
-                    )
-                )
-
-        try:
-            with open(file_path, 'r'):
-                pass
-        except IOError:
-            errors.append(
-                VerifierError(
-                    subject=self,
-                    local_error="Opening file returns IOError.",
-                    global_error=(
-                        "Unable to open Gromacs file."
-                    ),
+                    local_error="Number of molecular fragments must"
+                                " be at least 1",
+                    global_error="An IngredientDataSource does not "
+                                 "have enough molecular fragments defined"
                 )
             )
 
@@ -93,11 +85,10 @@ class MoleculeDataSourceModel(BaseDataSourceModel):
     # --------------------
 
     def verify(self):
-        """Overloads BaseDataSourceModel verify method to check file names
-        status upon activation of verify_workflow_event."""
+        """Overloads BaseDataSourceModel verify method to check the
+        number of Molecules during a verify_workflow_event"""
 
         errors = super(MoleculeDataSourceModel, self).verify()
-        errors += self._file_check(self.topology, 'itp')
-        errors += self._file_check(self.coordinate, 'gro')
+        errors += self._n_fragments_check()
 
         return errors

@@ -5,11 +5,12 @@ from .molecule_data_source import MoleculeDataSource
 
 
 class MoleculeFactory(BaseDataSourceFactory):
+
     def get_identifier(self):
         return "molecule"
 
     def get_name(self):
-        return "Gromacs Molecule Data"
+        return "Gromacs Molecule"
 
     def get_model_class(self):
         return MoleculeDataSourceModel

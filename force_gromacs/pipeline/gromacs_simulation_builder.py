@@ -1,4 +1,6 @@
-from traits.api import HasTraits, Unicode, Int, Bool, Instance
+from traits.api import (
+    HasTraits, Unicode, Int, Bool, Instance, Dict
+)
 
 from force_gromacs.pipeline.gromacs_pipeline import (
     GromacsPipeline
@@ -8,6 +10,10 @@ from force_gromacs.pipeline.gromacs_pipeline import (
 class GromacsSimulationBuilder(HasTraits):
     """Class that creates a GromacsPipeline object for a specific
     simulation"""
+
+    # --------------------
+    #  Required Attributes
+    # --------------------
 
     #: Reference name of simulation
     name = Unicode()
@@ -31,7 +37,18 @@ class GromacsSimulationBuilder(HasTraits):
     #: Whether or not to perform a dry run
     dry_run = Bool(True)
 
+    # --------------------
+    #  Regular Attributes
+    # --------------------
+
+    #: GromacsPipeline object to be constructed
     pipeline = Instance(GromacsPipeline)
+
+    #: Current data to be included in human readable topology file
+    topology_data = Dict()
+
+    #: Base folder for simulation data
+    _folder = Unicode()
 
     #: Output coordinate file name
     _coord_file = Unicode()
@@ -54,8 +71,19 @@ class GromacsSimulationBuilder(HasTraits):
     #: Output state file name
     _state_file = Unicode()
 
+    # --------------------
+    #      Defaults
+    # --------------------
+
     def _pipeline_default(self):
         return GromacsPipeline(dry_run=self.dry_run)
+
+    def _topology_data_default(self):
+        return {'topologies': [],
+                'fragment_dict': {}}
+
+    def __folder_default(self):
+        return '/'.join([self.directory, self.name])
 
     def __coord_file_default(self):
         return self.name + '_coord.gro'
@@ -78,9 +106,32 @@ class GromacsSimulationBuilder(HasTraits):
     def __state_file_default(self):
         return self.name + '_state.cpt'
 
+    # --------------------
+    #    Private Methods
+    # --------------------
+
+    def _update_topology_data(self, topology=None, symbol=None, n_mol=0):
+        """Updates attribute _topology_data, which stores data to write
+        to a human readable Gromacs topology file"""
+
+        if topology is not None:
+            if topology not in self.topology_data['topologies']:
+                self.topology_data['topologies'].append(topology)
+
+        if symbol is not None:
+            if symbol not in self.topology_data['fragment_dict']:
+                self.topology_data['fragment_dict'][symbol] = 0
+
+            self.topology_data['fragment_dict'][symbol] += n_mol
+
+    # --------------------
+    #    Public Methods
+    # --------------------
+
     def build_pipeline(self):
-        """Method to be implemented that returns a `GromacsPipeline` object containing
-        all commands required to set up and perform a simulation"""
+        """Method to be implemented that returns a `GromacsPipeline`
+        object containing all commands required to set up and perform a
+        simulation"""
         raise NotImplementedError(
             'Subclass does not contain an implementation of '
             '`build_pipeline` method'

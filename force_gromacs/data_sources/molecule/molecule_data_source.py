@@ -1,51 +1,63 @@
+import copy
+
 from force_bdss.api import BaseDataSource, DataValue, Slot
 
-from force_gromacs.io.gromacs_topology_reader import (
-    GromacsTopologyReader
+from force_gromacs.data_sources.molecule import (
+    Molecule
 )
-
-from .molecule import Molecule
 
 
 class MoleculeDataSource(BaseDataSource):
-    """Class takes in all data required to define each
-    separate molecule molecule in a Gromacs experiment. Gromacs topology
-    files must be included for all species, however coordinate files
-    are not necessary for atoms or molecules represented by single beads.
+    """Class that collates a set of molecular `Fragment` instances into
+    a single chemical `Molecule`.
     """
 
-    # --------------------
-    #  Regular Attributes
-    # --------------------
+    def _make_local_parameter_copy(self, parameters):
+        """Makes a local copy of any `parameter.value` attributes being
+         passed into the DataSource."""
+        for parameter in parameters:
+            parameter.value = copy.copy(parameter.value)
 
-    #: Topology reader that can be used to parse '.itp' files. Currently
-    #: unused, but can be referred to by any subclass that would like to
-    #: provide additional pre-processing functionality.
-    reader = GromacsTopologyReader()
+    def _assign_stoichiometry(self, model, parameters):
+        """Assign stoichiometric number to each `Fragment` present in
+        parameters"""
+
+        fragments = [parameter.value for parameter in parameters
+                     if parameter.type == 'FRAGMENT']
+
+        for number, fragment in zip(model.fragment_numbers, fragments):
+            fragment.number = number
 
     def run(self, model, parameters):
-        """Simply wraps all user input in a `Molecule` object for further
-        processing. Consequently, it is expected that either this method
-        can be overloaded by a subclass to perform more specific actions,
-        of additional `DataSource` objects can perform this in the next
-        `ExecutionLayer`"""
+        """Takes in all constituent fragments and assigns stoichiometric
+        numbers to produce a Molecule object"""
+
+        # Make a copy of any `FragmentDataSource`, so that stoichiometric
+        # numbers are only assigned locally
+        self._make_local_parameter_copy(parameters)
+
+        self._assign_stoichiometry(model, parameters)
+
+        fragments = [parameter.value for parameter in parameters
+                     if parameter.type == 'FRAGMENT']
 
         molecule = Molecule(
-            name=model.name,
-            symbol=model.symbol,
-            topology=model.topology,
-            coordinate=model.coordinate
+            fragments=fragments
         )
 
-        return [
-            DataValue(type="MOLECULE", value=molecule)]
+        return [DataValue(type='MOLECULE', value=molecule)]
 
     def slots(self, model):
+
+        input_slots = tuple(
+                Slot(description=f"Molecular fragment {index + 1} data",
+                     type="FRAGMENT") for index in range(model.n_fragments)
+            )
+
         return (
+            input_slots,
             (
-            ),
-            (
-                Slot(type="MOLECULE",
-                     description="Gromacs Molecule data object"),
+                Slot(description=f"Molecule for a simulation",
+                     type="MOLECULE"),
             )
         )

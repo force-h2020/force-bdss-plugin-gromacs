@@ -1,6 +1,6 @@
 import os
 
-from traits.api import List, Unicode, Int
+from traits.api import List, Unicode, Dict, Int
 
 from force_gromacs.core.base_gromacs_process import BaseGromacsProcess
 
@@ -18,15 +18,10 @@ class GromacsTopologyWriter(BaseGromacsProcess):
     #: List of Gromacs topology files to be included
     topologies = List(Unicode)
 
-    #: List of molecular symbols referenced from
-    #: from the files in `topologies` to be included in the
-    #: simulation
-    symbols = List(Unicode)
-
-    #: List of integers referring to the number of each
-    #: molecular species in `symbols` to be included in the
-    #: simulation
-    n_mols = List(Int)
+    #: Dictionary containing keys referring to molecular symbols
+    #: referenced from the files in `topologies`, with values determining
+    #: the number of each molecule to be included in the simulation
+    fragment_dict = Dict(Unicode, Int)
 
     # --------------------
     #  Regular Attributes
@@ -67,8 +62,8 @@ class GromacsTopologyWriter(BaseGromacsProcess):
         top_file += self.sim_name + '\n'
 
         top_file += '\n[ molecules ]\n'
-        for symbol, n in zip(self.symbols, self.n_mols):
-            top_file += '{} {}\n'.format(symbol, n)
+        for symbol, n_mol in self.fragment_dict.items():
+            top_file += '{} {}\n'.format(symbol, n_mol)
 
         return top_file
 

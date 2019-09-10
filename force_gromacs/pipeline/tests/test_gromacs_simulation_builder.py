@@ -61,6 +61,57 @@ class TestGromacsSimulationBuilder(TestCase):
             self.sim_builder.dry_run, self.sim_builder.pipeline.dry_run
         )
 
+        self.assertEqual(
+            {'topologies': [],
+             'fragment_dict': {}},
+            self.sim_builder.topology_data
+        )
+
+    def test__update_topology_data(self):
+
+        self.sim_builder._update_topology_data('some_top.itp', 'Mol', 10)
+        self.assertEqual(
+            ['some_top.itp'], self.sim_builder.topology_data['topologies']
+        )
+        self.assertEqual(
+            {'Mol': 10}, self.sim_builder.topology_data['fragment_dict']
+        )
+
+        self.sim_builder._update_topology_data('some_other_top.itp', 'At', 10)
+        self.assertEqual(
+            ['some_top.itp',
+             'some_other_top.itp'],
+            self.sim_builder.topology_data['topologies']
+        )
+        self.assertEqual(
+            {'Mol': 10,
+             'At': 10}, self.sim_builder.topology_data['fragment_dict']
+        )
+
+        self.sim_builder._update_topology_data('and_another_top.itp')
+        self.assertEqual(
+            ['some_top.itp',
+             'some_other_top.itp',
+             'and_another_top.itp'],
+            self.sim_builder.topology_data['topologies']
+        )
+        self.assertEqual(
+            {'Mol': 10,
+             'At': 10}, self.sim_builder.topology_data['fragment_dict']
+        )
+
+        self.sim_builder._update_topology_data(symbol='Mol', n_mol=100)
+        self.assertEqual(
+            ['some_top.itp',
+             'some_other_top.itp',
+             'and_another_top.itp'],
+            self.sim_builder.topology_data['topologies']
+        )
+        self.assertEqual(
+            {'Mol': 110,
+             'At': 10}, self.sim_builder.topology_data['fragment_dict']
+        )
+
     def test_build_pipeline(self):
 
         with self.assertRaises(NotImplementedError):
