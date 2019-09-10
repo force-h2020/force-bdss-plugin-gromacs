@@ -9,16 +9,20 @@ GROMACS_WRITER_OPEN_PATH = (
 )
 
 
-class TestGromacsFileWriter(TestCase):
+class TestGromacsTopologyWriter(TestCase):
 
     def setUp(self):
 
+        roster = {'PS': 1200,
+                  'SS': 480,
+                  'S': 200,
+                  'So': 2120}
+
         self.writer = GromacsTopologyWriter(
             sim_name='test_experiment',
-            symbols=['PS', 'SS', 'S', 'So'],
             topologies=['test_surf_1.itp', 'test_surf_2.itp',
                         'test_salt.itp', 'test_solv.itp'],
-            n_mols=[1200, 480, 200, 2120],
+            fragment_dict=roster,
             top_name='test_top.itp',
             dry_run=True
         )

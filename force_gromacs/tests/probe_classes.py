@@ -125,8 +125,7 @@ class ProbeGromacsPipeline(GromacsPipeline):
                     top_name='test_topology.top',
                     sim_name='test_experiment',
                     topologies=['test_top.itp'],
-                    symbols=['S'],
-                    n_mols=[30]
+                    fragment_dict={'S': 30}
                 )
             )
         ]
