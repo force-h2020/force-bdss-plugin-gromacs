@@ -19,13 +19,15 @@ class TestMolecule(TestCase):
             name='Negative Ion', symbol='NI')
 
         self.molecule = Molecule(
-            fragments=[self.water]
+            fragments=[self.water],
+            n_mol=10
         )
 
     def test___init__(self):
         self.assertEqual('Water', self.molecule.name)
         self.assertEqual(1, len(self.molecule.fragments))
         self.assertEqual(18, self.molecule.mass)
+        self.assertEqual(10, self.molecule.n_mol)
         self.assertEqual(0, self.molecule.charge)
         self.assertTrue(self.molecule.neutral)
 

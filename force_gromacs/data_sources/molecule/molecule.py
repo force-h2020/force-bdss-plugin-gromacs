@@ -1,6 +1,6 @@
 from traits.api import (
     HasTraits, List, Unicode, Float, Property,
-    Bool, cached_property,
+    Bool, cached_property, Int
 )
 
 from force_bdss.api import DataValue
@@ -25,6 +25,9 @@ class Molecule(HasTraits):
 
     #: Molecule name
     name = Unicode()
+
+    #: Number of molecules to be added to simulation
+    n_mol = Int()
 
     # --------------------
     #     Properties
