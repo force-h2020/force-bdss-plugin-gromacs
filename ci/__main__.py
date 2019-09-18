@@ -10,6 +10,9 @@ ADDITIONAL_CORE_DEPS = [
     "numpy>=1.13.0"
 ]
 
+ADDITIONAL_PIP_DEPS = [
+]
+
 
 @click.group()
 def cli():
@@ -34,6 +37,12 @@ def install(python_version):
         "--yes"] + ADDITIONAL_CORE_DEPS)
     if returncode:
         raise click.ClickException("Error while installing EDM dependencies.")
+
+    for dep in ADDITIONAL_PIP_DEPS:
+        returncode = edm_run(env_name, ["pip", "install", dep])
+        if returncode:
+            raise click.ClickException(
+                "Error while installing {!r} through pip.".format(dep))
 
     returncode = edm_run(env_name, ["pip", "install", "-e", "."])
     if returncode:
