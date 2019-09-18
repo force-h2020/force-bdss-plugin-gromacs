@@ -124,6 +124,10 @@ class TestGromacsCoordinateReader(TestCase):
         self.assertEqual((1, 6, 3), coord.shape)
         self.assertEqual((1, 3,), dim.shape)
 
+    def test__remove_digits(self):
+        string = '4ght6aos57'
+        self.assertEqual('ghtaos', self.reader._remove_digits(string))
+
     def test__extract_molecules(self):
 
         mol_ref = ['1PS', '1PS', '2SS', '2SS', '3PI', '4NI']
