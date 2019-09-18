@@ -1,4 +1,5 @@
 import logging
+import re
 
 import numpy as np
 
@@ -24,8 +25,35 @@ class GromacsCoordinateReader(BaseFileReader):
     #  Private Methods
     # ------------------
 
+    def _remove_digits(self, string):
+        """Remove any digits from a string"""
+        return re.sub(r"\d+", "", string)
+
     def _get_data(self, file_lines, n_frames=None):
-        """Process data from a parsed Gromacs file"""
+        """Process data from a parsed Gromacs file
+
+        Parameters
+        ----------
+        file_path: str
+            File path of Gromacs coordinate file
+        n_frames: int, optional
+            Maximum number of frames to read
+
+        Returns
+        -------
+        mol_ref: list of str
+            Reference symbols for each molecular species in a single
+            frame
+        atom_ref: list of str
+            Reference symbols for each atomic species in a single
+            frame
+        coordinates: array_like of float
+            Array with shape (n_frames, n_atoms, 3) containing
+            all atomic coordinates in 3 dimensions for each frame
+        dimensions: array_like of float
+            Array with shape (n_frames, 3) containing simulation
+            cell dimensiosn for each frame
+        """
 
         header = file_lines[0]
         n_particles = int(file_lines[1].strip())
@@ -67,11 +95,42 @@ class GromacsCoordinateReader(BaseFileReader):
 
         return mol_ref, atom_ref, coordinates, dimensions
 
+    def _extract_molecules(self, mol_ref, symbols):
+        """Return coordinates of molecules that posses a symbol
+        listed in symbols list
+
+        Parameters
+        ---------
+        mol_ref: list of str
+            Reference symbols for each molecular species in a single
+            frame
+        symbols: list of str
+            List of molecular symbols for each group required to be
+            returned
+
+        Returns
+        -------
+        indices: list of int
+            List of indexes corresponding to entries in mol_ref that
+            refer to molecules of the types listed in symbols
+        """
+
+        indices = []
+
+        if isinstance(symbols, str):
+            symbols = [symbols]
+
+        for index, ref in enumerate(mol_ref):
+            if self._remove_digits(ref) in symbols:
+                indices.append(index)
+
+        return indices
+
     # ------------------
     #   Public Methods
     # ------------------
 
-    def read(self, file_path, n_frames=None):
+    def read(self, file_path, n_frames=None, symbols=None):
         """ Open Gromacs coordinate file located at `file_path` and return
          processed data
 
@@ -81,6 +140,10 @@ class GromacsCoordinateReader(BaseFileReader):
             File path of Gromacs coordinate file
         n_frames: int, optional
             Maximum number of frames to read
+        symbols: list of str, optional
+            Symbols corresponding to molecular species to extract. If
+            not specfified, all molecular groups present will be
+            returned
 
         Returns
         -------
@@ -103,6 +166,14 @@ class GromacsCoordinateReader(BaseFileReader):
         except (IndexError, IOError) as e:
             log.exception('unable to load data from "{}"'.format(file_path))
             raise e
+
+        if symbols is not None:
+
+            indices = self._extract_molecules(mol_ref, symbols)
+
+            mol_ref = [mol_ref[index] for index in indices]
+            atom_ref = [atom_ref[index] for index in indices]
+            coordinates = coordinates[:, indices]
 
         data = {
             'mol_ref': mol_ref,

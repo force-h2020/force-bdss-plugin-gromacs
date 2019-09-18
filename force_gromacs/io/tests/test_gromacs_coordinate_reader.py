@@ -82,6 +82,18 @@ class TestGromacsCoordinateReader(TestCase):
             self.assertEqual(6, len(data['atom_ref']))
             self.assertEqual((1, 6, 3), data['coord'].shape)
             self.assertEqual((1, 3,), data['dim'].shape)
+            self.assertTrue(np.allclose(self.coord[:1], data['coord']))
+            self.assertTrue(np.allclose(self.dim[:1], data['dim']))
+
+        with mock.patch(FILE_READER_OPEN_PATH, mock_open,
+                        create=True):
+
+            data = self.reader.read('test_coord.gro', symbols='PS')
+
+            self.assertEqual(2, len(data['mol_ref']))
+            self.assertEqual(2, len(data['atom_ref']))
+            self.assertEqual((2, 2, 3), data['coord'].shape)
+            self.assertEqual((2, 3,), data['dim'].shape)
 
     def test__get_data(self):
         file_lines = coord_file.split('\n')
@@ -102,8 +114,8 @@ class TestGromacsCoordinateReader(TestCase):
             atom_ref
         )
 
-        self.assertAlmostEqual(0, np.sum(self.coord - coord), 5)
-        self.assertAlmostEqual(0, np.sum(self.dim - dim), 5)
+        self.assertTrue(np.allclose(self.coord, coord))
+        self.assertTrue(np.allclose(self.dim, dim))
 
         mol_ref, atom_ref, coord, dim = self.reader._get_data(file_lines, 1)
 
@@ -111,6 +123,16 @@ class TestGromacsCoordinateReader(TestCase):
         self.assertEqual(6, len(atom_ref))
         self.assertEqual((1, 6, 3), coord.shape)
         self.assertEqual((1, 3,), dim.shape)
+
+    def test__extract_molecules(self):
+
+        mol_ref = ['1PS', '1PS', '2SS', '2SS', '3PI', '4NI']
+
+        indices = self.reader._extract_molecules(mol_ref, 'PS')
+        self.assertListEqual([0, 1], indices)
+
+        indices = self.reader._extract_molecules(mol_ref, 'SS')
+        self.assertListEqual([2, 3], indices)
 
     def test_check_file_types(self):
 
