@@ -88,11 +88,11 @@ class TestGromacsCoordinateReader(TestCase):
         with mock.patch(FILE_READER_OPEN_PATH, mock_open,
                         create=True):
 
-            data = self.reader.read('test_coord.gro', symbols='PS')
+            data = self.reader.read('test_coord.gro', symbols=['PS', 'SS'])
 
-            self.assertEqual(2, len(data['mol_ref']))
-            self.assertEqual(2, len(data['atom_ref']))
-            self.assertEqual((2, 2, 3), data['coord'].shape)
+            self.assertEqual(4, len(data['mol_ref']))
+            self.assertEqual(4, len(data['atom_ref']))
+            self.assertEqual((2, 4, 3), data['coord'].shape)
             self.assertEqual((2, 3,), data['dim'].shape)
 
     def test__get_data(self):
@@ -131,8 +131,14 @@ class TestGromacsCoordinateReader(TestCase):
         indices = self.reader._extract_molecules(mol_ref, 'PS')
         self.assertListEqual([0, 1], indices)
 
-        indices = self.reader._extract_molecules(mol_ref, 'SS')
-        self.assertListEqual([2, 3], indices)
+        indices = self.reader._extract_molecules(mol_ref, ['PS'])
+        self.assertListEqual([0, 1], indices)
+
+        indices = self.reader._extract_molecules(mol_ref, ['PS', 'SS'])
+        self.assertListEqual([0, 1, 2, 3], indices)
+
+        indices = self.reader._extract_molecules(mol_ref, ['S'])
+        self.assertListEqual([], indices)
 
     def test_check_file_types(self):
 
