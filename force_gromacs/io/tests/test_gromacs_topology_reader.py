@@ -4,6 +4,25 @@ from force_gromacs.io.gromacs_topology_reader import (
     GromacsTopologyReader
 )
 
+FILE_READER_OPEN_PATH = (
+    "force_gromacs.io.base_file_reader.open"
+)
+
+top_file = """;Solvent
+             [moleculetype]
+             ;
+             So 1
+             [atoms]
+             ;
+             1 T 1 So So 1 0 18.0
+             ; Ion
+             [ moleculetype ]
+             ;
+             I 1
+             [ atoms ]
+             ;
+             1 F 1 I I 1 1.0 24"""
+
 
 class TestGromacsTopologyReader(TestCase):
 
@@ -12,20 +31,10 @@ class TestGromacsTopologyReader(TestCase):
         self.reader = GromacsTopologyReader()
 
     def test_basic_function(self):
+        mock_open = mock.mock_open(read_data=top_file)
 
-        top_lines = ['; Solvent \n', '[moleculetype]\n', ';\n',
-                     ' So 1\n', '\n' '[atoms]\n', ';\n',
-                     '1 T 1 So So 1 0 18.0 \n', '\n',
-                     '; Ion \n', '[ moleculetype ]\n', ';\n',
-                     ' I 1\n', '\n' ' [ atoms ]\n', ';\n',
-                     '1 F 1 I I 1 1.0 24 \n', '\n'
-                     ]
-        mock_method = (
-            "force_gromacs.io.gromacs_topology_reader"
-            ".GromacsTopologyReader._read_file")
-
-        with mock.patch(mock_method) as mockreadtop:
-            mockreadtop.return_value = top_lines
+        with mock.patch(FILE_READER_OPEN_PATH, mock_open,
+                        create=True):
 
             data = self.reader.read('test_top.itp')
 
@@ -43,13 +52,8 @@ class TestGromacsTopologyReader(TestCase):
             self.assertEqual(1, data['I']['charge'])
 
     def test__remove_comments(self):
-        top_lines = ['; Solvent \n', '[moleculetype]\n', ';\n',
-                     ' So 1\n', '\n' '[atoms]\n', ';\n',
-                     '1 T 1 So So 1 0 18.0 \n', '\n',
-                     '; Ion \n', '[ moleculetype ]\n', ';\n',
-                     ' I 1\n', '\n' ' [ atoms ]\n', ';\n',
-                     '1 F 1 I I 1 1.0 24 \n', '\n'
-                     ]
+        top_lines = top_file.split('\n')
+
         cleaned_lines = self.reader._remove_comments(top_lines)
 
         self.assertEqual(8, len(cleaned_lines))
@@ -107,12 +111,12 @@ class TestGromacsTopologyReader(TestCase):
         coordinate = 'some_file.xc'
 
         with self.assertRaises(IOError):
-            self.reader.check_file_types(topology)
+            self.reader._check_file_types(topology)
 
         with self.assertRaises(IOError):
-            self.reader.check_file_types(coordinate)
+            self.reader._check_file_types(coordinate)
 
     def test_file_opening_exception_handling(self):
 
         with self.assertRaises(IOError):
-            self.reader.read('this_file_should_not_exist.isp')
+            self.reader.read('this_file_should_not_exist.itp')

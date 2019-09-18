@@ -1,13 +1,15 @@
 import logging
 
-from traits.api import HasTraits, ReadOnly
+from traits.api import ReadOnly
+
+from .base_file_reader import BaseFileReader
 
 log = logging.getLogger(__name__)
 
 
-class GromacsTopologyReader(HasTraits):
-    """  Class parses Gromacs file and returns data required for
-    each molecular type listed in the symbols input argument.
+class GromacsTopologyReader(BaseFileReader):
+    """Class parses Gromacs file and returns data required for
+    each molecular type listed.
     """
 
     # --------------------
@@ -17,22 +19,17 @@ class GromacsTopologyReader(HasTraits):
     #: Character representing a _comment in a Gromacs topology file
     _comment = ReadOnly(';')
 
-    #: Extension of accepted file types
-    _ext = ReadOnly('itp')
+    # ------------------
+    #     Defaults
+    # ------------------
+
+    def __ext_default(self):
+        """Default extension for this reader subclass"""
+        return 'itp'
 
     # ------------------
     #  Private Methods
     # ------------------
-
-    def _read_file(self, gromacs_file):
-        """Simple file loader"""
-
-        self.check_file_types(gromacs_file)
-
-        with open(gromacs_file, 'r') as infile:
-            file_lines = infile.readlines()
-
-        return file_lines
 
     def _remove_comments(self, file_lines):
         """Removes comments and whitespace from parsed topology
@@ -143,18 +140,6 @@ class GromacsTopologyReader(HasTraits):
     # ------------------
     #   Public Methods
     # ------------------
-
-    def check_file_types(self, file_path):
-        """ Raise exception if specified Gromacs file does not have
-        expected format"""
-
-        space_check = file_path.isspace()
-        ext_check = not file_path.endswith(f'.{self._ext}')
-
-        if space_check or ext_check:
-            raise IOError(
-                '{} not a valid Gromacs file type'.format(
-                    file_path))
 
     def read(self, file_path):
         """ Open Gromacs topology file located at `file_path` and return
