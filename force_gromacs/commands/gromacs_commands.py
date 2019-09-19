@@ -121,3 +121,47 @@ class Gromacs_mdrun(BaseGromacsCommand):
         super(Gromacs_mdrun, self).__init__(
             name=name, *args, **kwargs
         )
+
+
+class Gromacs_select(BaseGromacsCommand):
+    """Wrapper around Gromacs select (or g_select) command
+    http://manual.gromacs.org/archive/4.6.5/online/g_select.html"""
+
+    #: Name of Gromacs genbox command
+    name = ReadOnly('g_select')
+
+    #: List of accepted flags for Gromacs genbox command
+    flags = ReadOnly(['-f', '-s', '-n', '-os', '-oc', '-oi',
+                      '-on', '-om', '-of', '-ofpdb', '-olt', '-b',
+                      '-e', '-dt', 'tu', '-fgroup', '-xvg',
+                      '-rmpbc', '-normpbc', '-pbc', '-nppbc', '-sf',
+                      '-selrpos', '-seltype', '-select', '-norm',
+                      '-nonorm', '-resnr', 'pdbatoms', '-cumlt',
+                      '-nocumlt'])
+
+    def __init__(self, name=None, flags=None,
+                 *args, **kwargs):
+        super(Gromacs_select, self).__init__(*args, **kwargs)
+
+
+class Gromacs_trjconv(BaseGromacsCommand):
+    """Wrapper around Gromacs trjconv command
+    http://manual.gromacs.org/documentation/2018/onlinehelp/gmx-trjconv.html"""
+
+    #: Name of Gromacs trjconv command
+    name = ReadOnly('trjconv')
+
+    #: List of accepted flags for Gromacs genion command
+    flags = ReadOnly(['-f', '-s', '-n', '-fr', '-sub', '-drop',
+                      '-o', '-b', '-e', '-tu', '-w', '-now', '-xvg',
+                      '-skip', '-dt', 'round', '-noround', '-dump',
+                      '-timestep', '-pbc', '-ur', '-centre', '-nocentre',
+                      '-boxcenter', '-box', '-trans', '-shift', '-fit',
+                      '-ndec', 'vel', '-novel', '-force', '-noforce',
+                      '-trunc', '-exec', '-split', '-sep', '-nosep',
+                      '-nzero', '-dropunder', '-dropover', '-conect',
+                      '-noconect'])
+
+    def __init__(self, name=None, flags=None,
+                 *args, **kwargs):
+        super(Gromacs_trjconv, self).__init__(*args, **kwargs)

@@ -3,6 +3,8 @@ from .commands.gromacs_commands import Gromacs_genconf # noqa
 from .commands.gromacs_commands import Gromacs_grompp # noqa
 from .commands.gromacs_commands import Gromacs_genbox # noqa
 from .commands.gromacs_commands import Gromacs_genion # noqa
+from .commands.gromacs_commands import Gromacs_trjconv # noqa
+from .commands.gromacs_commands import Gromacs_select # noqa
 from .commands.gromacs_file_tree_builder import GromacsFileTreeBuilder # noqa
 
 from .core.base_gromacs_command import BaseGromacsCommand # noqa
