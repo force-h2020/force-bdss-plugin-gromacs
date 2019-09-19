@@ -95,7 +95,11 @@ class GromacsCoordinateReader(BaseFileReader):
 
         return mol_ref, atom_ref, coordinates, dimensions
 
-    def _extract_molecules(self, mol_ref, symbols):
+    # ------------------
+    #   Public Methods
+    # ------------------
+
+    def extract_molecules(self, data, symbols):
         """Return coordinates of molecules that posses a symbol
         listed in symbols list
 
@@ -120,15 +124,11 @@ class GromacsCoordinateReader(BaseFileReader):
         if isinstance(symbols, str):
             symbols = [symbols]
 
-        for index, ref in enumerate(mol_ref):
+        for index, ref in enumerate(data['mol_ref']):
             if self._remove_digits(ref) in symbols:
                 indices.append(index)
 
         return indices
-
-    # ------------------
-    #   Public Methods
-    # ------------------
 
     def read(self, file_path, n_frames=None, symbols=None):
         """ Open Gromacs coordinate file located at `file_path` and return
@@ -167,19 +167,18 @@ class GromacsCoordinateReader(BaseFileReader):
             log.exception('unable to load data from "{}"'.format(file_path))
             raise e
 
-        if symbols is not None:
-
-            indices = self._extract_molecules(mol_ref, symbols)
-
-            mol_ref = [mol_ref[index] for index in indices]
-            atom_ref = [atom_ref[index] for index in indices]
-            coordinates = coordinates[:, indices]
-
         data = {
             'mol_ref': mol_ref,
             'atom_ref': atom_ref,
             'coord': coordinates,
             'dim': dimensions,
         }
+
+        if symbols is not None:
+            indices = self.extract_molecules(data, symbols)
+
+            data['mol_ref'] = [data['mol_ref'][index] for index in indices]
+            data['atom_ref'] = [data['atom_ref'][index] for index in indices]
+            data['coord'] = data['coord'][:, indices]
 
         return data

@@ -128,20 +128,20 @@ class TestGromacsCoordinateReader(TestCase):
         string = '4ght6aos57'
         self.assertEqual('ghtaos', self.reader._remove_digits(string))
 
-    def test__extract_molecules(self):
+    def test_extract_molecules(self):
 
-        mol_ref = ['1PS', '1PS', '2SS', '2SS', '3PI', '4NI']
+        data = {'mol_ref': ['1PS', '1PS', '2SS', '2SS', '3PI', '4NI']}
 
-        indices = self.reader._extract_molecules(mol_ref, 'PS')
+        indices = self.reader.extract_molecules(data, 'PS')
         self.assertListEqual([0, 1], indices)
 
-        indices = self.reader._extract_molecules(mol_ref, ['PS'])
+        indices = self.reader.extract_molecules(data, ['PS'])
         self.assertListEqual([0, 1], indices)
 
-        indices = self.reader._extract_molecules(mol_ref, ['PS', 'SS'])
+        indices = self.reader.extract_molecules(data, ['PS', 'SS'])
         self.assertListEqual([0, 1, 2, 3], indices)
 
-        indices = self.reader._extract_molecules(mol_ref, ['S'])
+        indices = self.reader.extract_molecules(data, ['S'])
         self.assertListEqual([], indices)
 
     def test_check_file_types(self):
