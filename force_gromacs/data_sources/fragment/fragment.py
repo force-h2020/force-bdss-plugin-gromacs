@@ -73,11 +73,20 @@ class Fragment(HasTraits):
 
     def _get_mass(self):
         if self._data is not None:
-            return self._data['mass']
+            return sum(self._data['masses'])
 
     def _get_charge(self):
         if self._data is not None:
-            return self._data['charge']
+            return sum(self._data['charges'])
+
+    # --------------------
+    #   Public Methods
+    # --------------------
+
+    def get_masses(self):
+        """Return list of atomic masses"""
+        if self._data is not None:
+            return self._data['masses']
 
     def get_data_values(self):
         """Return a list containing all DataValues stored in class"""
