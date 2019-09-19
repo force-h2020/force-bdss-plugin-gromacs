@@ -7,9 +7,6 @@ from force_gromacs.commands.gromacs_file_tree_builder import (
     GromacsFileTreeBuilder
 )
 from force_gromacs.data_sources.fragment import Fragment
-from force_gromacs.data_sources.simulation.simulation_data_source import (
-    SimulationDataSource
-)
 from force_gromacs.io.gromacs_topology_writer import (
     GromacsTopologyWriter
 )
@@ -24,18 +21,18 @@ from force_gromacs.pipeline.gromacs_simulation_builder import (
 data = {
     'W': {
         'atoms': ['W'],
-        'charges': [0],
-        'masses': [18]
+        'charge': 0,
+        'mass': 18
     },
     'PI': {
         'atoms': ['PI'],
-        'charges': [1],
-        'masses': [23]
+        'charge': 1,
+        'mass': 23
     },
     'NI': {
         'atoms': ['NI'],
-        'charges': [-1],
-        'masses': [35]
+        'charge': -1,
+        'mass': 35
     }
 }
 
