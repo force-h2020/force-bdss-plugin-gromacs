@@ -135,7 +135,7 @@ def create_molecule_coord(atom_coord, n_site, masses, mode='molecule',
     assert mode in ['molecule', 'sites']
 
     # Use centre of mass of molecule as molecular position
-    if mode is 'molecule':
+    if mode == 'molecule':
         for i in range(3):
             mol_coord[:, i] = np.sum(
                 np.reshape(
@@ -158,18 +158,20 @@ def create_molecule_coord(atom_coord, n_site, masses, mode='molecule',
         for i in range(3):
             mol_coord[:, i] = atom_coord[mol_list, i]
 
-    # Use centre of mass of a group of atoms within molecule as molecular position
+    # Use centre of mass of a group of atoms within molecule as
+    # molecular position
     elif len(com_sites) > 1:
         mol_list = np.arange(n_mol) * n_site
-        mol_list = mol_list.repeat(len(com_sites)) + np.tile(com_sites, n_mol)
+        mol_list = mol_list.repeat(len(com_sites))
+        mol_list += np.tile(com_sites, n_mol)
 
         for i in range(3):
             mol_coord[:, i] = np.sum(
                 np.reshape(
-                    atom_coord[mol_list, i] * masses[mol_list],(n_mol, len(com_sites))
+                    atom_coord[mol_list, i] * masses[mol_list],
+                    (n_mol, len(com_sites))
                 ), axis=1
             )
             mol_coord[:, i] *= n_mol / masses[mol_list].sum()
 
     return mol_coord
-

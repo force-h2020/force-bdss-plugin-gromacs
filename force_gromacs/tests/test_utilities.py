@@ -2,7 +2,6 @@ from unittest import TestCase
 
 import numpy as np
 
-
 from force_gromacs.utilities import (
     minimum_image, pairwise_difference_matrix, distance_matrix,
     create_molecule_coord
@@ -140,7 +139,7 @@ class UtilitiesTestCase(TestCase):
 
         self.assertEqual((5, 4), r2_coord.shape)
         self.assertTrue(
-            np.allclose(self.r2_matrix[:,:-1], r2_coord)
+            np.allclose(self.r2_matrix[:, :-1], r2_coord)
         )
 
     def test_create_molecule_coord(self):

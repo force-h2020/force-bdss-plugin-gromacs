@@ -22,4 +22,4 @@ from .notification_listeners.driver_events import SimulationProgressEvent # noqa
 from .pipeline.gromacs_pipeline import GromacsPipeline # noqa
 from .pipeline.gromacs_simulation_builder import GromacsSimulationBuilder # noqa
 
-from .utilities import create_molecule_coord, distance_matrix
+from .utilities import create_molecule_coord, distance_matrix # noqa

@@ -52,10 +52,9 @@ class GromacsCoordinateReader(BaseFileReader):
             all atomic coordinates in 3 dimensions for each frame
         dimensions: array_like of float
             Array with shape (n_frames, 3) containing simulation
-            cell dimensiosn for each frame
+            cell dimensions for each frame
         """
 
-        header = file_lines[0]
         n_particles = int(file_lines[1].strip())
         n_lines = n_particles + 3
 
@@ -80,7 +79,6 @@ class GromacsCoordinateReader(BaseFileReader):
                                       float(line[1]),
                                       float(line[2])])
                     dimensions[frame] = coord
-
 
                 else:
                     if frame == 0:
