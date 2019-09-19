@@ -29,32 +29,26 @@ def pairwise_difference_matrix(array1, array2):
     """Build matrix containing pairwise vector differences between
     each entry in array1 and array2."""
 
+    # Both arrays must share the same vector dimension, n_depth
+    assert array1.shape[-1] == array2.shape[-1]
+
     n_array1 = array1.shape[0]
     n_array2 = array2.shape[0]
+    n_depth = array1.shape[-1]
 
-    # Both arrays must share the same vector dimension, n_depth
-    assert array1.shape[1] == array2.shape[1]
-
-    n_depth = array1.shape[1]
-
-    # Create two n_depth x n_array2 x n_array1 matrices
+    # Create two n_array1 x n_array2 x n_depth matrices
     # to calculate cartesian distances between each element
-    matrix_shape = (n_depth, n_array2, n_array1)
+    d_array = np.zeros((n_array1, n_array2, n_depth))
 
-    d_array1 = np.moveaxis(array1, 0, 1)
-    d_array1 = np.tile(d_array1, (1, n_array2))
-
-    d_array2 = np.moveaxis(array2, 0, 1)
-    d_array2 = np.repeat(d_array2, n_array1, axis=1)
-
-    d_array1 = d_array1.reshape(matrix_shape)
-    d_array2 = d_array2.reshape(matrix_shape)
-
-    d_array1 = np.moveaxis(d_array1, (0, 1, 2), (2, 1, 0))
-    d_array2 = np.moveaxis(d_array2, (0, 1, 2), (2, 1, 0))
-
-    # Calculate the pairwise differences
-    d_array = d_array1 - d_array2
+    # Calculate signed distance matrices for each pairwise configuration
+    # along each dimension
+    for index in range(n_depth):
+        # Use numpy subtract to create broadcasted arrays for each
+        # dimension - note, we use slices to keep both subarrays 2D
+        d_array[..., index] = np.subtract(
+            array1[..., index: index + 1],
+            array2.T[index: index + 1]
+        )
 
     return d_array
 
