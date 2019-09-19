@@ -45,11 +45,11 @@ class TestGromacsTopologyReader(TestCase):
             self.assertEqual(['So'], data['So']['atoms'])
             self.assertEqual(['I'], data['I']['atoms'])
 
-            self.assertEqual(18.0, data['So']['mass'])
-            self.assertEqual(24, data['I']['mass'])
+            self.assertEqual([18.0], data['So']['masses'])
+            self.assertEqual([24], data['I']['masses'])
 
-            self.assertEqual(0, data['So']['charge'])
-            self.assertEqual(1, data['I']['charge'])
+            self.assertEqual([0], data['So']['charges'])
+            self.assertEqual([1], data['I']['charges'])
 
     def test__remove_comments(self):
         top_lines = top_file.split('\n')
@@ -102,8 +102,8 @@ class TestGromacsTopologyReader(TestCase):
 
         self.assertListEqual(['So', 'I'], symbols)
         self.assertListEqual([['So'], ['I']], atoms)
-        self.assertListEqual([0, 1], charges)
-        self.assertListEqual([18.0, 24], masses)
+        self.assertListEqual([[0], [1]], charges)
+        self.assertListEqual([[18.0], [24]], masses)
 
     def test_check_file_types(self):
 

@@ -87,21 +87,23 @@ class GromacsTopologyReader(BaseFileReader):
 
         Returns
         -------
-        atoms : list of str
+        mol_symbols : list of str
             List of atoms in each target molecular type
-        charges : list of int
+        mol_atoms : list of list of str
+            List of atoms in each target molecular type
+        mol_charges : list of list of int
             List of electronic charges corresponding to each target molecular
             type
-        masses : list of float
+        mol_masses : list of list of float
             List of atomic masses corresponding to each target molecular type
         """
 
         mol_sections = self._get_molecule_sections(file_lines)
 
-        symbols = []
-        atoms = []
-        charges = []
-        masses = []
+        mol_symbols = []
+        mol_atoms = []
+        mol_charges = []
+        mol_masses = []
 
         for section in mol_sections:
 
@@ -116,9 +118,9 @@ class GromacsTopologyReader(BaseFileReader):
 
             # Read the name, charge and mass of each atom/bead, which should
             # be included at indices 4, 6 and 7 respectively
-            atom = []
-            charge = 0
-            mass = 0
+            atoms = []
+            charges = []
+            masses = []
             for line in section[atoms_index:]:
                 if line.startswith('['):
                     break
@@ -126,16 +128,16 @@ class GromacsTopologyReader(BaseFileReader):
                     file_line = line.split(self._comment)[0]
                     file_line = file_line.split()
 
-                    atom.append(file_line[4])
-                    charge += float(file_line[6])
-                    mass += float(file_line[7])
+                    atoms.append(file_line[4])
+                    charges.append(float(file_line[6]))
+                    masses.append(float(file_line[7]))
 
-            symbols.append(symbol)
-            atoms.append(atom)
-            charges.append(charge)
-            masses.append(mass)
+            mol_symbols.append(symbol)
+            mol_atoms.append(atoms)
+            mol_charges.append(charges)
+            mol_masses.append(masses)
 
-        return symbols, atoms, charges, masses
+        return mol_symbols, mol_atoms, mol_charges, mol_masses
 
     # ------------------
     #   Public Methods
@@ -175,11 +177,11 @@ class GromacsTopologyReader(BaseFileReader):
 
         data = {
             symbol: {
-                'atoms': atom,
-                'charge': charge,
-                'mass': mass
+                'atoms': atoms,
+                'charges': charges,
+                'masses': masses
             }
-            for symbol, atom, charge, mass in zip(*iterator)
+            for symbol, atoms, charges, masses in zip(*iterator)
         }
 
         return data
