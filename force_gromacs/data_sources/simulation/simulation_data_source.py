@@ -1,7 +1,10 @@
 from force_bdss.api import (
-    BaseDataSource, DataValue, Slot
+    BaseDataSource, DataValue, Slot, Instance
 )
 
+from force_gromacs.pipeline.gromacs_simulation_builder import (
+    GromacsSimulationBuilder
+)
 from force_gromacs.notification_listeners.driver_events import (
     SimulationProgressEvent
 )
@@ -12,6 +15,8 @@ class SimulationDataSource(BaseDataSource):
     Gromacs simulation. Contains the option to perform the simulation
     locally, or export the bash script in order to run on a remote
     cluster."""
+
+    simulation_builder = Instance(GromacsSimulationBuilder)
 
     def notify_bash_script(self, model, bash_script):
         """Notify the construction of a bash script for a Gromacs
@@ -72,7 +77,8 @@ class SimulationDataSource(BaseDataSource):
         of generating a `GromacsPipeline`"""
         raise NotImplementedError(
             "Class needs to implement create_simulation_builder`"
-            "method that returns a GromacsSimulationBuilder instance"
+            "method that assigns a GromacsSimulationBuilder instance"
+            "to the simulation_builder attribute"
         )
 
     def run(self, model, parameters):
@@ -83,17 +89,17 @@ class SimulationDataSource(BaseDataSource):
         # all user input and produce a `GromacsPipeline` object in order
         # to run a simulation locally or export a bash script for submission
         # to a cluster
-        simulation_builder = self.create_simulation_builder(
+        self.simulation_builder = self.create_simulation_builder(
             model, parameters
         )
 
         # Create a `GromacsPipeline` with all commands needed to run the
         # simulation simulation
-        pipeline = simulation_builder.build_pipeline()
+        pipeline = self.simulation_builder.build_pipeline()
 
         # Create bash script of Gromacs commands for remote submission
         bash_script = self.create_bash_script(
-            pipeline, name=simulation_builder.name
+            pipeline, name=self.simulation_builder.name
         )
 
         # Export the bash script to any HPCWriterNotificationListener
