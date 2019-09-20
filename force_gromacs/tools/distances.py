@@ -2,7 +2,7 @@ import numpy as np
 from functools import partial
 
 from .utilities import (
-    batch_process
+    batch_pairwise
 )
 
 
@@ -190,7 +190,7 @@ def distance_matrix(coord, cell_dim, metric='euclidean'):
 
 def batch_distance_matrix(coord, cell_dim, metric='euclidean',
                           batch_size=50):
-    """Uses batch_process function in force_gromacs.tools.utilities to
+    """Uses batch_pairwise function in force_gromacs.tools.utilities to
     performs distance_matrix in batches to alleviate memory.
 
     Parameters
@@ -221,8 +221,8 @@ def batch_distance_matrix(coord, cell_dim, metric='euclidean',
 
         # Calculate the pairwise euclidean differences between each
         # element in coord
-        return batch_process(coord, coord, function,
-                             batch_size=batch_size)
+        return batch_pairwise(coord, coord, function,
+                              batch_size=batch_size)
 
     if metric == 'sqeuclidean':
         # Create a partial function that only takes in 2 arguments
@@ -231,8 +231,8 @@ def batch_distance_matrix(coord, cell_dim, metric='euclidean',
 
         # Calculate the squared pairwise euclidean differences between
         # each element in coord
-        return batch_process(coord, coord, function,
-                             batch_size=batch_size)
+        return batch_pairwise(coord, coord, function,
+                              batch_size=batch_size)
 
     elif metric == 'vector':
         # Create a partial function that only takes in 2 arguments
@@ -245,6 +245,6 @@ def batch_distance_matrix(coord, cell_dim, metric='euclidean',
         shape = (coord.shape[0], coord.shape[0], coord.shape[1])
 
         # Calculate the vector differences between each element in coord
-        return batch_process(
+        return batch_pairwise(
             coord, coord, function, shape=shape, batch_size=batch_size
         )

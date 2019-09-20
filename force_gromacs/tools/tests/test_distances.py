@@ -83,7 +83,6 @@ class DistancesTestCase(TestCase):
 
         d_coord = pairwise_difference_matrix(
             self.coord[:3, :1], self.coord[:3, :1])
-
         self.assertEqual((3, 3, 1), d_coord.shape)
         self.assertTrue(
             np.allclose(d_coord,

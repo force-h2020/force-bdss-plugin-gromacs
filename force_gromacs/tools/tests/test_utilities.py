@@ -1,11 +1,22 @@
 from unittest import TestCase
 
-from scipy.spatial.distance import cdist
 import numpy as np
 
 from force_gromacs.tools.utilities import (
-    batch_process
+    batch_pairwise
 )
+
+
+def probe_function(a, b):
+
+    matrix = np.zeros((a.shape[0],
+                       b.shape[0]))
+
+    for i, ai in enumerate(a):
+        for j, bj in enumerate(b):
+            matrix[i][j] = sum(ai + bj)
+
+    return matrix
 
 
 class UtilitiesTestCase(TestCase):
@@ -18,59 +29,55 @@ class UtilitiesTestCase(TestCase):
                                 [1, 1, 0, 0],
                                 [0, 0, 0, 0]])
 
-        self.r2_matrix = np.array([[0., 21., 18., 16.],
-                                   [21.,  0., 47., 53.],
-                                   [18., 47.,  0.,  2.],
-                                   [16., 53.,  2.,  0.]])
+        self.test_matrix = np.array([[8, 15, 6, 4],
+                                     [15, 22, 13, 11],
+                                     [6, 13, 4, 2],
+                                     [4, 11, 2, 0]])
 
-        self.r_matrix = np.sqrt(self.r2_matrix)
+    def test_batch_pairwise(self):
 
-    def test_batch_process(self):
-
-        r_matrix = batch_process(
-            self.matrix, self.matrix, cdist
+        test_matrix = batch_pairwise(
+            self.matrix, self.matrix, probe_function
         )
-
-        self.assertEqual((4, 4), r_matrix.shape)
+        self.assertEqual((4, 4), test_matrix.shape)
         self.assertTrue(
             np.allclose(
-                self.r_matrix,
-                r_matrix
+                self.test_matrix,
+                test_matrix
             )
         )
 
-        r_matrix = batch_process(
-            self.matrix, self.matrix, cdist, batch_size=3
+        test_matrix = batch_pairwise(
+            self.matrix, self.matrix, probe_function,
+            batch_size=3
         )
-
-        self.assertEqual((4, 4), r_matrix.shape)
+        self.assertEqual((4, 4), test_matrix.shape)
         self.assertTrue(
             np.allclose(
-                self.r_matrix,
-                r_matrix
+                self.test_matrix,
+                test_matrix
             )
         )
 
-        r_matrix = batch_process(
-            self.matrix, self.matrix, cdist, batch_size=2,
-            shape=(4, 4)
+        test_matrix = batch_pairwise(
+            self.matrix, self.matrix, probe_function,
+            batch_size=2, shape=(4, 4)
         )
-
-        self.assertEqual((4, 4), r_matrix.shape)
+        self.assertEqual((4, 4), test_matrix.shape)
         self.assertTrue(
             np.allclose(
-                self.r_matrix,
-                r_matrix
+                self.test_matrix,
+                test_matrix
             )
         )
 
         with self.assertRaises(AssertionError):
-            batch_process(
+            batch_pairwise(
                 self.matrix, self.matrix, 2
             )
 
         with self.assertRaises(AssertionError):
-            batch_process(
-                self.matrix[0], self.matrix[1], cdist,
-                batch_size=2
+            batch_pairwise(
+                self.matrix[0], self.matrix[1],
+                probe_function, batch_size=2
             )

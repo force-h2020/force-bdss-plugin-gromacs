@@ -1,9 +1,9 @@
 import numpy as np
 
 
-def batch_process(array1, array2, function, batch_size=50,
-                  shape=None):
-    """Perform a linear algebra operation involving two arrays
+def batch_pairwise(array1, array2, function, batch_size=50,
+                   shape=None):
+    """Perform a pairwise element operation involving two arrays
     in batch. Currently only supports up to 3D arrays
 
     Parameters
