@@ -4,7 +4,8 @@ from traits.trait_errors import TraitError
 
 from force_gromacs.commands.gromacs_commands import (
     Gromacs_genbox, Gromacs_grompp, Gromacs_genion,
-    Gromacs_mdrun, Gromacs_genconf
+    Gromacs_mdrun, Gromacs_genconf, Gromacs_trjconv,
+    Gromacs_select
 )
 
 
@@ -18,6 +19,8 @@ class TestGromacsCommands(TestCase):
         self.genion = Gromacs_genion(dry_run=True)
         self.mdrun = Gromacs_mdrun(dry_run=True)
         self.mdrun_mpi = Gromacs_mdrun(mpi_run=True, dry_run=True)
+        self.select = Gromacs_select(dry_run=True)
+        self.trjconv = Gromacs_trjconv(dry_run=True)
 
     def test_readonly(self):
         with self.assertRaises(TraitError):
@@ -132,3 +135,32 @@ class TestGromacsCommands(TestCase):
         self.assertIn(' -e test_ener.edr', command)
         self.assertIn(' -x test_traj.xtc', command)
         self.assertIn(' -c test_coord.gro', command)
+
+    def test_trjconv(self):
+        command_options = {
+            '-f': 'test_traj.xtc',
+            '-s': 'test_coord.gro',
+            '-pbc': 'nojump'
+        }
+
+        self.trjconv.command_options = command_options
+        command = self.trjconv.bash_script()
+        self.assertIn('trjconv', command)
+        self.assertIn(' -f test_traj.xtc ', command)
+        self.assertIn(' -s test_coord.gro', command)
+        self.assertIn(' -pbc nojump', command)
+
+    def test_select(self):
+
+        command_options = {
+            '-f': 'test_traj.xtc',
+            '-on': 'test_index.ntx',
+            '-select': '"( resname W )"'
+        }
+
+        self.select.command_options = command_options
+        command = self.select.bash_script()
+        self.assertIn('g_select', command)
+        self.assertIn(' -f test_traj.xtc ', command)
+        self.assertIn(' -on test_index.ntx', command)
+        self.assertIn(' -select "( resname W )"', command)

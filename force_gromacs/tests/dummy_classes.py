@@ -1,3 +1,7 @@
+def dummy_function(*args, **kwargs):
+    return
+
+
 class DummyCommand:
     pass
 

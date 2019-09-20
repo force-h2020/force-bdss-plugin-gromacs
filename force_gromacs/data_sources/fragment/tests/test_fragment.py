@@ -33,14 +33,14 @@ class TestFragmentDataSource(TestCase):
             res = self.data_source.run(model, data_values)
             self.assertEqual("FRAGMENT", res[0].type)
 
-            molecule = res[0].value
-            self.assertEqual("Water", molecule.name)
-            self.assertEqual("W", molecule.symbol)
-            self.assertEqual(["W"], molecule.atoms, )
-            self.assertEqual(18.0, molecule.mass, )
-            self.assertEqual(0, molecule.charge)
-            self.assertEqual("test_top.itp", molecule.topology)
-            self.assertEqual("test_coord.gro", molecule.coordinate)
+            fragment = res[0].value
+            self.assertEqual("Water", fragment.name)
+            self.assertEqual("W", fragment.symbol)
+            self.assertEqual(["W"], fragment.atoms, )
+            self.assertEqual(18.0, fragment.mass, )
+            self.assertEqual(0, fragment.charge)
+            self.assertEqual("test_top.itp", fragment.topology)
+            self.assertEqual("test_coord.gro", fragment.coordinate)
 
 
 class TestFragment(TestCase):
@@ -62,11 +62,16 @@ class TestFragment(TestCase):
 
         self.assertEqual("Water", self.fragment.name)
         self.assertEqual("W", self.fragment.symbol)
-        self.assertEqual(["W"], self.fragment.atoms, )
-        self.assertEqual(18.0, self.fragment.mass, )
+        self.assertEqual(["W"], self.fragment.atoms)
+        self.assertEqual(18.0, self.fragment.mass)
         self.assertEqual(0, self.fragment.charge)
         self.assertEqual("test_top.itp", self.fragment.topology)
         self.assertEqual("test_coord.gro", self.fragment.coordinate)
+
+    def test_get_masses(self):
+
+        masses = self.fragment.get_masses()
+        self.assertListEqual([18], masses)
 
     def test_get_data_values(self):
 

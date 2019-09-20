@@ -1,13 +1,15 @@
 import logging
 
-from traits.api import HasTraits, ReadOnly
+from traits.api import ReadOnly
+
+from .base_file_reader import BaseFileReader
 
 log = logging.getLogger(__name__)
 
 
-class GromacsTopologyReader(HasTraits):
-    """  Class parses Gromacs file and returns data required for
-    each molecular type listed in the symbols input argument.
+class GromacsTopologyReader(BaseFileReader):
+    """Class parses Gromacs file and returns data required for
+    each molecular type listed.
     """
 
     # --------------------
@@ -17,22 +19,17 @@ class GromacsTopologyReader(HasTraits):
     #: Character representing a _comment in a Gromacs topology file
     _comment = ReadOnly(';')
 
-    #: Extension of accepted file types
-    _ext = ReadOnly('itp')
+    # ------------------
+    #     Defaults
+    # ------------------
+
+    def __ext_default(self):
+        """Default extension for this reader subclass"""
+        return 'itp'
 
     # ------------------
     #  Private Methods
     # ------------------
-
-    def _read_file(self, gromacs_file):
-        """Simple file loader"""
-
-        self.check_file_types(gromacs_file)
-
-        with open(gromacs_file, 'r') as infile:
-            file_lines = infile.readlines()
-
-        return file_lines
 
     def _remove_comments(self, file_lines):
         """Removes comments and whitespace from parsed topology
@@ -90,21 +87,23 @@ class GromacsTopologyReader(HasTraits):
 
         Returns
         -------
-        atoms : list of str
+        mol_symbols : list of str
             List of atoms in each target molecular type
-        charges : list of int
+        mol_atoms : list of list of str
+            List of atoms in each target molecular type
+        mol_charges : list of list of int
             List of electronic charges corresponding to each target molecular
             type
-        masses : list of float
+        mol_masses : list of list of float
             List of atomic masses corresponding to each target molecular type
         """
 
         mol_sections = self._get_molecule_sections(file_lines)
 
-        symbols = []
-        atoms = []
-        charges = []
-        masses = []
+        mol_symbols = []
+        mol_atoms = []
+        mol_charges = []
+        mol_masses = []
 
         for section in mol_sections:
 
@@ -119,9 +118,9 @@ class GromacsTopologyReader(HasTraits):
 
             # Read the name, charge and mass of each atom/bead, which should
             # be included at indices 4, 6 and 7 respectively
-            atom = []
-            charge = 0
-            mass = 0
+            atoms = []
+            charges = []
+            masses = []
             for line in section[atoms_index:]:
                 if line.startswith('['):
                     break
@@ -129,32 +128,20 @@ class GromacsTopologyReader(HasTraits):
                     file_line = line.split(self._comment)[0]
                     file_line = file_line.split()
 
-                    atom.append(file_line[4])
-                    charge += float(file_line[6])
-                    mass += float(file_line[7])
+                    atoms.append(file_line[4])
+                    charges.append(float(file_line[6]))
+                    masses.append(float(file_line[7]))
 
-            symbols.append(symbol)
-            atoms.append(atom)
-            charges.append(charge)
-            masses.append(mass)
+            mol_symbols.append(symbol)
+            mol_atoms.append(atoms)
+            mol_charges.append(charges)
+            mol_masses.append(masses)
 
-        return symbols, atoms, charges, masses
+        return mol_symbols, mol_atoms, mol_charges, mol_masses
 
     # ------------------
     #   Public Methods
     # ------------------
-
-    def check_file_types(self, file_path):
-        """ Raise exception if specified Gromacs file does not have
-        expected format"""
-
-        space_check = file_path.isspace()
-        ext_check = not file_path.endswith(f'.{self._ext}')
-
-        if space_check or ext_check:
-            raise IOError(
-                '{} not a valid Gromacs file type'.format(
-                    file_path))
 
     def read(self, file_path):
         """ Open Gromacs topology file located at `file_path` and return
@@ -190,11 +177,11 @@ class GromacsTopologyReader(HasTraits):
 
         data = {
             symbol: {
-                'atoms': atom,
-                'charge': charge,
-                'mass': mass
+                'atoms': atoms,
+                'charges': charges,
+                'masses': masses
             }
-            for symbol, atom, charge, mass in zip(*iterator)
+            for symbol, atoms, charges, masses in zip(*iterator)
         }
 
         return data
