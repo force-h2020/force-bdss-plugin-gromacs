@@ -1,8 +1,8 @@
 import numpy as np
 
 
-def batch_process(array1, array2, function, size=None,
-                  shape=None, n_batch=None):
+def batch_process(array1, array2, function, batch_size=50,
+                  shape=None):
     """Perform a linear algebra operation involving two arrays
     in batch. Currently only supports up to 3D arrays
 
@@ -15,12 +15,10 @@ def batch_process(array1, array2, function, size=None,
     function: <object: callable>
         Callable method to perform on each pairwise combination
         of elements in array1 and array2
+    batch_size : int, optional, default: 50
+        Sample size of each array for a batch.
     shape: tuple of int, optional
         Shape of return matrix
-    size: int, optional
-        Size of batch to perform
-    n_batch: int, optional
-        Number of batches to perform
 
     Returns
     -------
@@ -41,22 +39,29 @@ def batch_process(array1, array2, function, size=None,
         matrix = np.zeros((array1.shape[0],
                            array2.shape[0]))
 
-    # Calculate number of batches based on either size or n_batch
-    # arguments
-    if size is not None:
-        n_batch = array1.shape[0] // size
-    else:
-        assert n_batch is not None
+    # Calculate number of batches based on batch_size
+    n_samples = min(array1.shape[0], array2.shape[0])
+    n_batches = int(np.ceil(n_samples / batch_size))
 
-    sub_arrays = np.array_split(array1, n_batch)
-    start = 0
-    end = 0
+    sub_arrays1 = np.array_split(array1, n_batches)
+    sub_arrays2 = np.array_split(array2, n_batches)
 
     # Cycle through each batch array in sub_arrays and perform
     # function on sub section
-    for sub_array in sub_arrays:
-        end += sub_array.shape[0]
-        matrix[start:end] = function(sub_array, array2)
-        start += sub_array.shape[0]
+    start1 = 0
+    end1 = 0
+    for sub_array1 in sub_arrays1:
+        end1 += sub_array1.shape[0]
+
+        start2 = 0
+        end2 = 0
+        for sub_array2 in sub_arrays2:
+            end2 += sub_array2.shape[0]
+
+            matrix[start1: end1,
+                   start2: end2] = function(sub_array1, sub_array2)
+
+            start2 += sub_array2.shape[0]
+        start1 += sub_array1.shape[0]
 
     return matrix

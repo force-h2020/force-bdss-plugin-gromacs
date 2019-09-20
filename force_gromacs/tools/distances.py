@@ -171,7 +171,8 @@ def distance_matrix(coord, cell_dim, metric='euclidean'):
         )
 
 
-def batch_distance_matrix(coord, cell_dim, metric='euclidean', n_batch=1):
+def batch_distance_matrix(coord, cell_dim, metric='euclidean',
+                          batch_size=50):
     """Uses batch_process function in force_gromacs.tools.utilities to
     performs distance_matrix in batches to alleviate memory.
 
@@ -185,8 +186,8 @@ def batch_distance_matrix(coord, cell_dim, metric='euclidean', n_batch=1):
         Method of calculation, either 'euclidean' for euclidean
         distance, 'sqeuclidean' for squared euclidean distance, or
         'vector' for displacement along each dimension vector
-    n_batch: int, optional
-        Number of batches to run in serial
+    batch_size : int, optional, default: 50
+        Sample size parameter of each batch.
 
     Returns
     -------
@@ -203,7 +204,8 @@ def batch_distance_matrix(coord, cell_dim, metric='euclidean', n_batch=1):
 
         # Calculate the pairwise euclidean differences between each
         # element in coord
-        return batch_process(coord, coord, function, n_batch=n_batch)
+        return batch_process(coord, coord, function,
+                             batch_size=batch_size)
 
     if metric == 'sqeuclidean':
         # Create a partial function that only takes in 2 arguments
@@ -212,7 +214,8 @@ def batch_distance_matrix(coord, cell_dim, metric='euclidean', n_batch=1):
 
         # Calculate the squared pairwise euclidean differences between
         # each element in coord
-        return batch_process(coord, coord, function, n_batch=n_batch)
+        return batch_process(coord, coord, function,
+                             batch_size=batch_size)
 
     elif metric == 'vector':
         # Create a partial function that only takes in 2 arguments
@@ -226,5 +229,5 @@ def batch_distance_matrix(coord, cell_dim, metric='euclidean', n_batch=1):
 
         # Calculate the vector differences between each element in coord
         return batch_process(
-            coord, coord, function, shape=shape, n_batch=n_batch
+            coord, coord, function, shape=shape, batch_size=batch_size
         )
