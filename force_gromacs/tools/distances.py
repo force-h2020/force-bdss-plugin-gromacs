@@ -124,9 +124,11 @@ def euclidean_distance(array1, array2, pbc_box=None):
     )
 
 
-def distance_matrix(coord, cell_dim, mode='r'):
-    """Calculate squared radial distances between each pairwise
-    combination of elements in coordinate array
+def distance_matrix(coord, cell_dim, metric='euclidean'):
+    """Calculate distances between each pairwise
+    combination of elements in coordinate array. Can either return
+    euclidean distance, squared euclidean distance or vector
+    displacements, depending on 'mode'.
 
     Parameters
     ----------
@@ -134,9 +136,9 @@ def distance_matrix(coord, cell_dim, mode='r'):
         Positions of a set particles in 3 dimensions
     cell_dim:  array_like of floats
         Simulation cell dimensions in 3 dimensions
-    mode: str, optional
-        Method of calculation, either 'r' for euclidean
-        distance, 'r2' for squared euclidean distance, or
+    metric: str, optional
+        Method of calculation, either 'euclidean' for euclidean
+        distance, 'sqeuclidean' for squared euclidean distance, or
         'vector' for displacement along each dimension vector
 
     Returns
@@ -145,23 +147,23 @@ def distance_matrix(coord, cell_dim, mode='r'):
         Distance matrix for each pairwise particle interaction
     """
 
-    assert mode in ['r', 'r2', 'vector']
+    assert metric in ['euclidean', 'sqeuclidean', 'vector']
 
-    if mode == 'r':
+    if metric == 'euclidean':
         # Calculate the pairwise euclidean differences between each
         # element in coord
         return euclidean_distance(
             coord, coord, pbc_box=cell_dim
         )
 
-    if mode == 'r2':
+    if metric == 'sqeuclidean':
         # Calculate the pairwise euclidean differences between each
         # element in coord
         return squared_euclidean_distance(
             coord, coord, pbc_box=cell_dim
         )
 
-    if mode == 'vector':
+    if metric == 'vector':
         # Calculate pairwise vector differences between each element
         # in coord
         return pairwise_difference_matrix(
@@ -169,11 +171,9 @@ def distance_matrix(coord, cell_dim, mode='r'):
         )
 
 
-def batch_distance_matrix(coord, cell_dim, mode='r', n_batch=1):
+def batch_distance_matrix(coord, cell_dim, metric='euclidean', n_batch=1):
     """Uses batch_process function in force_gromacs.tools.utilities to
     performs distance_matrix in batches to alleviate memory.
-    Currently only returns the squared radial distances, not the full
-    pairwise distance matrices.
 
     Parameters
     ----------
@@ -181,9 +181,9 @@ def batch_distance_matrix(coord, cell_dim, mode='r', n_batch=1):
         Positions of a set particles in 3 dimensions
     cell_dim:  array_like of floats
         Simulation cell dimensions in 3 dimensions
-    mode: str, optional
-        Method of calculation, either 'r' for euclidean
-        distance, 'r2' for squared euclidean distance, or
+    metric: str, optional
+        Method of calculation, either 'euclidean' for euclidean
+        distance, 'sqeuclidean' for squared euclidean distance, or
         'vector' for displacement along each dimension vector
     n_batch: int, optional
         Number of batches to run in serial
@@ -194,9 +194,9 @@ def batch_distance_matrix(coord, cell_dim, mode='r', n_batch=1):
         Distance matrix for each pairwise particle interaction
     """
 
-    assert mode in ['r', 'r2', 'vector']
+    assert metric in ['euclidean', 'sqeuclidean', 'vector']
 
-    if mode == 'r':
+    if metric == 'euclidean':
         # Create a partial function that only takes in 2 arguments
         function = partial(euclidean_distance,
                            pbc_box=cell_dim)
@@ -205,7 +205,7 @@ def batch_distance_matrix(coord, cell_dim, mode='r', n_batch=1):
         # element in coord
         return batch_process(coord, coord, function, n_batch=n_batch)
 
-    if mode == 'r2':
+    if metric == 'sqeuclidean':
         # Create a partial function that only takes in 2 arguments
         function = partial(squared_euclidean_distance,
                            pbc_box=cell_dim)
@@ -214,7 +214,7 @@ def batch_distance_matrix(coord, cell_dim, mode='r', n_batch=1):
         # each element in coord
         return batch_process(coord, coord, function, n_batch=n_batch)
 
-    elif mode == 'vector':
+    elif metric == 'vector':
         # Create a partial function that only takes in 2 arguments
         function = partial(
             pairwise_difference_matrix, pbc_box=cell_dim

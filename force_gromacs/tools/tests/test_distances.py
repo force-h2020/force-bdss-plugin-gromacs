@@ -158,18 +158,22 @@ class DistancesTestCase(TestCase):
         )
 
         r2_coord = distance_matrix(
-            self.coord, self.cell_dim, mode='r2')
+            self.coord, self.cell_dim, metric='sqeuclidean')
         self.assertEqual((5, 5), r2_coord.shape)
         self.assertTrue(
             np.allclose(self.r2_matrix, r2_coord)
         )
 
         d_coord = distance_matrix(
-            self.coord, self.cell_dim, mode='vector')
+            self.coord, self.cell_dim, metric='vector')
         self.assertEqual((5, 5, 3), d_coord.shape)
         self.assertTrue(
             np.allclose(self.d_matrix, d_coord)
         )
+
+        with self.assertRaises(AssertionError):
+            distance_matrix(
+                self.coord, self.cell_dim, metric='hamming')
 
     def test_batch_distance_matrix(self):
         r_coord = batch_distance_matrix(
@@ -181,15 +185,21 @@ class DistancesTestCase(TestCase):
         )
 
         r2_coord = batch_distance_matrix(
-            self.coord, self.cell_dim, mode='r2', n_batch=2)
+            self.coord, self.cell_dim, metric='sqeuclidean',
+            n_batch=2)
         self.assertEqual((5, 5), r2_coord.shape)
         self.assertTrue(
             np.allclose(self.r2_matrix, r2_coord)
         )
 
         d_coord = batch_distance_matrix(
-            self.coord, self.cell_dim, mode='vector', n_batch=2)
+            self.coord, self.cell_dim, metric='vector',
+            n_batch=2)
         self.assertEqual((5, 5, 3), d_coord.shape)
         self.assertTrue(
             np.allclose(self.d_matrix, d_coord)
         )
+
+        with self.assertRaises(AssertionError):
+            batch_distance_matrix(
+                self.coord, self.cell_dim, metric='hamming')
