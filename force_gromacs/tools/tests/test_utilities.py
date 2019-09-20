@@ -1,7 +1,6 @@
 from unittest import TestCase
 
 import numpy as np
-from scipy.spatial.distance import cdist
 
 from force_gromacs.tools.utilities import (
     batch_process
@@ -19,43 +18,55 @@ class UtilitiesTestCase(TestCase):
                                 [0, 0, 0, 0]])
 
     def test_batch_process(self):
-        r_matrix = batch_process(
-            self.matrix, self.matrix, cdist, size=2
+
+        dot_matrix = batch_process(
+            self.matrix, self.matrix, np.dot, size=2
         )
 
-        self.assertEqual((4, 4), r_matrix.shape)
+        self.assertEqual((4, 4), dot_matrix.shape)
         self.assertTrue(
             np.allclose(
-                cdist(self.matrix, self.matrix),
-                r_matrix
+                np.dot(self.matrix, self.matrix),
+                dot_matrix
             )
         )
 
-        r_matrix = batch_process(
-            self.matrix, self.matrix, cdist, size=3
+        dot_matrix = batch_process(
+            self.matrix, self.matrix, np.dot, size=3
         )
 
-        self.assertEqual((4, 4), r_matrix.shape)
+        self.assertEqual((4, 4), dot_matrix.shape)
         self.assertTrue(
             np.allclose(
-                cdist(self.matrix, self.matrix),
-                r_matrix
+                np.dot(self.matrix, self.matrix),
+                dot_matrix
             )
         )
 
-        r_matrix = batch_process(
-            self.matrix, self.matrix, cdist, n_batch=2
+        dot_matrix = batch_process(
+            self.matrix, self.matrix, np.dot, n_batch=2
         )
 
-        self.assertEqual((4, 4), r_matrix.shape)
+        self.assertEqual((4, 4), dot_matrix.shape)
         self.assertTrue(
             np.allclose(
-                cdist(self.matrix, self.matrix),
-                r_matrix
+                np.dot(self.matrix, self.matrix),
+                dot_matrix
             )
         )
 
         with self.assertRaises(AssertionError):
             batch_process(
-                self.matrix, self.matrix, cdist
+                self.matrix, self.matrix, 2, size=2
+            )
+
+        with self.assertRaises(AssertionError):
+            batch_process(
+                self.matrix, self.matrix, np.dot
+            )
+
+        with self.assertRaises(AssertionError):
+            batch_process(
+                self.matrix[0], self.matrix[1], np.dot,
+                size=2
             )

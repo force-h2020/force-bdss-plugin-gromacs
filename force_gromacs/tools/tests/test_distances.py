@@ -4,7 +4,8 @@ import numpy as np
 
 from force_gromacs.tools.distances import (
     minimum_image, pairwise_difference_matrix, distance_matrix,
-    batch_distance_matrix
+    batch_distance_matrix, squared_euclidean_distance,
+    euclidean_distance
 )
 
 
@@ -56,6 +57,8 @@ class DistancesTestCase(TestCase):
                                    [12, 27, 0, 3, 12],
                                    [3, 12, 3, 0, 19],
                                    [8, 3, 12, 19, 0]])
+
+        self.r_matrix = np.sqrt(self.r2_matrix)
 
     def test_minimum_image(self):
 
@@ -112,49 +115,81 @@ class DistancesTestCase(TestCase):
                                   [[5], [4], [1]]]))
         )
 
-    def test_distance_matrix(self):
-
-        r2_coord, d_coord = distance_matrix(self.coord, self.coord,
-                                            self.cell_dim)
-
-        self.assertEqual((5, 5, 3), d_coord.shape)
-        self.assertEqual((5, 5), r2_coord.shape)
+        d_coord = pairwise_difference_matrix(
+            self.coord, self.coord, self.cell_dim)
 
         self.assertTrue(
-            np.allclose(self.d_matrix, d_coord)
-        )
-        self.assertTrue(
-            np.allclose(self.r2_matrix, r2_coord)
+            np.allclose(d_coord, self.d_matrix)
         )
 
-        r2_coord = distance_matrix(self.coord, self.coord,
-                                   self.cell_dim, distances=False)
+    def test_squared_euclidean_distance(self):
+        r2_coord = squared_euclidean_distance(
+            self.coord, self.coord, pbc_box=self.cell_dim)
         self.assertEqual((5, 5), r2_coord.shape)
         self.assertTrue(
-            np.allclose(self.r2_matrix, r2_coord)
+            np.allclose(r2_coord, self.r2_matrix)
         )
 
-        r2_coord = distance_matrix(self.coord, self.coord[:-1],
-                                   self.cell_dim, distances=False)
+        r2_coord = squared_euclidean_distance(
+            self.coord, self.coord[:-1], self.cell_dim
+        )
 
         self.assertEqual((5, 4), r2_coord.shape)
         self.assertTrue(
             np.allclose(self.r2_matrix[:, :-1], r2_coord)
         )
 
-    def test_batch_distance_matrix(self):
+    def test_euclidean_distance(self):
+        r_coord = euclidean_distance(self.coord, self.coord,
+                                     pbc_box=self.cell_dim)
 
-        r2_matrix = batch_distance_matrix(
-            self.coord, self.coord,
-            cell_dim=self.cell_dim, n_batch=2
+        self.assertTrue(
+            np.allclose(r_coord, self.r_matrix)
         )
 
-        self.assertEqual((5, 5), r2_matrix.shape)
+    def test_distance_matrix(self):
+
+        r_coord = distance_matrix(
+            self.coord, self.cell_dim
+        )
+        self.assertEqual((5, 5), r_coord.shape)
         self.assertTrue(
-            np.allclose(
-                distance_matrix(self.coord, self.coord,
-                                cell_dim=self.cell_dim,
-                                distances=False),
-                r2_matrix
-            )
+            np.allclose(self.r_matrix, r_coord)
+        )
+
+        r2_coord = distance_matrix(
+            self.coord, self.cell_dim, mode='r2')
+        self.assertEqual((5, 5), r2_coord.shape)
+        self.assertTrue(
+            np.allclose(self.r2_matrix, r2_coord)
+        )
+
+        d_coord = distance_matrix(
+            self.coord, self.cell_dim, mode='vector')
+        self.assertEqual((5, 5, 3), d_coord.shape)
+        self.assertTrue(
+            np.allclose(self.d_matrix, d_coord)
+        )
+
+    def test_batch_distance_matrix(self):
+        r_coord = batch_distance_matrix(
+            self.coord, self.cell_dim, n_batch=2
+        )
+        self.assertEqual((5, 5), r_coord.shape)
+        self.assertTrue(
+            np.allclose(self.r_matrix, r_coord)
+        )
+
+        r2_coord = batch_distance_matrix(
+            self.coord, self.cell_dim, mode='r2', n_batch=2)
+        self.assertEqual((5, 5), r2_coord.shape)
+        self.assertTrue(
+            np.allclose(self.r2_matrix, r2_coord)
+        )
+
+        d_coord = batch_distance_matrix(
+            self.coord, self.cell_dim, mode='vector', n_batch=2)
+        self.assertEqual((5, 5, 3), d_coord.shape)
+        self.assertTrue(
+            np.allclose(self.d_matrix, d_coord)
         )

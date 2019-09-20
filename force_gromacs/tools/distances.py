@@ -1,36 +1,40 @@
 import numpy as np
 from functools import partial
 
-from .utilities import batch_process
+from .utilities import (
+    batch_process
+)
 
 
-def minimum_image(d_coord, cell_dim):
-    """Mutates d_coord to yield the minimum distance between
-    coordinates, based on periodic boundary conditions with cell_dim
-    dimensions
+def minimum_image(d_array, pbc_box):
+    """Mutates d_array to yield the minimum signed value of each
+    element, based on periodic boundary conditions given by pbc_box
 
     Parameters
     ---------
-    d_coord: array_like of float
-        Array of distances in multiple dimensions between coordinates,
-        where the last axis corresponds to each dimension
-    cell_dim:  array_like of floats
-        Simulation cell dimensions in 3 dimensions
+    d_array: array_like of float
+        Array of elements in n dimenions, where the last axis
+        corresponds to a vector with periodic boundary conditions
+        enforced by values in pbc_box
+    pbc_box:  array_like of floats
+        Vector containing maximum signed value for each element
+        in d_array
     """
 
-    assert d_coord.shape[-1] == cell_dim.shape[-1]
+    assert d_array.shape[-1] == pbc_box.shape[-1]
 
     # Obtain minimum image distances based on rectangular
     # prism geometry
-    for i, dim in enumerate(cell_dim):
-        d_coord[..., i] -= dim * np.array(
-            2 * d_coord[..., i] / dim, dtype=int
+    for i, dim in enumerate(pbc_box):
+        d_array[..., i] -= dim * np.array(
+            2 * d_array[..., i] / dim, dtype=int
         )
 
 
-def pairwise_difference_matrix(array1, array2):
+def pairwise_difference_matrix(array1, array2, pbc_box=None):
     """Build matrix containing pairwise vector differences between
-    each entry in array1 and array2."""
+    each entry in array1 and array2. Enforces minimum image periodic
+    boundary conditions given by pbc_box if supplied as an argument"""
 
     # Both arrays must share the same vector dimension, n_depth
     assert array1.shape[-1] == array2.shape[-1]
@@ -53,50 +57,119 @@ def pairwise_difference_matrix(array1, array2):
             array2.T[index: index + 1]
         )
 
+    if pbc_box is not None:
+        # Calculate difference matrix based on minimum image
+        minimum_image(d_array, pbc_box)
+
     return d_array
 
 
-def distance_matrix(coord1, coord2, cell_dim, distances=True):
-    """Calculate distance vector matrix between two sets
-    of coordinates
+def squared_euclidean_distance(array1, array2, pbc_box=None):
+    """Calculate squared euclidean distances between each pairwise
+    combination of elements in array1 and array2
 
     Parameters
     ----------
-    coord1:  array_like of floats
-        Positions of a set particles in 3 dimensions
-    coord2:  array_like of floats
-        Positions of a set particles in 3 dimensions
-    cell_dim:  array_like of floats
-        Simulation cell dimensions in 3 dimensions
-    distances: bool, optional
-        Whether or not to return pairwise difference matricies
-        alongside squared radial distance
+    array1: array_like of float
+        Input array of up to 2 dimensions
+    array2: array_like of float
+        Input array of up to 2 dimensions
+    pbc_box:  array_like of floats
+        Vector containing maximum signed value for each element
+        in distance array
 
     Returns
     -------
-    r2_coord: array_like of floats
-        Radial distance squared between each particle
-    d_coord: array_like of floats
-        Displacement along each axis between each particle
+    r2_matrix: array_like of floats
+        Squared euclidean distances for each pairwise particle
+        interaction
     """
 
-    # Calculate the pairwise differences between each element in
-    # coord1 and coord2
-    d_coord = pairwise_difference_matrix(coord1, coord2)
+    # Calculate vector differences
+    d_array = pairwise_difference_matrix(
+        array1, array2, pbc_box=pbc_box
+    )
 
-    # Calculate difference matrix based on minimum image
-    minimum_image(d_coord, cell_dim)
+    # Calculate squared euclidean distances
+    r2_matrix = np.sum(d_array**2, axis=-1)
 
-    # Calculate squared radial distances
-    r2_coord = np.sum(d_coord**2, axis=-1)
-
-    if distances:
-        return r2_coord, d_coord
-    else:
-        return r2_coord
+    return r2_matrix
 
 
-def batch_distance_matrix(coord1, coord2, cell_dim, n_batch=1):
+def euclidean_distance(array1, array2, pbc_box=None):
+    """Calculate euclidean distances between each pairwise
+    combination of elements in array1 and array2
+
+    Parameters
+    ----------
+    array1: array_like of float
+        Input array of up to 2 dimensions
+    array2: array_like of float
+        Input array of up to 2 dimensions
+    pbc_box:  array_like of floats
+        Vector containing maximum signed value for each element
+        in distance array
+
+    Returns
+    -------
+    r_matrix: array_like of floats
+        Euclidean distances for each pairwise particle
+        interaction
+    """
+
+    return np.sqrt(
+        squared_euclidean_distance(
+            array1, array2, pbc_box=pbc_box
+        )
+    )
+
+
+def distance_matrix(coord, cell_dim, mode='r'):
+    """Calculate squared radial distances between each pairwise
+    combination of elements in coordinate array
+
+    Parameters
+    ----------
+    coord:  array_like of floats
+        Positions of a set particles in 3 dimensions
+    cell_dim:  array_like of floats
+        Simulation cell dimensions in 3 dimensions
+    mode: str, optional
+        Method of calculation, either 'r' for euclidean
+        distance, 'r2' for squared euclidean distance, or
+        'vector' for displacement along each dimension vector
+
+    Returns
+    -------
+    distance_matrix: array_like of floats
+        Distance matrix for each pairwise particle interaction
+    """
+
+    assert mode in ['r', 'r2', 'vector']
+
+    if mode == 'r':
+        # Calculate the pairwise euclidean differences between each
+        # element in coord
+        return euclidean_distance(
+            coord, coord, pbc_box=cell_dim
+        )
+
+    if mode == 'r2':
+        # Calculate the pairwise euclidean differences between each
+        # element in coord
+        return squared_euclidean_distance(
+            coord, coord, pbc_box=cell_dim
+        )
+
+    if mode == 'vector':
+        # Calculate pairwise vector differences between each element
+        # in coord
+        return pairwise_difference_matrix(
+            coord, coord, pbc_box=cell_dim
+        )
+
+
+def batch_distance_matrix(coord, cell_dim, mode='r', n_batch=1):
     """Uses batch_process function in force_gromacs.tools.utilities to
     performs distance_matrix in batches to alleviate memory.
     Currently only returns the squared radial distances, not the full
@@ -104,24 +177,54 @@ def batch_distance_matrix(coord1, coord2, cell_dim, n_batch=1):
 
     Parameters
     ----------
-    coord1:  array_like of floats
-        Positions of a set particles in 3 dimensions
-    coord2:  array_like of floats
+    coord:  array_like of floats
         Positions of a set particles in 3 dimensions
     cell_dim:  array_like of floats
         Simulation cell dimensions in 3 dimensions
+    mode: str, optional
+        Method of calculation, either 'r' for euclidean
+        distance, 'r2' for squared euclidean distance, or
+        'vector' for displacement along each dimension vector
     n_batch: int, optional
         Number of batches to run in serial
 
     Returns
     -------
-    r2_coord: array_like of floats
-        Radial distance squared between each particle
+    distances: array_like of floats
+        Distance matrix for each pairwise particle interaction
     """
-    function = partial(distance_matrix, cell_dim=cell_dim,
-                       distances=False)
 
-    r2_coord = batch_process(coord1, coord2,
-                             function, n_batch=n_batch)
+    assert mode in ['r', 'r2', 'vector']
 
-    return r2_coord
+    if mode == 'r':
+        # Create a partial function that only takes in 2 arguments
+        function = partial(euclidean_distance,
+                           pbc_box=cell_dim)
+
+        # Calculate the pairwise euclidean differences between each
+        # element in coord
+        return batch_process(coord, coord, function, n_batch=n_batch)
+
+    if mode == 'r2':
+        # Create a partial function that only takes in 2 arguments
+        function = partial(squared_euclidean_distance,
+                           pbc_box=cell_dim)
+
+        # Calculate the squared pairwise euclidean differences between
+        # each element in coord
+        return batch_process(coord, coord, function, n_batch=n_batch)
+
+    elif mode == 'vector':
+        # Create a partial function that only takes in 2 arguments
+        function = partial(
+            pairwise_difference_matrix, pbc_box=cell_dim
+        )
+
+        # Provide an expected shape of the return matrix to handle
+        # 3D vector
+        shape = (coord.shape[0], coord.shape[0], coord.shape[1])
+
+        # Calculate the vector differences between each element in coord
+        return batch_process(
+            coord, coord, function, shape=shape, n_batch=n_batch
+        )
