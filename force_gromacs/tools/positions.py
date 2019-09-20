@@ -14,7 +14,7 @@ def molecular_positions(atom_coord, n_site, masses, mode='molecule',
         Number of atomic sites per molecule
     masses:  array_like of float
         Masses of all atomic sites in g mol-1
-    mode: list of int, optional
+    mode: str, optional, default: 'molecule'
         Mode of calculation, either 'molecule' or 'sites':
         if `molecule`, molecular centre of mass is used. Otherwise, if
         'sites', only atoms with corresponding indices given by com_sites

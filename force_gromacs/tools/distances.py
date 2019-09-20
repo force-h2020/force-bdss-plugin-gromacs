@@ -16,7 +16,7 @@ def minimum_image(d_array, pbc_box):
         Array of elements in n dimenions, where the last axis
         corresponds to a vector with periodic boundary conditions
         enforced by values in pbc_box
-    pbc_box:  array_like of floats
+    pbc_box: array_like of floats
         Vector containing maximum signed value for each element
         in d_array
     """
@@ -34,7 +34,24 @@ def minimum_image(d_array, pbc_box):
 def pairwise_difference_matrix(array1, array2, pbc_box=None):
     """Build matrix containing pairwise vector differences between
     each entry in array1 and array2. Enforces minimum image periodic
-    boundary conditions given by pbc_box if supplied as an argument"""
+    boundary conditions given by pbc_box if supplied as an argument
+
+    Parameters
+    ----------
+    array1: array_like of float
+        Input array of n dimensions
+    array2: array_like of float
+        Input array of n dimensions
+    pbc_box: array_like of floats, optional
+        Vector containing maximum signed value for each element
+        in distance array
+
+    Returns
+    -------
+    d_array: array_like of floats
+        Displacements between each pairwise combination of elements
+        in array1 and array2
+    """
 
     # Both arrays must share the same vector dimension, n_depth
     assert array1.shape[-1] == array2.shape[-1]
@@ -136,7 +153,7 @@ def distance_matrix(coord, cell_dim, metric='euclidean'):
         Positions of a set particles in 3 dimensions
     cell_dim:  array_like of floats
         Simulation cell dimensions in 3 dimensions
-    metric: str, optional
+    metric: str, optional, default: 'euclidean'
         Method of calculation, either 'euclidean' for euclidean
         distance, 'sqeuclidean' for squared euclidean distance, or
         'vector' for displacement along each dimension vector
@@ -182,7 +199,7 @@ def batch_distance_matrix(coord, cell_dim, metric='euclidean',
         Positions of a set particles in 3 dimensions
     cell_dim:  array_like of floats
         Simulation cell dimensions in 3 dimensions
-    metric: str, optional
+    metric: str, optional, default: 'euclidean'
         Method of calculation, either 'euclidean' for euclidean
         distance, 'sqeuclidean' for squared euclidean distance, or
         'vector' for displacement along each dimension vector
