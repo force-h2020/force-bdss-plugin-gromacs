@@ -2,13 +2,13 @@ from unittest import TestCase
 
 import numpy as np
 
-from force_gromacs.utilities import (
+from force_gromacs.tools.distances import (
     minimum_image, pairwise_difference_matrix, distance_matrix,
-    create_molecule_coord
+    batch_distance_matrix
 )
 
 
-class UtilitiesTestCase(TestCase):
+class DistancesTestCase(TestCase):
 
     def setUp(self):
 
@@ -142,27 +142,19 @@ class UtilitiesTestCase(TestCase):
             np.allclose(self.r2_matrix[:, :-1], r2_coord)
         )
 
-    def test_create_molecule_coord(self):
+    def test_batch_distance_matrix(self):
 
-        coord = self.coord[:-1]
-        mol_M = np.array([1, 2, 1, 2])
-
-        molecules = create_molecule_coord(
-            coord, 2, mol_M)
-
-        self.assertEqual((2, 3), molecules.shape)
-        self.assertTrue(
-            np.allclose(np.array([[0.666667, 0.666667, 0.666667],
-                                  [4.666667, 4.666667, 4.666667]]),
-                        molecules)
+        r2_matrix = batch_distance_matrix(
+            self.coord, self.coord,
+            cell_dim=self.cell_dim, n_batch=2
         )
 
-        molecules = create_molecule_coord(
-            coord, 2, mol_M, mode='sites', com_sites=0)
-
-        self.assertEqual((2, 3), molecules.shape)
+        self.assertEqual((5, 5), r2_matrix.shape)
         self.assertTrue(
-            np.allclose(np.array([[0, 0, 0],
-                                  [4, 4, 4]]),
-                        molecules)
+            np.allclose(
+                distance_matrix(self.coord, self.coord,
+                                cell_dim=self.cell_dim,
+                                distances=False),
+                r2_matrix
+            )
         )
