@@ -13,7 +13,7 @@ def minimum_image(d_array, pbc_box):
     Parameters
     ---------
     d_array: array_like of float
-        Array of elements in n dimenions, where the last axis
+        Array of elements in n dimensions, where the last axis
         corresponds to a vector with periodic boundary conditions
         enforced by values in pbc_box
     pbc_box: array_like of floats
@@ -22,12 +22,13 @@ def minimum_image(d_array, pbc_box):
     """
 
     assert d_array.shape[-1] == pbc_box.shape[-1]
+    assert d_array.dtype == pbc_box.dtype
 
     # Obtain minimum image distances based on rectangular
     # prism geometry
     for i, dim in enumerate(pbc_box):
-        d_array[..., i] -= dim * np.array(
-            2 * d_array[..., i] / dim, dtype=int
+        d_array[..., i] -= dim * np.rint(
+            d_array[..., i] / dim
         )
 
 
