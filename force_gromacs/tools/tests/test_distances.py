@@ -14,13 +14,13 @@ class DistancesTestCase(TestCase):
     def setUp(self):
 
         self.mol_ref = ['1PS', '1PS', '2PS', '2PS', '1NA']
-        self.coord = np.array([[0, 0, 0],
-                               [1, 1, 1],
-                               [4, 4, 4],
-                               [5, 5, 5],
-                               [2, 0, 2]])
+        self.coord = np.array([[0., 0., 0.],
+                               [1., 1., 1.],
+                               [4., 4., 4.],
+                               [5., 5., 5.],
+                               [2., 0., 2.]])
 
-        self.cell_dim = np.array([6, 6, 6])
+        self.cell_dim = np.array([6., 6., 6.])
 
         self.d_matrix = np.asarray([[[0., 0., 0.],
                                    [-1., -1., -1.],
@@ -30,12 +30,12 @@ class DistancesTestCase(TestCase):
 
                                   [[1, 1, 1],
                                    [0., 0., 0.],
-                                   [3, 3, 3],
+                                   [-3, -3, -3],
                                    [2, 2, 2],
                                    [-1, 1, -1]],
 
                                   [[-2, -2, -2],
-                                   [-3, -3, -3],
+                                   [3, 3, 3],
                                    [0., 0., 0.],
                                    [-1, -1, -1.],
                                    [2, -2, 2]],
@@ -44,12 +44,12 @@ class DistancesTestCase(TestCase):
                                    [-2, -2, -2],
                                    [1, 1, 1],
                                    [0, 0, 0.],
-                                   [-3, -1, -3]],
+                                   [3, -1, 3]],
 
                                   [[2, 0, 2],
                                    [1, -1, 1],
                                    [-2, 2, -2.],
-                                   [3, 1, 3.],
+                                   [-3, 1, -3.],
                                    [0., 0., 0.]]])
 
         self.r2_matrix = np.array([[0, 3, 12, 3, 8],
@@ -65,7 +65,7 @@ class DistancesTestCase(TestCase):
         d_coord = np.array([[[0, 0, 0],
                              [1, 5, 1]],
                             [[-1, -5, -1],
-                             [0, 0, 0]]])
+                             [0, 0, 0]]], dtype=float)
 
         minimum_image(d_coord, self.cell_dim)
 
@@ -116,7 +116,6 @@ class DistancesTestCase(TestCase):
 
         d_coord = pairwise_difference_matrix(
             self.coord, self.coord, self.cell_dim)
-
         self.assertTrue(
             np.allclose(d_coord, self.d_matrix)
         )
