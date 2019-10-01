@@ -65,12 +65,7 @@ class DistancesTestCase(TestCase):
         d_coord = np.array([[[0, 0, 0],
                              [1, 5, 1]],
                             [[-1, -5, -1],
-                             [0, 0, 0]]])
-
-        with self.assertRaises(AssertionError):
-            minimum_image(d_coord, self.cell_dim)
-
-        d_coord = d_coord.astype(float)
+                             [0, 0, 0]]], dtype=float)
 
         minimum_image(d_coord, self.cell_dim)
 

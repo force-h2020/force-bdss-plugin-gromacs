@@ -22,7 +22,6 @@ def minimum_image(d_array, pbc_box):
     """
 
     assert d_array.shape[-1] == pbc_box.shape[-1]
-    assert d_array.dtype == pbc_box.dtype
 
     # Obtain minimum image distances based on rectangular
     # prism geometry
