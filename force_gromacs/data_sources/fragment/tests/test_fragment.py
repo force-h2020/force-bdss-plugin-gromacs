@@ -37,8 +37,15 @@ class TestFragment(TestCase):
 
     def test_get__data(self):
 
+        self.fragment.topology = ''
+        self.assertIsNone(self.fragment.atoms)
+        self.assertIsNone(self.fragment.mass)
+        self.assertIsNone(self.fragment.charge)
+        self.assertIsNone(self.fragment.get_masses())
+
         with mock.patch(self.mock_method) as mockreadtop:
             mockreadtop.return_value = self.top_lines
+            self.fragment.topology = 'test_top.itp'
             self.fragment.symbol = ''
 
         self.assertEqual("Water", self.fragment.name)
