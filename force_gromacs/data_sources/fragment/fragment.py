@@ -69,7 +69,7 @@ class Fragment(HasTraits):
             try:
                 return data[self.symbol]
             except Exception:
-                return {}
+                return
 
     def _get_atoms(self):
         if self._data:
