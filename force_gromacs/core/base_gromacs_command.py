@@ -164,6 +164,7 @@ class BaseGromacsCommand(BaseGromacsProcess):
 
             try:
                 assert self._returncode == 0
+
             except AssertionError as error:
                 msg = f"Gromacs ('{command}') did not run correctly. \n"
                 msg += f"Error code: {self._returncode} \n"

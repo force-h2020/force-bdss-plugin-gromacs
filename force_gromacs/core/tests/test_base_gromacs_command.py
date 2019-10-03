@@ -111,6 +111,43 @@ class TestBaseGromacsCommand(TestCase):
 
     def test_run(self):
 
+        # Test dry run
         self.assertEqual(0, self.gromacs_command.run())
         self.assertEqual('', self.gromacs_command.recall_stdout())
         self.assertEqual('', self.gromacs_command.recall_stderr())
+
+        self.gromacs_command.dry_run = False
+
+        # Test simple bash command
+        self.gromacs_command.name = 'echo Hello World'
+        self.assertEqual(0, self.gromacs_command.run())
+        self.assertEqual('Hello World\n', self.gromacs_command.recall_stdout())
+        self.assertEqual('', self.gromacs_command.recall_stderr())
+
+        # Test user input
+        self.gromacs_command.name = 'uniq'
+        self.gromacs_command.user_input = 'Hello World'
+
+        self.assertEqual(0, self.gromacs_command.run())
+        self.assertEqual('Hello World\n', self.gromacs_command.recall_stdout())
+        self.assertEqual('', self.gromacs_command.recall_stderr())
+
+    def test_run_command_error(self):
+        self.gromacs_command.dry_run = False
+
+        # Test unrecognised command
+        self.gromacs_command.name = 'not_a_command'
+        with self.assertRaisesRegex(
+                FileNotFoundError,
+                "No such file or directory: 'not_a_command'"):
+            self.gromacs_command.run()
+
+        # Test failed command
+        self.gromacs_command.name = 'uniq Hello World'
+        with self.assertRaises(RuntimeError):
+            self.gromacs_command.run()
+
+        self.assertEqual(1, self.gromacs_command._returncode)
+        self.assertEqual('', self.gromacs_command.recall_stdout())
+        self.assertEqual('uniq: Hello: No such file or directory\n',
+                         self.gromacs_command.recall_stderr())
