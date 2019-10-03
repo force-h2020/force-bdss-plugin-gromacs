@@ -26,7 +26,7 @@ class PositionsTestCase(TestCase):
              [6.715, 2.014, 3.789], [6.999, 1.741, 3.721],
              [7.283, 1.467, 3.654], [7.567, 1.194, 3.587]])
         self.large_masses = np.array(
-            [10, 5, 5, 5, 10, 5, 5, 5, 10, 5, 5, 5]
+            [10, 5, 5, 5] * 3
         )
 
     def test_simple_molecular_positions(self):
@@ -51,6 +51,45 @@ class PositionsTestCase(TestCase):
         self.assertTrue(
             np.allclose(np.array([[0, 0, 0],
                                   [4, 4, 4]]),
+                        molecules)
+        )
+
+    def test_large_molecular_positions(self):
+
+        # Test centre of mass for whole molecule
+        molecules = molecular_positions(
+            self.large_coord, 4, self.large_masses)
+        self.assertEqual((3, 3), molecules.shape)
+        self.assertTrue(
+            np.allclose(np.array([[3.1422, 7.621, 3.0632],
+                                  [2.558, 1.0264, 2.165],
+                                  [7.0558, 1.686, 3.708]]),
+                        molecules)
+        )
+
+        # Test include atom as site
+        molecules = molecular_positions(
+            self.large_coord, 4, self.large_masses,
+            mode='sites', com_sites=0
+        )
+        self.assertEqual((3, 3), molecules.shape)
+        self.assertTrue(
+            np.allclose(np.array([[2.741, 7.518, 3.306],
+                                  [2.516, 0.583, 1.985],
+                                  [6.715, 2.014, 3.789]]),
+                        molecules)
+        )
+
+        # Test centre of mass for first 3 atoms
+        molecules = molecular_positions(
+            self.large_coord, 4, self.large_masses,
+            mode='sites', com_sites=[0, 1, 2]
+        )
+        self.assertEqual((3, 3), molecules.shape)
+        self.assertTrue(
+            np.allclose(np.array([[2.99175, 7.5825, 3.15425],
+                                  [2.54225, 0.86025, 2.0975],
+                                  [6.928, 1.809, 3.73825]]),
                         molecules)
         )
 
