@@ -64,11 +64,12 @@ class Fragment(HasTraits):
 
     @cached_property
     def _get__data(self):
-        data = self._reader.read(self.topology)
-        try:
-            return data[self.symbol]
-        except KeyError:
-            return {}
+        if self.topology:
+            data = self._reader.read(self.topology)
+            try:
+                return data[self.symbol]
+            except Exception:
+                return {}
 
     def _get_atoms(self):
         if self._data:
