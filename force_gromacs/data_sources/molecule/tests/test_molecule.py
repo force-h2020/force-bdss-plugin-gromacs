@@ -98,13 +98,13 @@ class TestMoleculeDataSource(TestCase):
         self.plugin = GromacsPlugin()
         self.factory = self.plugin.data_source_factories[1]
         self.data_source = self.factory.create_data_source()
+        self.model = self.factory.create_model()
 
     def test_basic_function(self):
-        model = self.factory.create_model()
-        model.n_fragments = 2
-        model.fragment_numbers = [1, 1]
+        self.model.n_fragments = 2
+        self.model.fragment_numbers = [1, 1]
 
-        in_slots = self.data_source.slots(model)[0]
+        in_slots = self.data_source.slots(self.model)[0]
         self.assertEqual(2, len(in_slots))
 
         data_values = [
@@ -114,7 +114,7 @@ class TestMoleculeDataSource(TestCase):
 
         with mock.patch(mock_method) as mockreadtop:
             mockreadtop.return_value = data
-            res = self.data_source.run(model, data_values)
+            res = self.data_source.run(self.model, data_values)
 
         self.assertEqual("MOLECULE", res[0].type)
 
@@ -144,9 +144,8 @@ class TestMoleculeDataSource(TestCase):
         )
 
     def test__assign_stoichiometry(self):
-        model = self.factory.create_model()
-        model.n_fragments = 2
-        model.fragment_numbers = [2, 3]
+        self.model.n_fragments = 2
+        self.model.fragment_numbers = [2, 3]
 
         parameters = [
             DataValue(type='FRAGMENT', value=value)
@@ -154,25 +153,66 @@ class TestMoleculeDataSource(TestCase):
         ]
         parameters += [DataValue(type='NOTHING', value=0)]
 
-        self.data_source._assign_stoichiometry(model, parameters)
+        self.data_source._assign_stoichiometry(self.model,
+                                               parameters)
 
         self.assertEqual(2, self.positive_ion.number)
         self.assertEqual(3, self.negative_ion.number)
 
     def test_update_fragment_numbers(self):
 
-        model = self.factory.create_model()
-
-        model.fragment_numbers[0] = 3
-        model.n_fragments = 5
-        in_slots = self.data_source.slots(model)[0]
+        self.model.fragment_numbers[0] = 3
+        self.model.n_fragments = 5
+        in_slots = self.data_source.slots(self.model)[0]
         self.assertEqual(5, len(in_slots))
-        self.assertEqual(5, len(model.fragment_numbers))
-        self.assertEqual(3, model.fragment_numbers[0])
+        self.assertEqual(5, len(self.model.fragment_numbers))
+        self.assertEqual(3, self.model.fragment_numbers[0])
 
-        model.fragment_numbers[1] = 5
-        model.n_fragments = 2
-        in_slots = self.data_source.slots(model)[0]
+        self.model.fragment_numbers[1] = 5
+        self.model.n_fragments = 2
+        in_slots = self.data_source.slots(self.model)[0]
         self.assertEqual(2, len(in_slots))
-        self.assertEqual(2, len(model.fragment_numbers))
-        self.assertEqual(5, model.fragment_numbers[1])
+        self.assertEqual(2, len(self.model.fragment_numbers))
+        self.assertEqual(5, self.model.fragment_numbers[1])
+
+    def test___n_fragments_check(self):
+        errors = self.model._n_fragments_check()
+        self.assertEqual(0, len(errors))
+
+        self.model.n_fragments = 0
+        errors = self.model._n_fragments_check()
+        messages = [error.local_error for error in errors]
+
+        self.assertEqual(1, len(errors))
+        self.assertIn(
+            'Number of molecular fragments must be at least 1',
+            messages
+        )
+
+    def test_verify(self):
+
+        self.model.n_fragments = 0
+        errors = self.model.verify()
+        messages = [error.local_error for error in errors]
+        self.assertEqual(2, len(messages))
+        self.assertIn(
+            'Number of molecular fragments must be at least 1',
+            messages
+        )
+        self.assertIn(
+            'The number of output slots is incorrect.',
+            messages
+        )
+
+        self.model.n_fragments = 1
+        errors = self.model.verify()
+        messages = [error.local_error for error in errors]
+        self.assertEqual(2, len(messages))
+        self.assertIn(
+            'The number of input slots is incorrect.',
+            messages
+        )
+        self.assertIn(
+            'The number of output slots is incorrect.',
+            messages
+        )
