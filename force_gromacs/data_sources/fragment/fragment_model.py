@@ -47,8 +47,9 @@ class FragmentDataSourceModel(BaseDataSourceModel):
         ext: str, optional
             Expected extension of Gromacs input file
         """
+
         errors = []
-        if file_path.isspace():
+        if not file_path or file_path.isspace():
             errors.append(
                 VerifierError(
                     subject=self,
