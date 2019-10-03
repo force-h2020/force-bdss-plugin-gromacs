@@ -47,9 +47,7 @@ class GromacsPipeline(BaseGromacsProcess):
         Pipeline.
         """
         if isinstance(ind, slice):
-            if ind.step not in (1, None):
-                raise ValueError('Pipeline slicing only supports a step of 1')
-            return self.__class__(self.steps[ind])
+            raise ValueError('Pipeline does not support slicing')
         try:
             name, command = self.steps[ind]
         except TypeError:
@@ -62,7 +60,7 @@ class GromacsPipeline(BaseGromacsProcess):
         return dict(**dict(self.steps))
 
     def append(self, step):
-        """Appends step to `self.steps` attribute after type checking"""
+        """Appends step to `self.steps` attribute"""
         self.steps.append(step)
 
     def bash_script(self):

@@ -1,5 +1,7 @@
 from unittest import TestCase, mock
 
+import testfixtures
+
 from force_gromacs.io.gromacs_topology_reader import (
     GromacsTopologyReader
 )
@@ -84,6 +86,12 @@ class TestGromacsTopologyReader(TestCase):
             ['[ moleculetype ]', 'I 1', '[ atoms ]',
              '1 F 1 I I 1 1.0 24'], mol_sections[1])
 
+        with self.assertRaisesRegex(
+                RuntimeError,
+                'Gromacs topology file does not include any'
+                ' molecule types'):
+            self.reader._get_molecule_sections([])
+
     def test__get_data(self):
         cleaned_lines = [
             '[moleculetype]', 'So 1', '[atoms]',
@@ -118,5 +126,28 @@ class TestGromacsTopologyReader(TestCase):
 
     def test_file_opening_exception_handling(self):
 
-        with self.assertRaises(IOError):
-            self.reader.read('this_file_should_not_exist.itp')
+        with testfixtures.LogCapture() as capture:
+            with self.assertRaises(IOError):
+                self.reader.read(
+                    'this_file_should_not_exist.itp'
+                )
+            capture.check(
+                ('force_gromacs.io.gromacs_topology_reader',
+                 'ERROR',
+                 'unable to open "this_file_should_not_exist.itp"')
+            )
+
+        mock_open = mock.mock_open(read_data=" ")
+        with mock.patch(
+                    FILE_READER_OPEN_PATH, mock_open,
+                    create=True),\
+                testfixtures.LogCapture() as capture:
+            with self.assertRaises(RuntimeError):
+                self.reader.read(
+                    'this_file_is_empty.itp'
+                )
+            capture.check(
+                ('force_gromacs.io.gromacs_topology_reader',
+                 'ERROR',
+                 'unable to load data from "this_file_is_empty.itp"')
+            )

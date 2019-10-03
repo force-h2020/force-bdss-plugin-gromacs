@@ -28,13 +28,15 @@ def molecular_positions(atom_coord, n_site, masses, mode='molecule',
         Positions of molecules in 3 dimensions
     """
 
-    # Calculate the expecded number of molecules in mol_coord
+    # Calculate the expected number of molecules in mol_coord
     n_mol = atom_coord.shape[0] // n_site
 
     # Create an empty array containing molecular coordinates
     mol_coord = np.zeros((n_mol, 3))
 
-    assert mode in ['molecule', 'sites']
+    assert mode in ['molecule', 'sites'], (
+        f"Argument mode=={mode} must be either 'molecule' or 'sites'"
+    )
 
     # Use centre of mass of molecule as molecular position
     if mode == 'molecule':
@@ -52,7 +54,10 @@ def molecular_positions(atom_coord, n_site, masses, mode='molecule',
     if isinstance(com_sites, int):
         com_sites = [com_sites]
 
-    assert len(com_sites) < n_site
+    assert len(com_sites) < n_site, (
+        f"Argument com_sites must have a length ({len(com_sites)}) "
+        f"less than n_sites ({n_site})"
+    )
 
     # Use single atom as molecular position
     if len(com_sites) == 1:

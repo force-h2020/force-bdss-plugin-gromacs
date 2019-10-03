@@ -1,6 +1,6 @@
 [run]
 branch = True
-source = gromacs
+source = force_gromacs
 omit = */tests/*
        */bench/*
        */scripts/*

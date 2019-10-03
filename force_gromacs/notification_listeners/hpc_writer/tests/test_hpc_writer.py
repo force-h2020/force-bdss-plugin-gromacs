@@ -97,3 +97,13 @@ class TestHPCWriter(TestCase, UnittestTools):
             self.hpc_script,
             self.notification_listener.deliver(event)
         )
+        self.assertEqual(
+            {'bash_script':
+                {'accuracy': None,
+                 'name': '',
+                 'quality': 'AVERAGE',
+                 'type': 'SCRIPT',
+                 'value': '# experiment_5.0\nmdrun -s test_topol.tpr\n'}
+             },
+            event.__getstate__()
+        )

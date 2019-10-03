@@ -64,8 +64,10 @@ class GromacsTopologyReader(BaseFileReader):
                        if "moleculetype" in line]
 
         if len(mol_indices) == 0:
-            raise IOError('Gromacs topology file does not include any'
-                          ' molecule types')
+            raise RuntimeError(
+                'Gromacs topology file does not include any'
+                ' molecule types'
+            )
         mol_sections = []
         start_indices = mol_indices
         end_indices = mol_indices[1:] + [None]
@@ -171,7 +173,7 @@ class GromacsTopologyReader(BaseFileReader):
 
         try:
             iterator = self._get_data(file_lines)
-        except (IndexError, IOError) as e:
+        except Exception as e:
             log.exception('unable to load data from "{}"'.format(file_path))
             raise e
 

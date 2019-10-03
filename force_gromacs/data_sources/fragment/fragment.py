@@ -44,7 +44,7 @@ class Fragment(HasTraits):
     # --------------------
 
     #: Parsed Gromacs topology data of fragment
-    _data = Property(Dict, depends_on='topology')
+    _data = Property(Dict, depends_on='topology,symbol')
 
     #: List of atoms in Gromacs topology '.itp' file
     atoms = Property(List(Unicode), depends_on='_data')
@@ -65,18 +65,21 @@ class Fragment(HasTraits):
     @cached_property
     def _get__data(self):
         data = self._reader.read(self.topology)
-        return data[self.symbol]
+        try:
+            return data[self.symbol]
+        except KeyError:
+            return {}
 
     def _get_atoms(self):
-        if self._data is not None:
+        if self._data:
             return self._data['atoms']
 
     def _get_mass(self):
-        if self._data is not None:
+        if self._data:
             return sum(self._data['masses'])
 
     def _get_charge(self):
-        if self._data is not None:
+        if self._data:
             return sum(self._data['charges'])
 
     # --------------------
@@ -85,7 +88,7 @@ class Fragment(HasTraits):
 
     def get_masses(self):
         """Return list of atomic masses"""
-        if self._data is not None:
+        if self._data:
             return self._data['masses']
 
     def get_data_values(self):

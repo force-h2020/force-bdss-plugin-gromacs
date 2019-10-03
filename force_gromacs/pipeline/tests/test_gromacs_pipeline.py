@@ -43,6 +43,45 @@ class TestGromacsPipeline(TestCase):
         for name, command in self.pipeline.steps:
             self.assertEqual(self.pipeline.dry_run, command.dry_run)
 
+    def test_named_steps(self):
+
+        self.assertIsInstance(self.pipeline.named_steps, dict)
+        self.assertEqual(
+            ['file_tree', 'genbox', 'genion', 'top_file'],
+            list(self.pipeline.named_steps.keys())
+        )
+
+        new_command = Gromacs_genbox(dry_run=True)
+        self.pipeline.append(('new_command', new_command))
+        self.assertEqual(
+            ['file_tree', 'genbox', 'genion', 'top_file',
+             'new_command'],
+            list(self.pipeline.named_steps.keys())
+        )
+
+    def test___getitem__(self):
+
+        # Allow indexing by name
+        self.assertEqual(
+            self.pipeline[0], self.pipeline['file_tree']
+        )
+
+        # Do not allow slicing
+        with self.assertRaisesRegex(
+                ValueError,
+                'Pipeline does not support slicing'):
+            self.pipeline[slice(0, 1, 1)]
+
+    def test_update_dry_run(self):
+
+        self.pipeline.dry_run = False
+        for command in self.pipeline:
+            self.assertFalse(command.dry_run)
+
+        new_command = Gromacs_genbox(dry_run=True)
+        self.pipeline.append(('new_command', new_command))
+        self.assertFalse(self.pipeline[-1].dry_run)
+
     def test_append(self):
 
         self.pipeline.append(('test_append', Gromacs_genbox()))
