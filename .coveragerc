@@ -4,7 +4,6 @@ source = force_gromacs
 omit = */tests/*
        */bench/*
        */scripts/*
-       *__init__.py
        api.py
 
 [report]
