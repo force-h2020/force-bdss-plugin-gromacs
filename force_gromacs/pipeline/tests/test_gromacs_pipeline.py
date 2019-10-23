@@ -27,10 +27,23 @@ class TestGromacsPipeline(TestCase):
 
     def test_pipeline_getitem(self):
 
-        self.assertEqual(type(self.pipeline[0]), GromacsFileTreeBuilder)
-        self.assertEqual(type(self.pipeline[1]), Gromacs_genbox)
-        self.assertEqual(type(self.pipeline[2]), Gromacs_genion)
-        self.assertEqual(type(self.pipeline[3]), GromacsTopologyWriter)
+        self.assertIsInstance(self.pipeline[0], GromacsFileTreeBuilder)
+        self.assertIsInstance(self.pipeline[1], Gromacs_genbox)
+        self.assertIsInstance(self.pipeline[2], Gromacs_genion)
+        self.assertIsInstance(self.pipeline[3], GromacsTopologyWriter)
+
+        self.assertIsInstance(
+            self.pipeline['file_tree'], GromacsFileTreeBuilder
+        )
+        self.assertIsInstance(
+            self.pipeline['genbox'], Gromacs_genbox
+        )
+        self.assertIsInstance(
+            self.pipeline['genion'], Gromacs_genion
+        )
+        self.assertIsInstance(
+            self.pipeline['top_file'], GromacsTopologyWriter
+        )
 
         self.assertEqual(4, len(self.pipeline))
 
@@ -51,12 +64,28 @@ class TestGromacsPipeline(TestCase):
             list(self.pipeline.named_steps.keys())
         )
 
+        self.assertIsInstance(
+            self.pipeline.named_steps['file_tree'], GromacsFileTreeBuilder
+        )
+        self.assertIsInstance(
+            self.pipeline.named_steps['genbox'], Gromacs_genbox
+        )
+        self.assertIsInstance(
+            self.pipeline.named_steps['genion'], Gromacs_genion
+        )
+        self.assertIsInstance(
+            self.pipeline.named_steps['top_file'], GromacsTopologyWriter
+        )
+
         new_command = Gromacs_genbox(dry_run=True)
         self.pipeline.append(('new_command', new_command))
         self.assertEqual(
             ['file_tree', 'genbox', 'genion', 'top_file',
              'new_command'],
             list(self.pipeline.named_steps.keys())
+        )
+        self.assertIsInstance(
+            self.pipeline.named_steps['new_command'], Gromacs_genbox
         )
 
     def test___getitem__(self):

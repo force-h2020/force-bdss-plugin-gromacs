@@ -12,6 +12,10 @@ class GromacsPipeline(BaseGromacsProcess):
     pipeline functionality that can sequentially apply a list of Gromacs
     commands using subprocess and retain the standard output/error."""
 
+    # --------------------
+    #  Regular Attributes
+    # --------------------
+
     #: List of tuples (name, BaseGromacsProcess) objects that are chained,
     #: in the order, in which they are chained.
     steps = List(Tuple(Unicode, BaseGromacsProcess))
@@ -19,7 +23,17 @@ class GromacsPipeline(BaseGromacsProcess):
     #: Output from the most recent Gromacs run
     run_output = Dict()
 
+    # --------------------
+    #      Properties
+    # --------------------
+
+    #: A dictionary representing `steps `with keys as the first element
+    #: and values as the second element in each tuple
     named_steps = Property(Dict, depends_on='steps[]')
+
+    # --------------------
+    #      Listeners
+    # --------------------
 
     def _get_named_steps(self):
         return dict(**dict(self.steps))
@@ -28,6 +42,10 @@ class GromacsPipeline(BaseGromacsProcess):
     def update_dry_run(self):
         for name, process in self.steps:
             process.dry_run = self.dry_run
+
+    # --------------------
+    #  Protected Methods
+    # --------------------
 
     def __len__(self):
         """
@@ -50,6 +68,10 @@ class GromacsPipeline(BaseGromacsProcess):
             return self.named_steps[ind]
         return command
 
+    # --------------------
+    #   Private Methods
+    # --------------------
+
     def _iter(self):
         """
         Generate (idx, (name, command)) tuples from self.steps
@@ -59,6 +81,10 @@ class GromacsPipeline(BaseGromacsProcess):
 
         for idx, (name, command) in generator:
             yield idx, name, command
+
+    # --------------------
+    #    Public Methods
+    # --------------------
 
     def append(self, step):
         """Appends step to `self.steps` attribute"""
