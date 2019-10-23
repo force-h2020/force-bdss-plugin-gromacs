@@ -1,11 +1,14 @@
-from traits.api import HasTraits, Bool, Int, Bytes
+from traits.api import HasTraits, Bool, Int, Bytes, provides
+
+from .i_base_process import IBaseProcess
 
 
+@provides(IBaseProcess)
 class BaseGromacsProcess(HasTraits):
     """Base class for objects that can generate and call Gromacs
-    commands, typically via the subprocess library. Attributes
-    and methods to be implemented provide standard functionalities
-    for using subprocess."""
+    command line executables via the subprocess library.
+    Attributes and methods to be implemented provide standard
+    functionalities for using subprocess."""
 
     #: Whether or not to perform a 'dry run' i.e. build the Gromacs
     #: command but do not call subprocess to run it

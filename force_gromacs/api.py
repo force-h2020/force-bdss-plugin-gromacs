@@ -9,6 +9,7 @@ from .commands.gromacs_file_tree_builder import GromacsFileTreeBuilder # noqa
 
 from .core.base_gromacs_command import BaseGromacsCommand # noqa
 from .core.base_gromacs_process import BaseGromacsProcess # noqa
+from .core.i_base_process import IBaseProcess # noqa
 
 from .data_sources.fragment.fragment import Fragment # noqa
 from .data_sources.molecule.molecule import Molecule # noqa

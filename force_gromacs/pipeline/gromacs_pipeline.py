@@ -1,10 +1,13 @@
 from itertools import islice
 
 from traits.api import (
-    List, Tuple, Unicode, on_trait_change, Dict
+    HasTraits, List, Tuple, Unicode, on_trait_change, Dict,
+    provides
 )
 
-from force_gromacs.core.base_gromacs_process import BaseGromacsProcess
+from force_gromacs.core.base_gromacs_process import (
+    BaseGromacsProcess
+)
 
 
 class GromacsPipeline(BaseGromacsProcess):
@@ -12,7 +15,7 @@ class GromacsPipeline(BaseGromacsProcess):
     pipeline functionality that can sequentially apply a list of Gromacs
     commands using subprocess and retain the standard output/error."""
 
-    #: List of tuples (name, BaseGromacsProcess) objects that are chained,
+    #: List of tuples (name, IBaseProcess) objects that are chained,
     #: in the order, in which they are chained.
     steps = List(Tuple(Unicode, BaseGromacsProcess))
 
