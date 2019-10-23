@@ -1,13 +1,11 @@
 from itertools import islice
 
 from traits.api import (
-    HasTraits, List, Tuple, Unicode, on_trait_change, Dict,
-    provides
+    List, Tuple, Unicode, on_trait_change, Dict
 )
 
-from force_gromacs.core.base_gromacs_process import (
-    BaseGromacsProcess
-)
+from force_gromacs.core.base_gromacs_process import BaseGromacsProcess
+from force_gromacs.core.i_base_process import IBaseProcess
 
 
 class GromacsPipeline(BaseGromacsProcess):
@@ -17,7 +15,7 @@ class GromacsPipeline(BaseGromacsProcess):
 
     #: List of tuples (name, IBaseProcess) objects that are chained,
     #: in the order, in which they are chained.
-    steps = List(Tuple(Unicode, BaseGromacsProcess))
+    steps = List(Tuple(Unicode, IBaseProcess))
 
     #: Output from the most recent Gromacs run
     run_output = Dict()
