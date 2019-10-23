@@ -5,7 +5,7 @@ from traits.api import TraitError
 from force_gromacs.commands.gromacs_commands import (
     Gromacs_genbox, Gromacs_genion
 )
-from force_gromacs.commands.gromacs_file_tree_builder import (
+from force_gromacs.io.gromacs_file_tree_builder import (
     GromacsFileTreeBuilder
 )
 from force_gromacs.io.gromacs_topology_writer import (
