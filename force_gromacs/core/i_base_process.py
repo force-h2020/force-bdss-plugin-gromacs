@@ -1,4 +1,4 @@
-from traits.api import Interface, Bool, Int, Bytes
+from traits.api import Interface, Bool
 
 
 class IBaseProcess(Interface):
