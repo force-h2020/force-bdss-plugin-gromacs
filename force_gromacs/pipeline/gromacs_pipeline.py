@@ -1,7 +1,7 @@
 from itertools import islice
 
 from traits.api import (
-    List, Tuple, Unicode, on_trait_change, Dict
+    List, Tuple, Unicode, on_trait_change, Dict, Property
 )
 
 from force_gromacs.core.base_gromacs_process import BaseGromacsProcess
@@ -19,20 +19,15 @@ class GromacsPipeline(BaseGromacsProcess):
     #: Output from the most recent Gromacs run
     run_output = Dict()
 
+    named_steps = Property(Dict, depends_on='steps[]')
+
+    def _get_named_steps(self):
+        return dict(**dict(self.steps))
+
     @on_trait_change('dry_run,steps[]')
     def update_dry_run(self):
         for name, process in self.steps:
             process.dry_run = self.dry_run
-
-    def _iter(self):
-        """
-        Generate (idx, (name, command)) tuples from self.steps
-        """
-        stop = len(self.steps)
-        generator = enumerate(islice(self.steps, 0, stop))
-
-        for idx, (name, command) in generator:
-            yield idx, name, command
 
     def __len__(self):
         """
@@ -55,9 +50,15 @@ class GromacsPipeline(BaseGromacsProcess):
             return self.named_steps[ind]
         return command
 
-    @property
-    def named_steps(self):
-        return dict(**dict(self.steps))
+    def _iter(self):
+        """
+        Generate (idx, (name, command)) tuples from self.steps
+        """
+        stop = len(self.steps)
+        generator = enumerate(islice(self.steps, 0, stop))
+
+        for idx, (name, command) in generator:
+            yield idx, name, command
 
     def append(self, step):
         """Appends step to `self.steps` attribute"""
