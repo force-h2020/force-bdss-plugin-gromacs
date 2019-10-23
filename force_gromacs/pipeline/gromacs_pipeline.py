@@ -8,7 +8,7 @@ from force_gromacs.core.base_gromacs_process import BaseGromacsProcess
 
 
 class GromacsPipeline(BaseGromacsProcess):
-    """ A simple pipeline for Gromacs commands, based on scikit-learn
+    """A simple pipeline for Gromacs commands, based on scikit-learn
     pipeline functionality that can sequentially apply a list of Gromacs
     commands using subprocess and retain the standard output/error."""
 
@@ -27,7 +27,7 @@ class GromacsPipeline(BaseGromacsProcess):
     #      Properties
     # --------------------
 
-    #: A dictionary representing `steps `with keys as the first element
+    #: A dictionary representing `steps` with keys as the first element
     #: and values as the second element in each tuple
     named_steps = Property(Dict, depends_on='steps[]')
 
