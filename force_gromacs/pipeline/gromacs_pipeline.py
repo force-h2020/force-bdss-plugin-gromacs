@@ -1,5 +1,3 @@
-from itertools import islice
-
 from traits.api import (
     List, Tuple, Unicode, on_trait_change, Dict, Property
 )
@@ -32,14 +30,23 @@ class GromacsPipeline(BaseGromacsProcess):
     named_steps = Property(Dict, depends_on='steps[]')
 
     # --------------------
+    #      Defaults
+    # --------------------
+
+    def _run_output_default(self):
+        return {name: {} for name, process in self.steps}
+
+    # --------------------
     #      Listeners
     # --------------------
 
     def _get_named_steps(self):
-        return dict(**dict(self.steps))
+        return dict(self.steps)
 
     @on_trait_change('dry_run,steps[]')
     def update_dry_run(self):
+        """Syncs the dry_run attribute for each process in steps
+        to the state of self.dry_run"""
         for name, process in self.steps:
             process.dry_run = self.dry_run
 
@@ -62,25 +69,18 @@ class GromacsPipeline(BaseGromacsProcess):
         if isinstance(ind, slice):
             raise ValueError('Pipeline does not support slicing')
         try:
-            name, command = self.steps[ind]
+            name, process = self.steps[ind]
         except TypeError:
             # Not an int, try get step by name
             return self.named_steps[ind]
-        return command
+        return process
 
-    # --------------------
-    #   Private Methods
-    # --------------------
-
-    def _iter(self):
+    def __iter__(self):
         """
-        Generate (idx, (name, command)) tuples from self.steps
+        Generate (name, process) tuples from self.steps
         """
-        stop = len(self.steps)
-        generator = enumerate(islice(self.steps, 0, stop))
-
-        for idx, (name, command) in generator:
-            yield idx, name, command
+        for name, process in self.steps:
+            yield name, process
 
     # --------------------
     #    Public Methods
@@ -100,25 +100,19 @@ class GromacsPipeline(BaseGromacsProcess):
         """
         bash_script = ''
 
-        for (step_idx,
-             name,
-             command) in self._iter():
-
-            bash_script += command.bash_script() + '\n'
+        for name, process in self:
+            bash_script += process.bash_script() + '\n'
 
         return bash_script
 
     def run(self):
         """Runs all terminal commands for steps and stores output
         from subprocess in `_run_output` """
-        self.run_output = {name: {} for name, command in self.steps}
+        self.run_output = self._run_output_default()
 
-        for (step_idx,
-             name,
-             command) in self._iter():
-
-            returncode = command.run()
+        for name, process in self:
+            returncode = process.run()
 
             self.run_output[name]['returncode'] = returncode
-            self.run_output[name]['stderr'] = command.recall_stderr()
-            self.run_output[name]['stdout'] = command.recall_stdout()
+            self.run_output[name]['stderr'] = process.recall_stderr()
+            self.run_output[name]['stdout'] = process.recall_stdout()
