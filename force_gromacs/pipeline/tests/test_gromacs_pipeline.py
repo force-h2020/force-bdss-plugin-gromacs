@@ -83,16 +83,16 @@ class TestGromacsPipeline(TestCase):
     def test___getitem__(self):
 
         # Allow indexing by name
-        self.assertEqual(
+        self.assertIs(
             self.pipeline[0], self.pipeline['file_tree']
         )
-        self.assertEqual(
+        self.assertIs(
             self.pipeline[1], self.pipeline['genbox']
         )
-        self.assertEqual(
+        self.assertIs(
             self.pipeline[2], self.pipeline['genion']
         )
-        self.assertEqual(
+        self.assertIs(
             self.pipeline[3], self.pipeline['top_file']
         )
 
