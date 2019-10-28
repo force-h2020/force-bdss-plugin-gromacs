@@ -82,7 +82,7 @@ class TestGromacsPipeline(TestCase):
 
     def test___getitem__(self):
 
-        # Allow indexing by name
+        # Allow indexing by name, both should point to same object
         self.assertIs(
             self.pipeline[0], self.pipeline['file_tree']
         )
