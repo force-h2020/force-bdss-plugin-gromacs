@@ -1,7 +1,5 @@
 from unittest import TestCase
 
-from traits.api import TraitError
-
 from force_gromacs.commands.gromacs_commands import (
     Gromacs_genbox, Gromacs_genion
 )
@@ -10,9 +8,6 @@ from force_gromacs.io.gromacs_file_tree_builder import (
 )
 from force_gromacs.io.gromacs_topology_writer import (
     GromacsTopologyWriter
-)
-from force_gromacs.tests.dummy_classes import (
-    DummyCommand, DummyCommand_2, DummyCommand_3
 )
 from force_gromacs.tests.probe_classes import (
     ProbeGromacsPipeline
@@ -25,19 +20,29 @@ class TestGromacsPipeline(TestCase):
 
         self.pipeline = ProbeGromacsPipeline()
 
-    def test_pipeline_getitem(self):
+    def test__len__(self):
+        self.assertEqual(4, len(self.pipeline))
 
-        self.assertEqual(type(self.pipeline[0]), GromacsFileTreeBuilder)
-        self.assertEqual(type(self.pipeline[1]), Gromacs_genbox)
-        self.assertEqual(type(self.pipeline[2]), Gromacs_genion)
-        self.assertEqual(type(self.pipeline[3]), GromacsTopologyWriter)
+        new_command = Gromacs_genbox(dry_run=True)
+        self.pipeline.steps.append(('new_command', new_command))
+
+        self.assertEqual(5, len(self.pipeline))
+
+        self.pipeline.steps.pop(0)
 
         self.assertEqual(4, len(self.pipeline))
 
-        keys = [name for name, _ in self.pipeline.steps]
+    def test_steps(self):
+
+        self.assertEqual(4, len(self.pipeline.steps))
+        self.assertIsInstance(self.pipeline[0], GromacsFileTreeBuilder)
+        self.assertIsInstance(self.pipeline[1], Gromacs_genbox)
+        self.assertIsInstance(self.pipeline[2], Gromacs_genion)
+        self.assertIsInstance(self.pipeline[3], GromacsTopologyWriter)
 
         self.assertListEqual(
-            ['file_tree', 'genbox', 'genion', 'top_file'], keys
+            ['file_tree', 'genbox', 'genion', 'top_file'],
+            [name for name, _ in self.pipeline.steps]
         )
 
         for name, command in self.pipeline.steps:
@@ -45,10 +50,23 @@ class TestGromacsPipeline(TestCase):
 
     def test_named_steps(self):
 
-        self.assertIsInstance(self.pipeline.named_steps, dict)
+        self.assertEqual(4, len(self.pipeline.named_steps))
         self.assertEqual(
             ['file_tree', 'genbox', 'genion', 'top_file'],
             list(self.pipeline.named_steps.keys())
+        )
+
+        self.assertIsInstance(
+            self.pipeline.named_steps['file_tree'], GromacsFileTreeBuilder
+        )
+        self.assertIsInstance(
+            self.pipeline.named_steps['genbox'], Gromacs_genbox
+        )
+        self.assertIsInstance(
+            self.pipeline.named_steps['genion'], Gromacs_genion
+        )
+        self.assertIsInstance(
+            self.pipeline.named_steps['top_file'], GromacsTopologyWriter
         )
 
         new_command = Gromacs_genbox(dry_run=True)
@@ -58,12 +76,24 @@ class TestGromacsPipeline(TestCase):
              'new_command'],
             list(self.pipeline.named_steps.keys())
         )
+        self.assertIsInstance(
+            self.pipeline.named_steps['new_command'], Gromacs_genbox
+        )
 
     def test___getitem__(self):
 
-        # Allow indexing by name
-        self.assertEqual(
+        # Allow indexing by name, both should point to same object
+        self.assertIs(
             self.pipeline[0], self.pipeline['file_tree']
+        )
+        self.assertIs(
+            self.pipeline[1], self.pipeline['genbox']
+        )
+        self.assertIs(
+            self.pipeline[2], self.pipeline['genion']
+        )
+        self.assertIs(
+            self.pipeline[3], self.pipeline['top_file']
         )
 
         # Do not allow slicing
@@ -72,10 +102,17 @@ class TestGromacsPipeline(TestCase):
                 'Pipeline does not support slicing'):
             self.pipeline[slice(0, 1, 1)]
 
+    def test___iter__(self):
+
+        names = ['file_tree', 'genbox', 'genion', 'top_file']
+        for index, (name, process) in enumerate(self.pipeline):
+            self.assertEqual(self.pipeline[index], process)
+            self.assertEqual(names[index], name)
+
     def test_update_dry_run(self):
 
         self.pipeline.dry_run = False
-        for command in self.pipeline:
+        for _, command in self.pipeline:
             self.assertFalse(command.dry_run)
 
         new_command = Gromacs_genbox(dry_run=True)
@@ -96,43 +133,7 @@ class TestGromacsPipeline(TestCase):
             keys
         )
 
-    def test__validate_steps(self):
-
-        dummy_command = DummyCommand()
-
-        with self.assertRaises(TraitError):
-            self.pipeline.append(
-                ('not_a_command', dummy_command)
-            )
-        self.assertEqual(4, len(self.pipeline))
-
-        dummy_command.run = True
-        dummy_command.bash_script = True
-        dummy_command.dry_run = True
-
-        with self.assertRaises(TraitError):
-            self.pipeline.append(
-                ('not_a_command', dummy_command)
-            )
-        self.assertEqual(4, len(self.pipeline))
-
-        dummy_command = DummyCommand_2()
-
-        with self.assertRaises(TraitError):
-            self.pipeline.append(
-                ('not_a_command', dummy_command)
-            )
-        self.assertEqual(4, len(self.pipeline))
-
-        dummy_command = DummyCommand_3()
-
-        with self.assertRaises(TraitError):
-            self.pipeline.append(
-                ('not_a_command', dummy_command)
-            )
-        self.assertEqual(4, len(self.pipeline))
-
-    def test_pipeline_build_command(self):
+    def test_pipeline_bash_script(self):
 
         commands = self.pipeline.bash_script().split('\n')
 
@@ -175,20 +176,10 @@ class TestGromacsPipeline(TestCase):
     def test_pipeline_run(self):
 
         self.pipeline.run()
-
+        names = ['file_tree', 'genbox', 'genion', 'top_file']
         output = self.pipeline.run_output
 
-        self.assertEqual(0, output['file_tree']['returncode'])
-        self.assertEqual(0, output['genbox']['returncode'])
-        self.assertEqual(0, output['genion']['returncode'])
-        self.assertEqual(0, output['top_file']['returncode'])
-
-        self.assertEqual('', output['file_tree']['stdout'])
-        self.assertEqual('', output['genbox']['stdout'])
-        self.assertEqual('', output['genion']['stdout'])
-        self.assertEqual('', output['top_file']['stdout'])
-
-        self.assertEqual('', output['file_tree']['stderr'])
-        self.assertEqual('', output['genbox']['stderr'])
-        self.assertEqual('', output['genion']['stderr'])
-        self.assertEqual('', output['top_file']['stderr'])
+        for name in names:
+            self.assertEqual(0, output[name]['returncode'])
+            self.assertEqual('', output[name]['stdout'])
+            self.assertEqual('', output[name]['stderr'])
