@@ -10,23 +10,23 @@ FILE_READER_OPEN_PATH = (
     "force_gromacs.io.base_file_reader.open"
 )
 
-coord_file = """Some header comment
+trajectory = """Some header comment
               6
-              1PS     SO    1   0.546   0.326   0.070
-              1PS     C1    2   0.285   0.135   0.310
-              2SS     SO    3   0.212   0.178   0.770
-              2SS     C2    4   0.166   0.422   1.173
-              3PI     NA    5   1.638   0.315   1.042
-              4NI     CL    6   1.680   0.707   1.028
+              1PS1    PS11  1   0.546   0.326   0.070
+              1PS1    PS12  2   0.285   0.135   0.310
+              2SS     SS1   3   0.212   0.178   0.770
+              2SS     SS2   4   0.166   0.422   1.173
+              3PI     PI    5   1.638   0.315   1.042
+              4NI     NI    6   1.680   0.707   1.028
                 4.36258   4.36258   4.36258
               Some header comment
               6
-              1PS     SO    1   0.546   0.326   0.070
-              1PS     C1    2   0.285   0.135   0.310
-              2SS     SO    3   0.212   0.178   0.770
-              2SS     C2    4   0.166   0.422   1.173
-              3PI     NA    5   1.638   0.315   1.042
-              4NI     CL    6   1.680   0.707   1.028
+              1PS1    PS11  1   0.546   0.326   0.070
+              1PS1    PS12  2   0.285   0.135   0.310
+              2SS     SS1   3   0.212   0.178   0.770
+              2SS     SS2   4   0.166   0.422   1.173
+              3PI     PI    5   1.638   0.315   1.042
+              4NI     NI    6   1.680   0.707   1.028
                 4.36258   4.36258   4.36258"""
 
 
@@ -50,7 +50,7 @@ class TestGromacsCoordinateReader(TestCase):
 
     def test_basic_function(self):
 
-        mock_open = mock.mock_open(read_data=coord_file)
+        mock_open = mock.mock_open(read_data=trajectory)
 
         with mock.patch(FILE_READER_OPEN_PATH, mock_open,
                         create=True):
@@ -88,7 +88,7 @@ class TestGromacsCoordinateReader(TestCase):
         with mock.patch(FILE_READER_OPEN_PATH, mock_open,
                         create=True):
 
-            data = self.reader.read('test_coord.gro', symbols=['PS', 'SS'])
+            data = self.reader.read('test_coord.gro', symbols=['PS1', 'SS'])
 
             self.assertEqual(4, len(data['mol_ref']))
             self.assertEqual(4, len(data['atom_ref']))
@@ -96,7 +96,7 @@ class TestGromacsCoordinateReader(TestCase):
             self.assertEqual((2, 3,), data['dim'].shape)
 
     def test__get_data(self):
-        file_lines = coord_file.split('\n')
+        file_lines = trajectory.split('\n')
 
         mol_ref, atom_ref, coord, dim = self.reader._get_data(file_lines)
 
@@ -106,11 +106,11 @@ class TestGromacsCoordinateReader(TestCase):
         self.assertEqual((2, 3,), dim.shape)
 
         self.assertListEqual(
-            ['1PS', '1PS', '2SS', '2SS', '3PI', '4NI'],
+            ['1PS1', '1PS1', '2SS', '2SS', '3PI', '4NI'],
             mol_ref
         )
         self.assertListEqual(
-            ['SO', 'C1', 'SO', 'C2', 'NA', 'CL'],
+            ['PS11', 'PS12', 'SS1', 'SS2', 'PI', 'NI'],
             atom_ref
         )
 
@@ -124,21 +124,22 @@ class TestGromacsCoordinateReader(TestCase):
         self.assertEqual((1, 6, 3), coord.shape)
         self.assertEqual((1, 3,), dim.shape)
 
-    def test__remove_digits(self):
-        string = '4ght6aos57'
-        self.assertEqual('ghtaos', self.reader._remove_digits(string))
+    def test__remove_index(self):
+        string = '424ght6aos57'
+        self.assertEqual('ght6aos57',
+                         self.reader._remove_index(string))
 
     def test_extract_molecules(self):
 
-        data = {'mol_ref': ['1PS', '1PS', '2SS', '2SS', '3PI', '4NI']}
+        data = {'mol_ref': ['1PS1', '1PS1', '2SS', '2SS', '3PI', '4NI']}
 
-        indices = self.reader.extract_molecules(data, 'PS')
+        indices = self.reader.extract_molecules(data, 'PS1')
         self.assertListEqual([0, 1], indices)
 
-        indices = self.reader.extract_molecules(data, ['PS'])
+        indices = self.reader.extract_molecules(data, ['PS1'])
         self.assertListEqual([0, 1], indices)
 
-        indices = self.reader.extract_molecules(data, ['PS', 'SS'])
+        indices = self.reader.extract_molecules(data, ['PS1', 'SS'])
         self.assertListEqual([0, 1, 2, 3], indices)
 
         indices = self.reader.extract_molecules(data, ['S'])
