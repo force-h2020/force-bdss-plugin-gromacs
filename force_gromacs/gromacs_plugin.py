@@ -8,9 +8,6 @@ from force_gromacs.data_sources.molecule.molecule_factory import (
 )
 from force_gromacs.notification_listeners.hpc_writer\
     .hpc_writer_factory import HPCWriterFactory
-from force_gromacs.data_sources.simulation.simulation_factory import (
-    SimulationFactory
-)
 
 PLUGIN_VERSION = 0
 
@@ -39,6 +36,5 @@ class GromacsPlugin(BaseExtensionPlugin):
         return [
             FragmentFactory,
             MoleculeFactory,
-            SimulationFactory,
             HPCWriterFactory
         ]

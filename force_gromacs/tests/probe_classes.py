@@ -13,8 +13,8 @@ from force_gromacs.io.gromacs_topology_writer import (
 from force_gromacs.pipeline.gromacs_pipeline import (
     GromacsPipeline
 )
-from force_gromacs.pipeline.gromacs_simulation_builder import (
-    GromacsSimulationBuilder
+from force_gromacs.pipeline.base_gromacs_simulation_builder import (
+    BaseGromacsSimulationBuilder
 )
 
 
@@ -133,7 +133,10 @@ class ProbeGromacsPipeline(GromacsPipeline):
         super(ProbeGromacsPipeline, self).__init__(steps=steps)
 
 
-class ProbeSimulationBuilder(GromacsSimulationBuilder):
+class ProbeSimulationBuilder(BaseGromacsSimulationBuilder):
 
     def build_pipeline(self):
         return ProbeGromacsPipeline()
+
+    def get_results_path(self):
+        return '/path/to/trajectory.gro'

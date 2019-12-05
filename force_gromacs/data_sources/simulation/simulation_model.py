@@ -25,6 +25,9 @@ class SimulationDataSourceModel(BaseDataSourceModel):
     #: Total number of fragments in simulation
     size = Int(1000)
 
+    #: Whether or not to overwrite existing simulation data
+    ow_data = Bool(False)
+
     #: Whether or not to perform a dry run of Gromacs
     dry_run = Bool(True)
 
@@ -65,6 +68,7 @@ class SimulationDataSourceModel(BaseDataSourceModel):
         Item('martini_parameters'),
         Item('md_min_parameters'),
         Item('md_prod_parameters'),
+        Item("ow_data", label='Overwrite simulation data'),
         Item("dry_run")
     )
 

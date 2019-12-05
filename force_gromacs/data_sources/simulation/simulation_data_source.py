@@ -1,13 +1,13 @@
+import os
+
 from force_bdss.api import (
     BaseDataSource, DataValue, Slot, Instance
 )
 
 from force_gromacs.notification_listeners.driver_events import (
-    SimulationProgressEvent
-)
-from force_gromacs.pipeline.gromacs_simulation_builder import (
-    GromacsSimulationBuilder
-)
+    SimulationProgressEvent)
+from force_gromacs.pipeline.i_simulation_builder import (
+    ISimulationBuilder)
 
 
 class SimulationDataSource(BaseDataSource):
@@ -16,7 +16,16 @@ class SimulationDataSource(BaseDataSource):
     locally, or export the bash script in order to run on a remote
     cluster."""
 
-    simulation_builder = Instance(GromacsSimulationBuilder)
+    simulation_builder = Instance(ISimulationBuilder)
+
+    def _check_perform_simulation(self, model, results_path):
+        """Check to see whether a simulation should be performed.
+        If a results file already exists, then only perform a new
+        simulation if required by the model"""
+
+        if os.path.exists(results_path):
+            return model.ow_data
+        return True
 
     def notify_bash_script(self, model, bash_script):
         """Notify the construction of a bash script for a Gromacs
@@ -74,40 +83,62 @@ class SimulationDataSource(BaseDataSource):
 
     def create_simulation_builder(self, model, parameters):
         """Method that returns a `GromacsSimulationBuilder` object capable
-        of generating a `GromacsPipeline`"""
+        of generating a `GromacsPipeline`
+
+        Parameters
+        ----------
+        model: SimulationDataSourceModel
+            The BaseDataSourceModel associated with this class
+        parameters: List(DataValue)
+            a list of DataValue objects containing the information needed
+            for the execution of the DataSource.
+
+        Returns
+        -------
+        simulation_builder: BaseGromacsSimulationBuilder
+            An object capable of generating a GromacsPipeline that calls
+            a Gromacs simulation
+        """
         raise NotImplementedError(
             "Class needs to implement create_simulation_builder`"
-            "method that returns a GromacsSimulationBuilder instance"
+            "method that returns a BaseGromacsSimulationBuilder instance"
         )
 
     def run(self, model, parameters):
         """Takes in all parameters and molecules required to
         perform a Gromacs simulation"""
 
-        # Generate a `GromacsSimulationBuilder` object that will pre-process
-        # all user input and produce a `GromacsPipeline` object in order
-        # to run a simulation locally or export a bash script for submission
-        # to a cluster
+        # Generate a `BaseGromacsSimulationBuilder` object that will
+        # pre-process all user input and produce a `GromacsPipeline`
+        # object in order to run a simulation locally or export a bash
+        # script for submission to a cluster
         self.simulation_builder = self.create_simulation_builder(
             model, parameters
         )
 
-        # Create a `GromacsPipeline` with all commands needed to run the
-        # simulation simulation
-        pipeline = self.simulation_builder.build_pipeline()
+        # Output the path containing the results trajectory file
+        results_path = self.simulation_builder.get_results_path()
 
-        # Create bash script of Gromacs commands for remote submission
-        bash_script = self.create_bash_script(
-            pipeline, name=self.simulation_builder.name
-        )
+        if self._check_perform_simulation(model, results_path):
 
-        # Export the bash script to any HPCWriterNotificationListener
-        self.notify_bash_script(model, bash_script)
+            # Create a `GromacsPipeline` with all commands needed to run the
+            # simulation simulation
+            pipeline = self.simulation_builder.build_pipeline()
 
-        # Run simulation locally
-        pipeline.run()
+            # Create bash script of Gromacs commands for remote submission
+            bash_script = self.create_bash_script(
+                pipeline, name=self.simulation_builder.name
+            )
 
-        return []
+            # Export the bash script to any HPCWriterNotificationListener
+            self.notify_bash_script(model, bash_script)
+
+            # Run simulation locally
+            pipeline.run()
+
+        return [
+            DataValue(type="TRAJECTORY", value=results_path)
+        ]
 
     def slots(self, model):
 
@@ -117,8 +148,12 @@ class SimulationDataSource(BaseDataSource):
                 for index in range(model.n_molecule_types)
             )
 
+        output_slots = (
+            Slot(description="Gromacs trajectory path",
+                 type="TRAJECTORY"),
+        )
+
         return (
             input_slots,
-            (
-            ),
+            output_slots
         )
