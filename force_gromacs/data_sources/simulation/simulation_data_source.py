@@ -20,6 +20,13 @@ class SimulationDataSource(BaseDataSource):
 
     simulation_builder = Instance(GromacsSimulationBuilder)
 
+    def _check_perform_simulation(self, model, results_path):
+        """Check to see whether a simulation should be performed.
+        If a results file already exists, then only perform a new
+        simulation if required by the model"""
+
+        return not os.path.exists(results_path) or model.ow_data
+
     def notify_bash_script(self, model, bash_script):
         """Notify the construction of a bash script for a Gromacs
         simulation. Assigns an `ExperimentProgressEvent` to the
@@ -97,9 +104,7 @@ class SimulationDataSource(BaseDataSource):
         # Output the path containing the results trajectory file
         results_path = self.simulation_builder.get_results_path()
 
-        # If results file already exists, only perform a new simulation if
-        # required
-        if not os.path.exists(results_path) or model.ow_data:
+        if self._check_perform_simulation(model, results_path):
 
             # Create a `GromacsPipeline` with all commands needed to run the
             # simulation simulation

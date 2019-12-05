@@ -68,6 +68,7 @@ class SimulationDataSourceModel(BaseDataSourceModel):
         Item('martini_parameters'),
         Item('md_min_parameters'),
         Item('md_prod_parameters'),
+        Item("ow_data"),
         Item("dry_run")
     )
 
