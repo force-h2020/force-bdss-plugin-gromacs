@@ -7,8 +7,8 @@ from force_bdss.api import (
 from force_gromacs.notification_listeners.driver_events import (
     SimulationProgressEvent
 )
-from force_gromacs.pipeline.gromacs_simulation_builder import (
-    GromacsSimulationBuilder
+from force_gromacs.pipeline.base_gromacs_simulation_builder import (
+    BaseGromacsSimulationBuilder
 )
 
 
@@ -18,7 +18,7 @@ class SimulationDataSource(BaseDataSource):
     locally, or export the bash script in order to run on a remote
     cluster."""
 
-    simulation_builder = Instance(GromacsSimulationBuilder)
+    simulation_builder = Instance(BaseGromacsSimulationBuilder)
 
     def _check_perform_simulation(self, model, results_path):
         """Check to see whether a simulation should be performed.
@@ -85,17 +85,32 @@ class SimulationDataSource(BaseDataSource):
 
     def create_simulation_builder(self, model, parameters):
         """Method that returns a `GromacsSimulationBuilder` object capable
-        of generating a `GromacsPipeline`"""
+        of generating a `GromacsPipeline`
+
+        Parameters
+        ----------
+        model: SimulationDataSourceModel
+            The BaseDataSourceModel associated with this class
+        parameters: List(DataValue)
+            a list of DataValue objects containing the information needed
+            for the execution of the DataSource.
+
+        Returns
+        -------
+        simulation_builder: BaseGromacsSimulationBuilder
+            An object capable of generating a GromacsPipeline that calls
+            a Gromacs simulation
+        """
         raise NotImplementedError(
             "Class needs to implement create_simulation_builder`"
-            "method that returns a GromacsSimulationBuilder instance"
+            "method that returns a BaseGromacsSimulationBuilder instance"
         )
 
     def run(self, model, parameters):
         """Takes in all parameters and molecules required to
         perform a Gromacs simulation"""
 
-        # Generate a `GromacsSimulationBuilder` object that will pre-process
+        # Generate a `BaseGromacsSimulationBuilder` object that will pre-process
         # all user input and produce a `GromacsPipeline` object in order
         # to run a simulation locally or export a bash script for submission
         # to a cluster

@@ -20,7 +20,7 @@ from .io.gromacs_topology_writer import GromacsTopologyWriter # noqa
 from .notification_listeners.driver_events import SimulationProgressEvent # noqa
 
 from .pipeline.gromacs_pipeline import GromacsPipeline # noqa
-from .pipeline.gromacs_simulation_builder import GromacsSimulationBuilder # noqa
+from .pipeline.base_gromacs_simulation_builder import BaseGromacsSimulationBuilder # noqa
 
 from .tools.distances import distance_matrix, batch_distance_matrix # noqa
 from .tools.positions import molecular_positions # noqa

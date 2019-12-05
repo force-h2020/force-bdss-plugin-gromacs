@@ -1,7 +1,7 @@
 from unittest import TestCase
 
-from force_gromacs.pipeline.gromacs_simulation_builder import (
-    GromacsSimulationBuilder
+from force_gromacs.pipeline.base_gromacs_simulation_builder import (
+    BaseGromacsSimulationBuilder
 )
 from force_gromacs.pipeline.gromacs_pipeline import GromacsPipeline
 
@@ -14,7 +14,7 @@ class TestGromacsSimulationBuilder(TestCase):
         size = 100
         martini_parameters = 'test_martini.itp'
 
-        self.sim_builder = GromacsSimulationBuilder(
+        self.sim_builder = BaseGromacsSimulationBuilder(
             name=name,
             size=size,
             martini_parameters=martini_parameters
