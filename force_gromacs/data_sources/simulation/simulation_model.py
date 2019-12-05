@@ -25,6 +25,9 @@ class SimulationDataSourceModel(BaseDataSourceModel):
     #: Total number of fragments in simulation
     size = Int(1000)
 
+    #: Whether or not to overwrite existing simulation data
+    ow_data = Bool(False)
+
     #: Whether or not to perform a dry run of Gromacs
     dry_run = Bool(True)
 
