@@ -14,18 +14,17 @@ class ISimulationBuilder(Interface):
     #: Particle size of simulation
     size = Int()
 
-    #: Location to create simulation file tree in. (By default,
-    #: the current working directory)
-    directory = Unicode('.')
+    #: Location to create simulation file tree in.
+    directory = Unicode()
 
     #: Whether or not to perform an MPI parallel run
-    mpi_run = Bool(False)
+    mpi_run = Bool()
 
     #: Number of processors required for MPI run
-    n_proc = Int(1)
+    n_proc = Int()
 
     #: Whether or not to perform a dry run
-    dry_run = Bool(True)
+    dry_run = Bool()
 
     def build_pipeline(self):
         """Method to be implemented that returns a `GromacsPipeline`
