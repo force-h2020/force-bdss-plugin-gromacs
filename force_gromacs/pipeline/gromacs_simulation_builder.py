@@ -37,9 +37,6 @@ class GromacsSimulationBuilder(HasTraits):
     #: Number of processors required for MPI run
     n_proc = Int(1)
 
-    #: Whether or not to overwrite existing simulation data
-    ow_data = Bool(False)
-
     #: Whether or not to perform a dry run
     dry_run = Bool(True)
 
