@@ -18,9 +18,6 @@ class ISimulationBuilder(Interface):
     #: the current working directory)
     directory = Unicode('.')
 
-    #: Location of MARTINI bead parameter file
-    martini_parameters = Unicode()
-
     #: Whether or not to perform an MPI parallel run
     mpi_run = Bool(False)
 
