@@ -39,6 +39,5 @@ class GromacsPlugin(BaseExtensionPlugin):
         return [
             FragmentFactory,
             MoleculeFactory,
-            SimulationFactory,
             HPCWriterFactory
         ]
