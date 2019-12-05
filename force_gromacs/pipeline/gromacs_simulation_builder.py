@@ -1,12 +1,15 @@
 from traits.api import (
-    HasTraits, Unicode, Int, Bool, Instance, Dict
+    HasTraits, Unicode, Int, Bool, Instance, Dict, provides
 )
 
 from force_gromacs.pipeline.gromacs_pipeline import (
     GromacsPipeline
 )
 
+from .i_simulation_builder import ISimulationBuilder
 
+
+@provides(ISimulationBuilder)
 class GromacsSimulationBuilder(HasTraits):
     """Class that creates a GromacsPipeline object for a specific
     simulation"""
@@ -33,6 +36,9 @@ class GromacsSimulationBuilder(HasTraits):
 
     #: Number of processors required for MPI run
     n_proc = Int(1)
+
+    #: Whether or not to overwrite existing simulation data
+    ow_data = Bool(False)
 
     #: Whether or not to perform a dry run
     dry_run = Bool(True)
@@ -135,4 +141,12 @@ class GromacsSimulationBuilder(HasTraits):
         raise NotImplementedError(
             'Subclass does not contain an implementation of '
             '`build_pipeline` method'
+        )
+
+    def get_results_path(self):
+        """Obtain the results trajectory file path for further
+        post-processing"""
+        raise NotImplementedError(
+            'Subclass does not contain an implementation of '
+            '`get_results_path` method'
         )

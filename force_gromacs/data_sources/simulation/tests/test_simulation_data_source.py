@@ -52,7 +52,8 @@ class TestSimulationDataSource(TestCase, UnittestTools):
             mocksim.return_value = ProbeSimulationBuilder()
             res = self.data_source.run(self.model, data_values)
 
-        self.assertEqual(0, len(res))
+        self.assertEqual(1, len(res))
+        self.assertEqual('/path/to/trajectory.gro', res[0].value)
 
     def test_slots(self):
 

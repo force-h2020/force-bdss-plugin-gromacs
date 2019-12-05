@@ -112,7 +112,10 @@ class TestGromacsSimulationBuilder(TestCase):
              'At': 10}, self.sim_builder.topology_data['fragment_dict']
         )
 
-    def test_build_pipeline(self):
+    def test_not_implemented_methods(self):
 
         with self.assertRaises(NotImplementedError):
             self.sim_builder.build_pipeline()
+
+        with self.assertRaises(NotImplementedError):
+            self.sim_builder.get_results_path()

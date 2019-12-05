@@ -137,3 +137,6 @@ class ProbeSimulationBuilder(GromacsSimulationBuilder):
 
     def build_pipeline(self):
         return ProbeGromacsPipeline()
+
+    def get_results_path(self):
+        return '/path/to/trajectory.gro'

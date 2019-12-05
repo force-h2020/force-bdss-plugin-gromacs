@@ -1,3 +1,5 @@
+import os
+
 from force_bdss.api import (
     BaseDataSource, DataValue, Slot, Instance
 )
@@ -92,22 +94,31 @@ class SimulationDataSource(BaseDataSource):
             model, parameters
         )
 
-        # Create a `GromacsPipeline` with all commands needed to run the
-        # simulation simulation
-        pipeline = self.simulation_builder.build_pipeline()
+        # Output the path containing the results trajectory file
+        results_path = self.simulation_builder.get_results_path()
 
-        # Create bash script of Gromacs commands for remote submission
-        bash_script = self.create_bash_script(
-            pipeline, name=self.simulation_builder.name
-        )
+        # If results file already exists, only perform a new simulation if
+        # required
+        if not os.path.exists(results_path) or model.ow_data:
 
-        # Export the bash script to any HPCWriterNotificationListener
-        self.notify_bash_script(model, bash_script)
+            # Create a `GromacsPipeline` with all commands needed to run the
+            # simulation simulation
+            pipeline = self.simulation_builder.build_pipeline()
 
-        # Run simulation locally
-        pipeline.run()
+            # Create bash script of Gromacs commands for remote submission
+            bash_script = self.create_bash_script(
+                pipeline, name=self.simulation_builder.name
+            )
 
-        return []
+            # Export the bash script to any HPCWriterNotificationListener
+            self.notify_bash_script(model, bash_script)
+
+            # Run simulation locally
+            pipeline.run()
+
+        return [
+            DataValue(type="TRAJECTORY", value=results_path)
+        ]
 
     def slots(self, model):
 
@@ -117,8 +128,12 @@ class SimulationDataSource(BaseDataSource):
                 for index in range(model.n_molecule_types)
             )
 
+        output_slots = (
+            Slot(description="Gromacs trajectory path",
+                 type="TRAJECTORY"),
+        )
+
         return (
             input_slots,
-            (
-            ),
+            output_slots
         )
