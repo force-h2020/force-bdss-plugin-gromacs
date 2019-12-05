@@ -25,7 +25,9 @@ class SimulationDataSource(BaseDataSource):
         If a results file already exists, then only perform a new
         simulation if required by the model"""
 
-        return not os.path.exists(results_path) or model.ow_data
+        if os.path.exists(results_path):
+            return model.ow_data
+        return True
 
     def notify_bash_script(self, model, bash_script):
         """Notify the construction of a bash script for a Gromacs

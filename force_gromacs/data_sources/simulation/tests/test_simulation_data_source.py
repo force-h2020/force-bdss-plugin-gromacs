@@ -70,23 +70,26 @@ class TestSimulationDataSource(TestCase, UnittestTools):
     def test__check_perform_simulation(self):
 
         with mock.patch('os.path.exists') as mock_exists:
-            self.model.ow_data = True
-            mock_exists.return_value = True
-            self.assertTrue(
-                self.data_source._check_perform_simulation(
-                    self.model, '/some/path'))
-
+            # If data doesnt exist, always perform simulation
             mock_exists.return_value = False
-            self.assertTrue(
-                self.data_source._check_perform_simulation(
-                    self.model, '/some/path'))
-
             self.model.ow_data = False
             self.assertTrue(
                 self.data_source._check_perform_simulation(
                     self.model, '/some/path'))
 
+            self.model.ow_data = True
+            self.assertTrue(
+                self.data_source._check_perform_simulation(
+                    self.model, '/some/path'))
+
+            # If data exists, only perform simulation when required
+            # by model
             mock_exists.return_value = True
+            self.assertTrue(
+                self.data_source._check_perform_simulation(
+                    self.model, '/some/path'))
+
+            self.model.ow_data = False
             self.assertFalse(
                 self.data_source._check_perform_simulation(
                     self.model, '/some/path'))
