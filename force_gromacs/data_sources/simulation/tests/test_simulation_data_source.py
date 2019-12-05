@@ -10,6 +10,12 @@ from force_gromacs.tests.probe_classes import (
 from force_gromacs.gromacs_plugin import GromacsPlugin
 
 
+SIMULATION_DATASOURCE_PATH = ('force_gromacs.data_sources.simulation'
+                              '.simulation_data_source.SimulationDataSource')
+SIMULATION_BUILDER_PATH = (f"{SIMULATION_DATASOURCE_PATH}"
+                           '.create_simulation_builder')
+
+
 class TestSimulationDataSource(TestCase, UnittestTools):
 
     def setUp(self):
@@ -46,14 +52,44 @@ class TestSimulationDataSource(TestCase, UnittestTools):
             for slot, value in zip(in_slots, self.input_values)
         ]
 
-        with mock.patch('force_gromacs.data_sources.simulation'
-                        '.simulation_data_source.SimulationDataSource'
-                        '.create_simulation_builder') as mocksim:
-            mocksim.return_value = ProbeSimulationBuilder()
-            res = self.data_source.run(self.model, data_values)
+        with mock.patch(SIMULATION_BUILDER_PATH) as mock_sim:
+            mock_sim.return_value = ProbeSimulationBuilder()
+            with mock.patch('os.path.exists') as mock_exists:
+                mock_exists.return_value = True
+                with self.assertTraitChanges(
+                        self.model, 'driver_event', count=0):
+                    self.data_source.run(self.model, data_values)
+                self.model.ow_data = True
+                with self.assertTraitChanges(
+                        self.model, 'driver_event', count=1):
+                    res = self.data_source.run(self.model, data_values)
 
         self.assertEqual(1, len(res))
         self.assertEqual('/path/to/trajectory.gro', res[0].value)
+
+    def test__check_perform_simulation(self):
+
+        with mock.patch('os.path.exists') as mock_exists:
+            self.model.ow_data = True
+            mock_exists.return_value = True
+            self.assertTrue(
+                self.data_source._check_perform_simulation(
+                    self.model, '/some/path'))
+
+            mock_exists.return_value = False
+            self.assertTrue(
+                self.data_source._check_perform_simulation(
+                    self.model, '/some/path'))
+
+            self.model.ow_data = False
+            self.assertTrue(
+                self.data_source._check_perform_simulation(
+                    self.model, '/some/path'))
+
+            mock_exists.return_value = True
+            self.assertFalse(
+                self.data_source._check_perform_simulation(
+                    self.model, '/some/path'))
 
     def test_slots(self):
 
