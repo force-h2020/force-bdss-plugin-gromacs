@@ -5,11 +5,9 @@ from force_bdss.api import (
 )
 
 from force_gromacs.notification_listeners.driver_events import (
-    SimulationProgressEvent
-)
-from force_gromacs.pipeline.base_gromacs_simulation_builder import (
-    BaseGromacsSimulationBuilder
-)
+    SimulationProgressEvent)
+from force_gromacs.pipeline.i_simulation_builder import (
+    ISimulationBuilder)
 
 
 class SimulationDataSource(BaseDataSource):
@@ -18,7 +16,7 @@ class SimulationDataSource(BaseDataSource):
     locally, or export the bash script in order to run on a remote
     cluster."""
 
-    simulation_builder = Instance(BaseGromacsSimulationBuilder)
+    simulation_builder = Instance(ISimulationBuilder)
 
     def _check_perform_simulation(self, model, results_path):
         """Check to see whether a simulation should be performed.
