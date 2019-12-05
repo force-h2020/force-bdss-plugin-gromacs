@@ -7,7 +7,9 @@ from force_bdss.api import DataValue
 from force_gromacs.tests.probe_classes import (
     ProbeSimulationBuilder, ProbeMolecule, ProbeGromacsPipeline
 )
-from force_gromacs.gromacs_plugin import GromacsPlugin
+from force_gromacs.data_sources.simulation.simulation_factory import (
+    SimulationFactory
+)
 
 
 SIMULATION_DATASOURCE_PATH = ('force_gromacs.data_sources.simulation'
@@ -19,8 +21,8 @@ SIMULATION_BUILDER_PATH = (f"{SIMULATION_DATASOURCE_PATH}"
 class TestSimulationDataSource(TestCase, UnittestTools):
 
     def setUp(self):
-        self.plugin = GromacsPlugin()
-        self.factory = self.plugin.data_source_factories[2]
+        self.factory = SimulationFactory({'id': '0',
+                                          'name': 'Simulation'})
         self.data_source = self.factory.create_data_source()
 
         #: Example input values

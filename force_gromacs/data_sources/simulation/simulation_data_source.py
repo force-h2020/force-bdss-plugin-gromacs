@@ -110,10 +110,10 @@ class SimulationDataSource(BaseDataSource):
         """Takes in all parameters and molecules required to
         perform a Gromacs simulation"""
 
-        # Generate a `BaseGromacsSimulationBuilder` object that will pre-process
-        # all user input and produce a `GromacsPipeline` object in order
-        # to run a simulation locally or export a bash script for submission
-        # to a cluster
+        # Generate a `BaseGromacsSimulationBuilder` object that will
+        # pre-process all user input and produce a `GromacsPipeline`
+        # object in order to run a simulation locally or export a bash
+        # script for submission to a cluster
         self.simulation_builder = self.create_simulation_builder(
             model, parameters
         )
