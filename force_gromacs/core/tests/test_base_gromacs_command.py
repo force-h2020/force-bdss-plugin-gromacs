@@ -138,13 +138,18 @@ class TestBaseGromacsCommand(TestCase):
         # Test unrecognised command
         self.gromacs_command.name = 'not_a_command'
         with self.assertRaisesRegex(
-                FileNotFoundError,
-                "No such file or directory: 'not_a_command'"):
+                RuntimeError,
+                "Gromacs executable 'not_a_command' was not found."
+                " Check Gromacs installation"):
             self.gromacs_command.run()
 
         # Test failed command
         self.gromacs_command.name = 'uniq Hello World'
-        with self.assertRaises(RuntimeError):
+        with self.assertRaisesRegex(
+                RuntimeError,
+                "Gromacs command 'uniq Hello World' did not run correctly."
+                " Error code: 1,"
+                " 'uniq: Hello: No such file or directory'"):
             self.gromacs_command.run()
 
         self.assertEqual(1, self.gromacs_command._returncode)
