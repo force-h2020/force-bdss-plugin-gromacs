@@ -158,27 +158,26 @@ class BaseGromacsCommand(BaseGromacsProcess):
             )
 
         else:
-            proc = self._build_process(command)
+            try:
+                proc = self._build_process(command)
+            except FileNotFoundError:
+                raise RuntimeError(
+                    f"Gromacs executable '{self.name}' was "
+                    "not found. Check Gromacs installation")
+
             self._stdout, self._stderr = proc.communicate()
             self._returncode = proc.returncode
 
-            try:
-                assert self._returncode == 0
+            if self._returncode != 0:
 
-            except AssertionError as error:
-                msg = f"Gromacs ('{command}') did not run correctly. \n"
-                msg += f"Error code: {self._returncode} \n"
-
-                if self._returncode == 127:
-                    msg += (f" executable '{self.name}' was "
-                            "not found.")
+                msg = (
+                    f"Gromacs command '{command}' did not run correctly. "
+                    f"Error code: {self._returncode}")
 
                 if self._stderr:
                     msg += (
-                        f"stderr: \'"
-                        f"{self._stderr.decode('unicode_escape')}\n\' "
-                    )
+                        f", '{self._stderr.decode('unicode_escape').strip()}'")
 
-                raise RuntimeError(msg) from error
+                raise RuntimeError(msg)
 
         return self._returncode
