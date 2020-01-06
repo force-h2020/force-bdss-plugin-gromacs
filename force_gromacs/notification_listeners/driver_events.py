@@ -1,7 +1,6 @@
-from traits.api import Instance
+from traits.api import Unicode
 
-from force_bdss.api import BaseDriverEvent, DataValue
-from force_bdss.io.workflow_writer import pop_dunder_recursive
+from force_bdss.api import BaseDriverEvent
 
 
 class SimulationProgressEvent(BaseDriverEvent):
@@ -9,9 +8,4 @@ class SimulationProgressEvent(BaseDriverEvent):
     of a bash script to be passed into a HPCWriter.
     """
     #: The bash script for a Gromacs Experiment
-    bash_script = Instance(DataValue)
-
-    def __getstate__(self):
-        d = pop_dunder_recursive(super().__getstate__())
-        d["bash_script"] = d["bash_script"].__getstate__()
-        return d
+    bash_script = Unicode()

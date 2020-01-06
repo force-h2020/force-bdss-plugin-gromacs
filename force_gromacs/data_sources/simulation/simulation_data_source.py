@@ -45,9 +45,7 @@ class SimulationDataSource(BaseDataSource):
         """
 
         model.driver_event = SimulationProgressEvent(
-            bash_script=DataValue(
-                type="SCRIPT", value=bash_script
-            )
+            bash_script=bash_script
         )
 
     def create_bash_script(self, pipeline, name=None):
