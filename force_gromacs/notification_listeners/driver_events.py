@@ -1,4 +1,4 @@
-from traits.api import Instance, Unicode
+from traits.api import Unicode
 
 from force_bdss.api import BaseDriverEvent
 
@@ -8,4 +8,4 @@ class SimulationProgressEvent(BaseDriverEvent):
     of a bash script to be passed into a HPCWriter.
     """
     #: The bash script for a Gromacs Experiment
-    bash_script = Instance(Unicode)
+    bash_script = Unicode()

@@ -88,9 +88,7 @@ class TestHPCWriter(TestCase, UnittestTools):
     def test_progress_event_handling(self):
 
         event = SimulationProgressEvent(
-            bash_script=DataValue(
-                type='SCRIPT', value=self.script
-            )
+            bash_script=self.script
         )
 
         self.assertEqual(
@@ -98,12 +96,9 @@ class TestHPCWriter(TestCase, UnittestTools):
             self.notification_listener.deliver(event)
         )
         self.assertEqual(
-            {'bash_script':
-                {'accuracy': None,
-                 'name': '',
-                 'quality': 'AVERAGE',
-                 'type': 'SCRIPT',
-                 'value': '# experiment_5.0\nmdrun -s test_topol.tpr\n'}
-             },
+            {
+                'bash_script':
+                    '# experiment_5.0\nmdrun -s test_topol.tpr\n'
+            },
             event.__getstate__()
         )
