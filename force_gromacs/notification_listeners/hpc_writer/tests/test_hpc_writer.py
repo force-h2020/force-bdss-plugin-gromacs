@@ -2,8 +2,6 @@ from unittest import TestCase, mock
 
 from traits.testing.unittest_tools import UnittestTools
 
-from force_bdss.api import DataValue
-
 from force_gromacs.gromacs_plugin import GromacsPlugin
 from force_gromacs.notification_listeners.driver_events import (
     SimulationProgressEvent
