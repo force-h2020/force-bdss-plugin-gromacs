@@ -161,7 +161,7 @@ class TestSimulationDataSource(TestCase, UnittestTools):
             mocksim.return_value = ProbeSimulationBuilder()
             self.data_source.run(self.model, data_values)
 
-        bash_script = self.model.driver_event.bash_script.value
+        bash_script = self.model.driver_event.bash_script
 
         commands = bash_script.split('\n')
         self.assertEqual(17, len(commands))
