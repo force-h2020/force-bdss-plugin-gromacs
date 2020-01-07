@@ -1,7 +1,7 @@
 import subprocess
 
 from traits.api import (
-    Unicode, Set, Dict, List, Property, on_trait_change
+    Unicode, Enum, Set, Dict, List, Property, on_trait_change
 )
 
 from .base_gromacs_process import BaseGromacsProcess
@@ -28,6 +28,9 @@ class BaseGromacsCommand(BaseGromacsProcess):
     # --------------------
 
     #: Name of Gromacs executable
+    executable = Enum('gmx', '')
+
+    #: Name of Gromacs task
     name = Unicode(allow_none=False)
 
     #: List of accepted flags for command line options
@@ -108,7 +111,7 @@ class BaseGromacsCommand(BaseGromacsProcess):
     def _build_command(self):
         """Generate terminal command from input data"""
 
-        command = f"{self.name}"
+        command = ' '.join([self.executable, self.name]).strip()
 
         for flag, arg in self.command_options.items():
             if arg is None:
