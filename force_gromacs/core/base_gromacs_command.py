@@ -1,4 +1,5 @@
 import subprocess
+import os
 
 from traits.api import (
     Unicode, Enum, Set, Dict, List, Property, on_trait_change
@@ -62,7 +63,7 @@ class BaseGromacsCommand(BaseGromacsProcess):
     def _get__flags(self):
         """Private attribute `_flags` contains unique set of command
         line options that is readonly."""
-        return set(self.flags)
+        return set(self.flags + ['-h'])
 
     @on_trait_change('command_options')
     def check_command_options(self):
@@ -81,6 +82,7 @@ class BaseGromacsCommand(BaseGromacsProcess):
     def _build_process(self, command):
         """Creates process to run Gromacs command on. Also sets up piping
         in of any arguments in `user_input` if required."""
+
         if self.user_input != '':
 
             input_proc = subprocess.Popen(
@@ -90,6 +92,7 @@ class BaseGromacsCommand(BaseGromacsProcess):
 
             process = subprocess.Popen(
                 command.split(),
+                env=os.environ,
                 stdin=input_proc.stdout,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE
@@ -101,6 +104,7 @@ class BaseGromacsCommand(BaseGromacsProcess):
         else:
             process = subprocess.Popen(
                 command.split(),
+                env=os.environ,
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE
