@@ -3,8 +3,8 @@ sudo: false
 
 env:
   global:
-    - EDM_FULL=1.11.0
-      EDM_X_Y=1.11
+    - EDM_FULL=2.1.0
+      EDM_X_Y=2.1
 
 matrix:
   include:
