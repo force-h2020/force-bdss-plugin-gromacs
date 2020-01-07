@@ -75,7 +75,8 @@ class Gromacs_solvate(BaseGromacsCommand):
 
 class Gromacs_insert_molecules(BaseGromacsCommand):
     """Wrapper around Gromacs insert-molecules command
-    http://manual.gromacs.org/documentation/2018/onlinehelp/gmx-insert-molecules.html"""
+    http://manual.gromacs.org/documentation/2018/onlinehelp/gmx-insert-molecules.html # noqa
+    """
 
     #: Name of Gromacs genbox command
     name = ReadOnly('insert-molecules')
@@ -161,18 +162,19 @@ class Gromacs_mdrun(BaseGromacsCommand):
         )
 
     def _get_name(self):
+        """Returns correct name syntax, depending on MPI run
+        option and installation version"""
         if self.mpi_run and not self.executable:
             return "mdrun_mpi"
         return "mdrun"
 
     def _build_command(self):
+        """Overloads build_command option to include shell mpirun
+        command with processor count if running in parallel"""
         command = super()._build_command()
-
         if self.mpi_run:
             command = f"mpirun -np {self.n_proc} {command}"
-
         return command
-
 
 
 class Gromacs_select(BaseGromacsCommand):
@@ -196,10 +198,13 @@ class Gromacs_select(BaseGromacsCommand):
         super(Gromacs_select, self).__init__(*args, **kwargs)
 
     def _get_name(self):
+        """Returns correct name syntax, depending on installation
+        version"""
         if self.executable == 'gmx':
             return 'select'
         else:
             return 'g_select'
+
 
 class Gromacs_trjconv(BaseGromacsCommand):
     """Wrapper around Gromacs trjconv command
