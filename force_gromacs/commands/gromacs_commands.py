@@ -15,7 +15,7 @@ so in a similar way.
 Note - all objects are tested on Gromacs version 4.6.7
 """
 
-from traits.api import ReadOnly
+from traits.api import Unicode, ReadOnly, Property, Bool, Int
 
 from force_gromacs.core.base_gromacs_command import BaseGromacsCommand
 
@@ -41,6 +41,9 @@ class Gromacs_genbox(BaseGromacsCommand):
     """Wrapper around Gromacs genbox command
     http://manual.gromacs.org/archive/4.6.5/online/genbox.html"""
 
+    #: Name of Gromacs executable
+    executable = ReadOnly('')
+
     #: Name of Gromacs genbox command
     name = ReadOnly('genbox')
 
@@ -51,6 +54,41 @@ class Gromacs_genbox(BaseGromacsCommand):
     def __init__(self, name=None, flags=None,
                  *args, **kwargs):
         super(Gromacs_genbox, self).__init__(*args, **kwargs)
+
+
+class Gromacs_solvate(BaseGromacsCommand):
+    """Wrapper around Gromacs solvate command
+    http://manual.gromacs.org/documentation/2018/onlinehelp/gmx-solvate.html"""
+
+    #: Name of Gromacs genbox command
+    name = ReadOnly('solvate')
+
+    #: List of accepted flags for Gromacs solvate command
+    flags = ReadOnly(['-cp', '-cs', '-p', '-maxsol',
+                      '-o', '-box', '-radius', '-scale',
+                      '-shell', '-vel'])
+
+    def __init__(self, name=None, flags=None,
+                 *args, **kwargs):
+        super(Gromacs_solvate, self).__init__(*args, **kwargs)
+
+
+class Gromacs_insert_molecules(BaseGromacsCommand):
+    """Wrapper around Gromacs insert-molecules command
+    http://manual.gromacs.org/documentation/2018/onlinehelp/gmx-insert-molecules.html"""
+
+    #: Name of Gromacs genbox command
+    name = ReadOnly('insert-molecules')
+
+    #: List of accepted flags for Gromacs insert-molecules command
+    flags = ReadOnly(['-f', '-ci', '-ip', '-n',
+                      '-o', '-replace', '-sf', '-selfrpos',
+                      '-box', '-nmol', '-try', '-seed',
+                      '-radius', '-scale', '-dr', '-rot'])
+
+    def __init__(self, name=None, flags=None,
+                 *args, **kwargs):
+        super(Gromacs_insert_molecules, self).__init__(*args, **kwargs)
 
 
 class Gromacs_grompp(BaseGromacsCommand):
@@ -103,34 +141,48 @@ class Gromacs_mdrun(BaseGromacsCommand):
         mpi_mdrun = Gromacs_mdrun(mpi_run=True, n_proc=2)
     """
 
-    #: Name of Gromacs genion command
-    name = ReadOnly()
+    #: Whether or not to perform an MPI run
+    mpi_run = Bool(False)
 
-    #: List of accepted flags for Gromacs genion command
+    #: Number of processors for MPI run
+    n_proc = Int(1)
+
+    #: Name of Gromacs mdrun command
+    name = Property(Unicode, depends_on='mpi_run')
+
+    #: List of accepted flags for Gromacs mdrun command
     flags = ReadOnly(['-s', '-g', '-e', '-o', '-x', '-c',
                       '-cpo'])
 
-    def __init__(self, name=None, flags=None, mpi_run=False,
-                 n_proc=1, *args, **kwargs):
-
-        if mpi_run:
-            name = f'mpirun -np {n_proc} mdrun_mpi'
-        else:
-            name = 'mdrun'
+    def __init__(self, flags=None, *args, **kwargs):
 
         super(Gromacs_mdrun, self).__init__(
-            name=name, *args, **kwargs
+            *args, **kwargs
         )
+
+    def _get_name(self):
+        if self.mpi_run and not self.executable:
+            return "mdrun_mpi"
+        return "mdrun"
+
+    def _build_command(self):
+        command = super()._build_command()
+
+        if self.mpi_run:
+            command = f"mpirun -np {self.n_proc} {command}"
+
+        return command
+
 
 
 class Gromacs_select(BaseGromacsCommand):
     """Wrapper around Gromacs select (or g_select) command
     http://manual.gromacs.org/archive/4.6.5/online/g_select.html"""
 
-    #: Name of Gromacs genbox command
-    name = ReadOnly('g_select')
+    #: Name of Gromacs select command
+    name = Property(Unicode, depends_on='executable')
 
-    #: List of accepted flags for Gromacs genbox command
+    #: List of accepted flags for Gromacs select command
     flags = ReadOnly(['-f', '-s', '-n', '-os', '-oc', '-oi',
                       '-on', '-om', '-of', '-ofpdb', '-olt', '-b',
                       '-e', '-dt', 'tu', '-fgroup', '-xvg',
@@ -143,6 +195,11 @@ class Gromacs_select(BaseGromacsCommand):
                  *args, **kwargs):
         super(Gromacs_select, self).__init__(*args, **kwargs)
 
+    def _get_name(self):
+        if self.executable == 'gmx':
+            return 'select'
+        else:
+            return 'g_select'
 
 class Gromacs_trjconv(BaseGromacsCommand):
     """Wrapper around Gromacs trjconv command
