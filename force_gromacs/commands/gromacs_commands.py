@@ -6,13 +6,15 @@ subclasses:
 * :class:`Gromacs_grompp` provides a wrapper around Gromacs genmpp command.
 * :class:`Gromacs_genion` provides a wrapper around Gromacs genion command.
 * :class:`Gromacs_mdrun` provides a wrapper around Gromacs mdrun command.
+* :class:`Gromacs_mdrun` provides a wrapper around Gromacs mdrun command.
+* :class:`Gromacs_select` provides a wrapper around Gromacs select command.
 
 The `name` and `flags` attributes of these subclasses have been overridden as
 ReadOnly traits, and so cannot be mutated during runtime. Developers wishing to
 create further wrappers around additional Gromacs commands are encouraged to do
 so in a similar way.
 
-Note - all objects are tested on Gromacs version 4.6.7
+Note - all objects have been tested on both Gromacs versions 4.6.7 and 2019.4
 """
 
 from traits.api import Unicode, ReadOnly, Property, Bool, Int
