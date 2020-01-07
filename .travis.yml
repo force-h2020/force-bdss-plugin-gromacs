@@ -13,7 +13,7 @@ matrix:
     services:
       - xvfb
     env:
-      - EDM_OS="rh5_x86_64"
+      - EDM_OS="rh6_x86_64"
         EDM_INSTALLER_SUFFIX="_linux_x86_64.sh"
   - os: osx
     env:
