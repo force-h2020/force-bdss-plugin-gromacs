@@ -7,7 +7,8 @@ DEFAULT_PYTHON_VERSION = "3.6"
 PYTHON_VERSIONS = ["3.6"]
 
 ADDITIONAL_CORE_DEPS = [
-    "numpy>=1.13.0"
+    "numpy>=1.13.0",
+    "gromacs==2019.4-1"
 ]
 
 ADDITIONAL_PIP_DEPS = [
