@@ -34,7 +34,7 @@ def install(python_version):
     env_name = get_env_name(python_version)
 
     returncode = subprocess.call([
-        "edm", "install", "-e", env_name,
+        "edm", "install", "-e", env_name, "--add-repository", "enthought/lgpl",
         "--yes"] + ADDITIONAL_CORE_DEPS)
     if returncode:
         raise click.ClickException("Error while installing EDM dependencies.")
