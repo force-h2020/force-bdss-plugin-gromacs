@@ -32,10 +32,6 @@ class Gromacs_genconf(BaseGromacsCommand):
     #: List of accepted flags for Gromacs genbox command
     flags = ReadOnly(['-f', '-o', '-trj', '-nbox'])
 
-    def __init__(self, name=None, flags=None,
-                 *args, **kwargs):
-        super(Gromacs_genconf, self).__init__(*args, **kwargs)
-
 
 #: NOTE: as of Gromacs 5.0, this tool has been split to gmx solvate
 #: and gmx insert-molecules.
@@ -53,10 +49,6 @@ class Gromacs_genbox(BaseGromacsCommand):
     flags = ReadOnly(['-cp', '-cs', '-ci', '-maxsol',
                       '-o', '-box', '-try', '-nmol'])
 
-    def __init__(self, name=None, flags=None,
-                 *args, **kwargs):
-        super(Gromacs_genbox, self).__init__(*args, **kwargs)
-
 
 class Gromacs_solvate(BaseGromacsCommand):
     """Wrapper around Gromacs solvate command
@@ -69,10 +61,6 @@ class Gromacs_solvate(BaseGromacsCommand):
     flags = ReadOnly(['-cp', '-cs', '-p', '-maxsol',
                       '-o', '-box', '-radius', '-scale',
                       '-shell', '-vel'])
-
-    def __init__(self, name=None, flags=None,
-                 *args, **kwargs):
-        super(Gromacs_solvate, self).__init__(*args, **kwargs)
 
 
 class Gromacs_insert_molecules(BaseGromacsCommand):
@@ -89,10 +77,6 @@ class Gromacs_insert_molecules(BaseGromacsCommand):
                       '-box', '-nmol', '-try', '-seed',
                       '-radius', '-scale', '-dr', '-rot'])
 
-    def __init__(self, name=None, flags=None,
-                 *args, **kwargs):
-        super(Gromacs_insert_molecules, self).__init__(*args, **kwargs)
-
 
 class Gromacs_grompp(BaseGromacsCommand):
     """Wrapper around Gromacs grompp command
@@ -106,10 +90,6 @@ class Gromacs_grompp(BaseGromacsCommand):
                       '-t', '-e', '-ref', '-po', '-pp',
                       '-o', '-idm', '-time', '-maxwarn'])
 
-    def __init__(self, name=None, flags=None,
-                 *args, **kwargs):
-        super(Gromacs_grompp, self).__init__(*args, **kwargs)
-
 
 class Gromacs_genion(BaseGromacsCommand):
     """Wrapper around Gromacs genion command
@@ -122,10 +102,6 @@ class Gromacs_genion(BaseGromacsCommand):
     flags = ReadOnly(['-s', '-n', '-p', '-o', '-np', '-pname',
                       '-pq', '-nn', '-nname', '-nq', '-rmin',
                       '-seed', '-conc'])
-
-    def __init__(self, name=None, flags=None,
-                 *args, **kwargs):
-        super(Gromacs_genion, self).__init__(*args, **kwargs)
 
 
 class Gromacs_mdrun(BaseGromacsCommand):
@@ -156,12 +132,6 @@ class Gromacs_mdrun(BaseGromacsCommand):
     #: List of accepted flags for Gromacs mdrun command
     flags = ReadOnly(['-s', '-g', '-e', '-o', '-x', '-c',
                       '-cpo'])
-
-    def __init__(self, flags=None, *args, **kwargs):
-
-        super(Gromacs_mdrun, self).__init__(
-            *args, **kwargs
-        )
 
     def _get_name(self):
         """Returns correct name syntax, depending on MPI run
@@ -195,10 +165,6 @@ class Gromacs_select(BaseGromacsCommand):
                       '-nonorm', '-resnr', 'pdbatoms', '-cumlt',
                       '-nocumlt'])
 
-    def __init__(self, name=None, flags=None,
-                 *args, **kwargs):
-        super(Gromacs_select, self).__init__(*args, **kwargs)
-
     def _get_name(self):
         """Returns correct name syntax, depending on installation
         version"""
@@ -225,7 +191,3 @@ class Gromacs_trjconv(BaseGromacsCommand):
                       '-trunc', '-exec', '-split', '-sep', '-nosep',
                       '-nzero', '-dropunder', '-dropover', '-conect',
                       '-noconect'])
-
-    def __init__(self, name=None, flags=None,
-                 *args, **kwargs):
-        super(Gromacs_trjconv, self).__init__(*args, **kwargs)
