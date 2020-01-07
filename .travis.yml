@@ -14,12 +14,12 @@ matrix:
       - xvfb
     env:
       - EDM_OS="rh6_x86_64"
-      - EDM_INSTALLER_PREFIX="edm_cli"
+      - EDM_INSTALLER_PREFIX="edm_cli_"
         EDM_INSTALLER_SUFFIX="_linux_x86_64.sh"
   - os: osx
     env:
       - EDM_OS="osx_x86_64"
-      - EDM_INSTALLER_PREFIX="edm"
+      - EDM_INSTALLER_PREFIX="edm_"
         EDM_INSTALLER_SUFFIX=".pkg"
 
 before_install:
