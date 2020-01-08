@@ -4,9 +4,9 @@ source = force_gromacs
 omit = */tests/*
        */bench/*
        */scripts/*
-       api.py
 
 [report]
+omit = force_gromacs/api.py
 # Regexes for lines to exclude from consideration
 exclude_lines =
     # Have to re-enable the standard pragma
