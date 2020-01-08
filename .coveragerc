@@ -4,6 +4,7 @@ source = force_gromacs
 omit = */tests/*
        */bench/*
        */scripts/*
+       api.py
 
 [report]
 # Regexes for lines to exclude from consideration
