@@ -16,7 +16,7 @@ It is implemented under the Formulations and Computational Engineering (FORCE) p
 
 The ``GromacsPlugin`` class contributes several BDSS objects, including ``DataSource``
 and ``NotificationListener`` subclasses, as well as a stand-alone wrapper
-around Gromacs version 2019.4.
+around Gromacs version `2019.4 <http://manual.gromacs.org/documentation/2019-current/index.html>`_.
 
 Installation
 -------------
