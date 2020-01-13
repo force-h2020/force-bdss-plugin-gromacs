@@ -36,7 +36,7 @@ the enter the source directory and run::
 
     python -m ci install
 
-This will allow install the plugin in the `force-py36` edm environment, allowing the contributed
+This will allow install the plugin in the ``force-py36`` edm environment, allowing the contributed
 BDSS objects to be visible by both ``force-bdss`` and ``force-wfmanager`` applications.
 
 Documentation
