@@ -32,7 +32,7 @@ After completing at least the ``force-bdss`` installation steps, clone the git r
 
     git clone https://github.com/force-h2020/force-bdss-plugin-gromacs
 
-the enter the source directory and run:
+the enter the source directory and run::
 
     python -m ci install
 
