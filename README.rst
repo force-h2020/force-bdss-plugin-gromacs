@@ -1,8 +1,8 @@
 FORCE BDSS GROMACS Plugin
 --------------------------
 
-.. image:: https://travis-ci.org/force-h2020/force-bdss-plugin-gromacs.svg?branch=master
-   :target: https://travis-ci.org/force-h2020/force-bdss-plugin-gromacs
+.. image:: https://travis-ci.com/force-h2020/force-bdss-plugin-gromacs.svg?branch=master
+   :target: https://travis-ci.com/force-h2020/force-bdss-plugin-gromacs
    :alt: Build status
 
 .. image:: http://codecov.io/github/force-h2020/force-bdss-plugin-gromacs/coverage.svg?branch=master
