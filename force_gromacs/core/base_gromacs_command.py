@@ -1,7 +1,8 @@
 import subprocess
+import os
 
 from traits.api import (
-    Unicode, Set, Dict, List, Property, on_trait_change
+    Unicode, Enum, Set, Dict, List, Property, on_trait_change
 )
 
 from .base_gromacs_process import BaseGromacsProcess
@@ -28,6 +29,9 @@ class BaseGromacsCommand(BaseGromacsProcess):
     # --------------------
 
     #: Name of Gromacs executable
+    executable = Enum('gmx', '')
+
+    #: Name of Gromacs task
     name = Unicode(allow_none=False)
 
     #: List of accepted flags for command line options
@@ -59,7 +63,7 @@ class BaseGromacsCommand(BaseGromacsProcess):
     def _get__flags(self):
         """Private attribute `_flags` contains unique set of command
         line options that is readonly."""
-        return set(self.flags)
+        return set(self.flags + ['-h'])
 
     @on_trait_change('command_options')
     def check_command_options(self):
@@ -78,6 +82,7 @@ class BaseGromacsCommand(BaseGromacsProcess):
     def _build_process(self, command):
         """Creates process to run Gromacs command on. Also sets up piping
         in of any arguments in `user_input` if required."""
+
         if self.user_input != '':
 
             input_proc = subprocess.Popen(
@@ -87,6 +92,7 @@ class BaseGromacsCommand(BaseGromacsProcess):
 
             process = subprocess.Popen(
                 command.split(),
+                env=os.environ,
                 stdin=input_proc.stdout,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE
@@ -98,6 +104,7 @@ class BaseGromacsCommand(BaseGromacsProcess):
         else:
             process = subprocess.Popen(
                 command.split(),
+                env=os.environ,
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE
@@ -108,7 +115,7 @@ class BaseGromacsCommand(BaseGromacsProcess):
     def _build_command(self):
         """Generate terminal command from input data"""
 
-        command = f"{self.name}"
+        command = ' '.join([self.executable, self.name]).strip()
 
         for flag, arg in self.command_options.items():
             if arg is None:

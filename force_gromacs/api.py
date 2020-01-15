@@ -2,6 +2,8 @@ from .commands.gromacs_commands import Gromacs_mdrun # noqa
 from .commands.gromacs_commands import Gromacs_genconf # noqa
 from .commands.gromacs_commands import Gromacs_grompp # noqa
 from .commands.gromacs_commands import Gromacs_genbox # noqa
+from .commands.gromacs_commands import Gromacs_solvate # noqa
+from .commands.gromacs_commands import Gromacs_insert_molecules # noqa
 from .commands.gromacs_commands import Gromacs_genion # noqa
 from .commands.gromacs_commands import Gromacs_trjconv # noqa
 from .commands.gromacs_commands import Gromacs_select # noqa

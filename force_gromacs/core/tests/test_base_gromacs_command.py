@@ -12,21 +12,29 @@ class TestBaseGromacsCommand(TestCase):
     def setUp(self):
         # Create Gromacs command objects
         self.gromacs_command = BaseGromacsCommand(
-            name='gmx',
             flags=['-c', '-o', '-flag'],
             dry_run=True)
 
     def test___init__(self):
-        self.assertEqual('gmx', self.gromacs_command.name)
+        self.assertEqual('gmx', self.gromacs_command.executable)
         self.assertListEqual(
             ['-c', '-o', '-flag'], self.gromacs_command.flags
         )
         self.assertEqual(
-            {'-c', '-o', '-flag'}, self.gromacs_command._flags)
+            {'-c', '-o', '-flag', '-h'}, self.gromacs_command._flags)
 
         self.assertTrue(self.gromacs_command.dry_run)
         self.assertEqual('', self.gromacs_command.user_input)
         self.assertEqual({}, self.gromacs_command.command_options)
+
+    def test_gromacs_installation(self):
+
+        self.gromacs_command.dry_run = False
+        self.gromacs_command.command_options = {
+            '-h': True}
+        self.assertEqual('gmx -h', self.gromacs_command.bash_script())
+        self.assertEqual(0, self.gromacs_command.run())
+        self.assertIn('SYNOPSIS', self.gromacs_command.recall_stdout())
 
     def test__flags_readonly(self):
 
@@ -117,6 +125,7 @@ class TestBaseGromacsCommand(TestCase):
         self.assertEqual('', self.gromacs_command.recall_stderr())
 
         self.gromacs_command.dry_run = False
+        self.gromacs_command.executable = ''
 
         # Test simple bash command
         self.gromacs_command.name = 'echo Hello World'
@@ -134,6 +143,7 @@ class TestBaseGromacsCommand(TestCase):
 
     def test_run_command_error(self):
         self.gromacs_command.dry_run = False
+        self.gromacs_command.executable = ''
 
         # Test unrecognised command
         self.gromacs_command.name = 'not_a_command'
