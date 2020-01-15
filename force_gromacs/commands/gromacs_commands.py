@@ -151,7 +151,7 @@ class Gromacs_mdrun(BaseGromacsCommand):
 
 class Gromacs_select(BaseGromacsCommand):
     """Wrapper around Gromacs select (or g_select) command
-    http://manual.gromacs.org/archive/4.6.5/online/g_select.html"""
+    http://manual.gromacs.org/documentation/2019/onlinehelp/gmx-select.html"""
 
     #: Name of Gromacs select command
     name = Property(Unicode, depends_on='executable')
@@ -176,7 +176,7 @@ class Gromacs_select(BaseGromacsCommand):
 
 class Gromacs_trjconv(BaseGromacsCommand):
     """Wrapper around Gromacs trjconv command
-    http://manual.gromacs.org/documentation/2018/onlinehelp/gmx-trjconv.html"""
+    http://manual.gromacs.org/documentation/2019/onlinehelp/gmx-trjconv.html"""
 
     #: Name of Gromacs trjconv command
     name = ReadOnly('trjconv')
