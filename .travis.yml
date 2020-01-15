@@ -35,7 +35,6 @@ before_install:
 script:
     - edm run -- python -m ci install
     - edm run -- python -m ci flake8
-    - export DISPLAY=:99.0
     - edm run -- python -m ci test
     - edm run -- python -m ci docs
 after_success:
