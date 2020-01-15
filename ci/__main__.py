@@ -38,8 +38,9 @@ def install(python_version):
         "--yes"] + ADDITIONAL_CORE_DEPS)
     if returncode:
         raise click.ClickException("Error while installing EDM dependencies."
-                                   "Make sure you are using a EDM >= 2.1, otherwise"
-                                   "please download the latest version available")
+                                   "Make sure you are using a EDM >= 2.1, "
+                                   "otherwise please download the latest "
+                                   "version available")
 
     for dep in ADDITIONAL_PIP_DEPS:
         returncode = edm_run(env_name, ["pip", "install", dep])
