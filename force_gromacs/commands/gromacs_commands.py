@@ -162,7 +162,7 @@ class Gromacs_select(BaseGromacsCommand):
                       '-e', '-dt', 'tu', '-fgroup', '-xvg',
                       '-rmpbc', '-normpbc', '-pbc', '-nppbc', '-sf',
                       '-selrpos', '-seltype', '-select', '-norm',
-                      '-nonorm', '-resnr', 'pdbatoms', '-cumlt',
+                      '-nonorm', '-resnr', '-pdbatoms', '-cumlt',
                       '-nocumlt'])
 
     def _get_name(self):
