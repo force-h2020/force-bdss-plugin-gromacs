@@ -5,6 +5,9 @@ from force_bdss.api import (
     BaseDataSourceModel, BaseDriverEvent, VerifierError
 )
 
+from force_gromacs.notification_listeners.driver_events import (
+    SimulationProgressEvent)
+
 
 class SimulationDataSourceModel(BaseDataSourceModel):
     """Class that inputs all required parameters for a single
@@ -48,13 +51,6 @@ class SimulationDataSourceModel(BaseDataSourceModel):
     #: File path for Gromacs Production run parameters file
     md_prod_parameters = File(
         desc='File path for Gromacs MD Parameter file')
-
-    # --------------------
-    #  Regular Attributes
-    # --------------------
-
-    #: Propagation channel for events from the SimulationDataSource
-    driver_event = Instance(BaseDriverEvent)
 
     # --------------------
     #        View
@@ -106,3 +102,20 @@ class SimulationDataSourceModel(BaseDataSourceModel):
         errors += self._n_molecule_types_check()
 
         return errors
+
+    def notify_bash_script(self, bash_script):
+        """Notify the construction of a bash script for a Gromacs
+        simulation. Assigns an `SimulationProgressEvent` to the
+        `event` attribute. By doing so it can be picked
+        up by the `Workflow` and passed onto any
+        `NotificationListeners` present.
+
+        Parameters
+        ----------
+        bash_script: str
+            A string containing the constructed
+            bash script to run a Gromacs simulation.
+        """
+        self.event = SimulationProgressEvent(
+            bash_script=bash_script
+        )

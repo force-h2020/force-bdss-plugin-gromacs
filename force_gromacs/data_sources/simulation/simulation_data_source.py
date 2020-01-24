@@ -4,8 +4,6 @@ from force_bdss.api import (
     BaseDataSource, DataValue, Slot, Instance
 )
 
-from force_gromacs.notification_listeners.driver_events import (
-    SimulationProgressEvent)
 from force_gromacs.pipeline.i_simulation_builder import (
     ISimulationBuilder)
 
@@ -26,27 +24,6 @@ class SimulationDataSource(BaseDataSource):
         if os.path.exists(results_path):
             return model.ow_data
         return True
-
-    def notify_bash_script(self, model, bash_script):
-        """Notify the construction of a bash script for a Gromacs
-        simulation. Assigns an `ExperimentProgressEvent` to the
-        `progress_event` attribute on associated
-        `SimulationDataSourceModel`. By doing so it can be picked
-        up by the `UnileverMCO` and passed onto any
-        `NotificationListeners` present.
-
-        Parameters
-        ----------
-        model: SimulationDataSourceModel
-            The BaseDataSourceModel associated with this class
-        bash_script: str
-            A string containing the constructed
-            bash script to run a Gromacs simulation.
-        """
-
-        model.driver_event = SimulationProgressEvent(
-            bash_script=bash_script
-        )
 
     def create_bash_script(self, pipeline, name=None):
         """Creates a string that can be exported as a bash script
@@ -129,7 +106,7 @@ class SimulationDataSource(BaseDataSource):
             )
 
             # Export the bash script to any HPCWriterNotificationListener
-            self.notify_bash_script(model, bash_script)
+            model.notify_bash_script(bash_script)
 
             # Run simulation locally
             pipeline.run()
