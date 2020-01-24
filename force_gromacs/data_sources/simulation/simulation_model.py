@@ -116,6 +116,6 @@ class SimulationDataSourceModel(BaseDataSourceModel):
             A string containing the constructed
             bash script to run a Gromacs simulation.
         """
-        self.event = SimulationProgressEvent(
-            bash_script=bash_script
+        self.notify(
+            SimulationProgressEvent(bash_script=bash_script)
         )
