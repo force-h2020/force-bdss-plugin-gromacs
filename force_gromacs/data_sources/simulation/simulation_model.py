@@ -1,9 +1,7 @@
 from traits.api import Unicode, Bool, Int, File
 from traitsui.api import View, Item
 
-from force_bdss.api import (
-    BaseDataSourceModel, VerifierError
-)
+from force_bdss.api import BaseDataSourceModel, VerifierError
 
 from force_gromacs.notification_listeners.driver_events import (
     SimulationProgressEvent)
