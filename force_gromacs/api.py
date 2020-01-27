@@ -2,6 +2,8 @@ from .commands.gromacs_commands import Gromacs_mdrun # noqa
 from .commands.gromacs_commands import Gromacs_genconf # noqa
 from .commands.gromacs_commands import Gromacs_grompp # noqa
 from .commands.gromacs_commands import Gromacs_genbox # noqa
+from .commands.gromacs_commands import Gromacs_solvate # noqa
+from .commands.gromacs_commands import Gromacs_insert_molecules # noqa
 from .commands.gromacs_commands import Gromacs_genion # noqa
 from .commands.gromacs_commands import Gromacs_trjconv # noqa
 from .commands.gromacs_commands import Gromacs_select # noqa
@@ -21,7 +23,7 @@ from .io.gromacs_topology_writer import GromacsTopologyWriter # noqa
 from .notification_listeners.driver_events import SimulationProgressEvent # noqa
 
 from .pipeline.gromacs_pipeline import GromacsPipeline # noqa
-from .pipeline.gromacs_simulation_builder import GromacsSimulationBuilder # noqa
+from .pipeline.base_gromacs_simulation_builder import BaseGromacsSimulationBuilder # noqa
 
 from .tools.distances import distance_matrix, batch_distance_matrix # noqa
 from .tools.positions import molecular_positions # noqa

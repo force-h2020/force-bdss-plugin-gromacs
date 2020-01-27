@@ -25,9 +25,9 @@ class GromacsCoordinateReader(BaseFileReader):
     #  Private Methods
     # ------------------
 
-    def _remove_digits(self, string):
-        """Remove any digits from a string"""
-        return re.sub(r"\d+", "", string)
+    def _remove_index(self, string):
+        """Remove any digits from beginning of string"""
+        return re.sub(r"^\d+", "", string)
 
     def _get_data(self, file_lines, n_frames=None):
         """Process data from a parsed Gromacs file
@@ -123,7 +123,7 @@ class GromacsCoordinateReader(BaseFileReader):
             symbols = [symbols]
 
         for index, ref in enumerate(data['mol_ref']):
-            if self._remove_digits(ref) in symbols:
+            if self._remove_index(ref) in symbols:
                 indices.append(index)
 
         return indices

@@ -6,9 +6,10 @@ import subprocess
 DEFAULT_PYTHON_VERSION = "3.6"
 PYTHON_VERSIONS = ["3.6"]
 
-ADDITIONAL_CORE_DEPS = [
-    "numpy>=1.13.0"
-]
+ADDITIONAL_CORE_DEPS = {
+    'free': ["numpy>=1.13.0"],
+    'lgpl': ["gromacs==2019.4-1"]
+}
 
 ADDITIONAL_PIP_DEPS = [
 ]
@@ -32,11 +33,15 @@ python_version_option = click.option(
 def install(python_version):
     env_name = get_env_name(python_version)
 
-    returncode = subprocess.call([
-        "edm", "install", "-e", env_name,
-        "--yes"] + ADDITIONAL_CORE_DEPS)
-    if returncode:
-        raise click.ClickException("Error while installing EDM dependencies.")
+    for key, value in ADDITIONAL_CORE_DEPS.items():
+        returncode = subprocess.call([
+            "edm", "install", "-e", env_name, "--add-repository",
+            f"enthought/{key}", "--yes"] + value)
+        if returncode:
+            raise click.ClickException("Error while installing EDM "
+                                       "dependencies. Make sure you are using"
+                                       " EDM >= 2.1, otherwise please download"
+                                       " the latest version available")
 
     for dep in ADDITIONAL_PIP_DEPS:
         returncode = edm_run(env_name, ["pip", "install", dep])

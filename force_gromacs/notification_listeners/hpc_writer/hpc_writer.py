@@ -79,7 +79,7 @@ class HPCWriter(BaseNotificationListener):
 
         if isinstance(event, SimulationProgressEvent):
 
-            bash_script = event.bash_script.value
+            bash_script = event.bash_script
 
             simulation_name = self._extract_simulation_name(bash_script)
             file_path = self.create_file_path(simulation_name)
