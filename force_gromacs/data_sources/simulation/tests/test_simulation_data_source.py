@@ -59,11 +59,11 @@ class TestSimulationDataSource(TestCase, UnittestTools):
             with mock.patch('os.path.exists') as mock_exists:
                 mock_exists.return_value = True
                 with self.assertTraitChanges(
-                        self.model, 'driver_event', count=0):
+                        self.model, 'event', count=0):
                     self.data_source.run(self.model, data_values)
                 self.model.ow_data = True
                 with self.assertTraitChanges(
-                        self.model, 'driver_event', count=1):
+                        self.model, 'event', count=1):
                     res = self.data_source.run(self.model, data_values)
 
         self.assertEqual(1, len(res))
@@ -141,9 +141,9 @@ class TestSimulationDataSource(TestCase, UnittestTools):
                        'mdrun -s test_topol.tpr\n')
 
         with self.assertTraitChanges(
-                self.model, 'driver_event', count=1):
-            self.data_source.notify_bash_script(
-                self.model, bash_script
+                self.model, 'event', count=1):
+            self.model.notify_bash_script(
+                bash_script
             )
 
     def test_driver_event(self):
@@ -159,9 +159,6 @@ class TestSimulationDataSource(TestCase, UnittestTools):
                         '.simulation_data_source.SimulationDataSource'
                         '.create_simulation_builder') as mocksim:
             mocksim.return_value = ProbeSimulationBuilder()
-            self.data_source.run(self.model, data_values)
-
-        bash_script = self.model.driver_event.bash_script
-
-        commands = bash_script.split('\n')
-        self.assertEqual(17, len(commands))
+            with self.assertTraitChanges(
+                    self.model, 'event', count=1):
+                self.data_source.run(self.model, data_values)
