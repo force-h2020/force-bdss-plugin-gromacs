@@ -1,6 +1,6 @@
 from unittest import mock, TestCase
 
-from force_gromacs.tests.probe_classes import ProbeFragment
+from force_gromacs.tests.probe_classes import ProbeGromacsFragment
 
 
 class TestFragment(TestCase):
@@ -18,7 +18,7 @@ class TestFragment(TestCase):
 
         with mock.patch(self.mock_method) as mockreadtop:
             mockreadtop.return_value = self.top_lines
-            self.fragment = ProbeFragment()
+            self.fragment = ProbeGromacsFragment()
 
     def test___init__(self):
 

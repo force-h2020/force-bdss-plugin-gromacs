@@ -1,1 +1,1 @@
-from .fragment import Fragment # noqa
+from .gromacs_fragment import GromacsFragment # noqa

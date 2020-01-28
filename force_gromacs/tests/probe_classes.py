@@ -6,7 +6,7 @@ from force_gromacs.commands.gromacs_commands import (
 from force_gromacs.commands.gromacs_file_tree_builder import (
     GromacsFileTreeBuilder
 )
-from force_gromacs.data_sources.fragment import Fragment
+from force_gromacs.data_sources.fragment import GromacsFragment
 from force_gromacs.io.gromacs_topology_writer import (
     GromacsTopologyWriter
 )
@@ -42,12 +42,12 @@ mock_method = (
 )
 
 
-class ProbeFragment(Fragment):
+class ProbeGromacsFragment(GromacsFragment):
     def __init__(self, name="Water", symbol='W'):
 
         with mock.patch(mock_method) as mockreadtop:
             mockreadtop.return_value = data
-            super(ProbeFragment, self).__init__(
+            super(ProbeGromacsFragment, self).__init__(
                 name=name,
                 symbol=symbol,
                 topology="test_top.itp",
@@ -55,22 +55,22 @@ class ProbeFragment(Fragment):
             )
 
 
-class ProbeMolecule(Fragment):
+class ProbeMolecule(GromacsFragment):
 
     def __init__(self, name):
         with mock.patch(mock_method) as mockreadtop:
             mockreadtop.return_value = data
             if name == 'Water':
                 fragments = [
-                    ProbeFragment(name='Water',
-                                  symbol='W')
+                    ProbeGromacsFragment(name='Water',
+                                         symbol='W')
                 ]
             elif name == 'Salt':
                 fragments = [
-                    ProbeFragment(name='Positive Ion',
-                                  symbol='PI'),
-                    ProbeFragment(name='Negative Ion',
-                                  symbol='NI')
+                    ProbeGromacsFragment(name='Positive Ion',
+                                         symbol='PI'),
+                    ProbeGromacsFragment(name='Negative Ion',
+                                         symbol='NI')
                 ]
 
         super(ProbeMolecule, self).__init__(
