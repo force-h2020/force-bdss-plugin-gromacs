@@ -1,14 +1,14 @@
-from traits.api import Interface, Bool
+from traits.api import Interface, Bool, HasStrictTraits
 
 
-class IBaseProcess(Interface):
+class IProcess(Interface):
     """Interface for objects that can generate and call
     command line executables, typically via the subprocess library.
     Attributes and methods to be implemented provide standard
     functionalities for using subprocess.
 
     Any class that provides this interface is able to be chained
-    together in a GromacsPipeline
+    together in a BasePipeline
     """
 
     #: Whether or not to perform a 'dry run' i.e. build the

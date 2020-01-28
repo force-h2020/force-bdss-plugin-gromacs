@@ -5,10 +5,10 @@ from traits.api import (
     Unicode, Enum, Set, Dict, List, Property, on_trait_change
 )
 
-from .base_gromacs_process import BaseGromacsProcess
+from .base_process import BaseProcess
 
 
-class BaseGromacsCommand(BaseGromacsProcess):
+class BaseGromacsCommand(BaseProcess):
     """Base class for Gromacs commands. Requires the command `name` to be
     defined on initiation, and takes in a list of accepted command line
     `flags`.

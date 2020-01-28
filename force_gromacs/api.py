@@ -9,8 +9,8 @@ from .commands.gromacs_commands import Gromacs_trjconv # noqa
 from .commands.gromacs_commands import Gromacs_select # noqa
 
 from .core.base_gromacs_command import BaseGromacsCommand # noqa
-from .core.base_gromacs_process import BaseGromacsProcess # noqa
-from .core.i_base_process import IBaseProcess # noqa
+from .core.base_process import BaseProcess # noqa
+from .core.i_process import IProcess # noqa
 
 from .data_sources.fragment.gromacs_fragment import GromacsFragment as Fragment # noqa
 from .database.molecule import Molecule # noqa

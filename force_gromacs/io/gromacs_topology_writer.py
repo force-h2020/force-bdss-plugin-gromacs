@@ -4,10 +4,10 @@ from traits.api import (
     HasTraits, List, Unicode, Dict, Int, provides
 )
 
-from force_gromacs.core.i_base_process import IBaseProcess
+from force_gromacs.core.i_process import IProcess
 
 
-@provides(IBaseProcess)
+@provides(IProcess)
 class GromacsTopologyWriter(HasTraits):
     """  Class writes Gromacs topology file"""
 

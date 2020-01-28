@@ -1,7 +1,7 @@
 from unittest import TestCase
 
-from force_gromacs.core.base_gromacs_process import (
-    BaseGromacsProcess
+from force_gromacs.core.base_process import (
+    BaseProcess
 )
 
 
@@ -9,7 +9,7 @@ class TestBaseGromacsProcess(TestCase):
 
     def setUp(self):
         #: Create Gromacs command objects
-        self.gromacs = BaseGromacsProcess()
+        self.gromacs = BaseProcess()
 
     def test___init__(self):
         self.assertTrue(self.gromacs.dry_run)
