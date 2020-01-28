@@ -5,32 +5,32 @@ from force_gromacs.core.base_process import (
 )
 
 
-class TestBaseGromacsProcess(TestCase):
+class TestBaseProcess(TestCase):
 
     def setUp(self):
         #: Create Gromacs command objects
-        self.gromacs = BaseProcess()
+        self.process = BaseProcess()
 
     def test___init__(self):
-        self.assertTrue(self.gromacs.dry_run)
-        self.assertEqual(0, self.gromacs._returncode)
+        self.assertTrue(self.process.dry_run)
+        self.assertEqual(0, self.process._returncode)
 
     def test__not_implemented(self):
 
         with self.assertRaises(NotImplementedError):
-            self.gromacs.bash_script()
+            self.process.bash_script()
 
         with self.assertRaises(NotImplementedError):
-            self.gromacs.run()
+            self.process.run()
 
     def test_recall(self):
 
-        self.gromacs._stdout = b'output'
-        self.gromacs._stderr = b'error'
+        self.process._stdout = b'output'
+        self.process._stderr = b'error'
 
         self.assertEqual(
-            'output', self.gromacs.recall_stdout()
+            'output', self.process.recall_stdout()
         )
         self.assertEqual(
-            'error', self.gromacs.recall_stderr()
+            'error', self.process.recall_stderr()
         )
