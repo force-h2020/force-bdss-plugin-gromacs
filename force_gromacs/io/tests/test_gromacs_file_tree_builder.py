@@ -1,11 +1,11 @@
 from unittest import TestCase, mock
 
-from force_gromacs.commands.gromacs_file_tree_builder import (
+from force_gromacs.io.gromacs_file_tree_builder import (
     GromacsFileTreeBuilder
 )
 
 GROMACS_FILE_TREE_MKPATH = (
-    "force_gromacs.commands.gromacs_file_tree_builder.os.mkdir"
+    "force_gromacs.io.gromacs_file_tree_builder.os.mkdir"
 )
 
 

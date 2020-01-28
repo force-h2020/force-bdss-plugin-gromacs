@@ -1,14 +1,15 @@
 import logging
 import os
 
-from traits.api import List, Unicode
+from traits.api import HasTraits, List, Unicode, provides
 
-from force_gromacs.core.base_gromacs_process import BaseGromacsProcess
+from force_gromacs.core.i_base_process import IBaseProcess
 
 log = logging.getLogger(__name__)
 
 
-class GromacsFileTreeBuilder(BaseGromacsProcess):
+@provides(IBaseProcess)
+class GromacsFileTreeBuilder(HasTraits):
     """Class builds file trees for a Gromacs experiment"""
 
     # --------------------
@@ -50,6 +51,14 @@ class GromacsFileTreeBuilder(BaseGromacsProcess):
     #    Public Methods
     # --------------------
 
+    def recall_stderr(self):
+        """Returns dummy stderr message"""
+        return ''
+
+    def recall_stdout(self):
+        """Returns dummy stdout message"""
+        return ''
+
     def bash_script(self):
         """Creates a bash script to build the file tree"""
 
@@ -69,4 +78,5 @@ class GromacsFileTreeBuilder(BaseGromacsProcess):
         for directory in directory_list:
             self._make_directory(directory)
 
-        return self._returncode
+        # Provide successful return code
+        return 0

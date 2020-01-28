@@ -1,11 +1,14 @@
 import os
 
-from traits.api import List, Unicode, Dict, Int
+from traits.api import (
+    HasTraits, List, Unicode, Dict, Int, provides
+)
 
-from force_gromacs.core.base_gromacs_process import BaseGromacsProcess
+from force_gromacs.core.i_base_process import IBaseProcess
 
 
-class GromacsTopologyWriter(BaseGromacsProcess):
+@provides(IBaseProcess)
+class GromacsTopologyWriter(HasTraits):
     """  Class writes Gromacs topology file"""
 
     # --------------------
@@ -71,6 +74,14 @@ class GromacsTopologyWriter(BaseGromacsProcess):
     #   Public Methods
     # ------------------
 
+    def recall_stderr(self):
+        """Returns dummy stderr message"""
+        return ''
+
+    def recall_stdout(self):
+        """Returns dummy stdout message"""
+        return ''
+
     def bash_script(self):
         """Output terminal command as a bash script"""
 
@@ -94,4 +105,5 @@ class GromacsTopologyWriter(BaseGromacsProcess):
                       'w') as outfile:
                 outfile.write(top_file)
 
-        return self._returncode
+        # Provide successful return code
+        return 0
