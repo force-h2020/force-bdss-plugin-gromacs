@@ -19,7 +19,7 @@ Note - all objects have been tested on both Gromacs versions 4.6.7 and 2019.4
 
 from traits.api import Unicode, ReadOnly, Property, Bool, Int
 
-from force_gromacs.core.base_gromacs_command import BaseGromacsCommand
+from force_gromacs.commands.base_gromacs_command import BaseGromacsCommand
 
 
 class Gromacs_genconf(BaseGromacsCommand):

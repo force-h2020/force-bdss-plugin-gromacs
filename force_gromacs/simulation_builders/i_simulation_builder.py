@@ -1,4 +1,4 @@
-from traits.api import Interface, Unicode, Int, Bool
+from traits.api import Interface, Str, Int, Bool
 
 
 class ISimulationBuilder(Interface):
@@ -9,13 +9,13 @@ class ISimulationBuilder(Interface):
     # --------------------
 
     #: Reference name of simulation
-    name = Unicode()
+    name = Str()
 
     #: Particle size of simulation
     size = Int()
 
     #: Location to create simulation file tree in.
-    directory = Unicode()
+    directory = Str()
 
     #: Whether or not to perform an MPI parallel run
     mpi_run = Bool()

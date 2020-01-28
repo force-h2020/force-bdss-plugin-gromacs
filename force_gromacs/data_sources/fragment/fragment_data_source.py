@@ -1,6 +1,6 @@
 from force_bdss.api import BaseDataSource, DataValue, Slot
 
-from .gromacs_fragment import GromacsFragment
+from force_gromacs.chemicals.gromacs_fragment import GromacsFragment
 
 
 class FragmentDataSource(BaseDataSource):

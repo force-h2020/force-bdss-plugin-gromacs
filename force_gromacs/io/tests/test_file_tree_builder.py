@@ -1,11 +1,11 @@
 from unittest import TestCase, mock
 
-from force_gromacs.io.gromacs_file_tree_builder import (
-    GromacsFileTreeBuilder
+from force_gromacs.io.file_tree_builder import (
+    FileTreeBuilder
 )
 
-GROMACS_FILE_TREE_MKPATH = (
-    "force_gromacs.io.gromacs_file_tree_builder.os.mkdir"
+FILE_TREE_MKPATH = (
+    "force_gromacs.io.file_tree_builder.os.mkdir"
 )
 
 
@@ -13,11 +13,11 @@ def mock_empty(value):
     return None
 
 
-class TestGromacsFileTreeBuilder(TestCase):
+class TestFileTreeBuilder(TestCase):
 
     def setUp(self):
 
-        self.builder = GromacsFileTreeBuilder(
+        self.builder = FileTreeBuilder(
             directory='test_experiment_1',
             folders=[
                 '1_build', '2_minimize', '3_production'
@@ -26,13 +26,13 @@ class TestGromacsFileTreeBuilder(TestCase):
         )
 
     def test__make_directory(self):
-        with mock.patch(GROMACS_FILE_TREE_MKPATH) as mock_mkdir:
+        with mock.patch(FILE_TREE_MKPATH) as mock_mkdir:
             mock_mkdir.side_effect = mock_empty
             self.builder._make_directory('')
             mock_mkdir.assert_not_called()
 
         self.builder.dry_run = False
-        with mock.patch(GROMACS_FILE_TREE_MKPATH) as mock_mkdir:
+        with mock.patch(FILE_TREE_MKPATH) as mock_mkdir:
             mock_mkdir.side_effect = mock_empty
             self.builder._make_directory('')
             mock_mkdir.assert_called()
@@ -74,13 +74,13 @@ class TestGromacsFileTreeBuilder(TestCase):
         )
 
     def test_run(self):
-        with mock.patch(GROMACS_FILE_TREE_MKPATH) as mock_mkdir:
+        with mock.patch(FILE_TREE_MKPATH) as mock_mkdir:
             mock_mkdir.side_effect = mock_empty
             self.builder.run()
             mock_mkdir.assert_not_called()
 
         self.builder.dry_run = False
-        with mock.patch(GROMACS_FILE_TREE_MKPATH) as mock_mkdir:
+        with mock.patch(FILE_TREE_MKPATH) as mock_mkdir:
             mock_mkdir.side_effect = mock_empty
             self.builder.run()
             self.assertEqual(4, mock_mkdir.call_count)

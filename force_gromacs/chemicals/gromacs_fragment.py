@@ -9,7 +9,7 @@ from force_gromacs.io.gromacs_topology_reader import (
     GromacsTopologyReader
 )
 
-from force_gromacs.database.i_fragment import IFragment
+from force_gromacs.chemicals.i_fragment import IFragment
 
 
 @provides(IFragment)

@@ -1,26 +1,31 @@
 from traits.api import (
-    List, Tuple, Unicode, on_trait_change, Dict, Property
+    HasStrictTraits, List, Tuple, Str, on_trait_change,
+    Dict, Property, provides, Bool
 )
 
-from force_gromacs.core.base_gromacs_process import BaseGromacsProcess
-from force_gromacs.core.i_base_process import IBaseProcess
+from force_gromacs.core.i_process import IProcess
 
 
-class GromacsPipeline(BaseGromacsProcess):
-    """A simple pipeline for Gromacs commands, based on scikit-learn
-    pipeline functionality that can sequentially apply a list of Gromacs
+@provides(IProcess)
+class BasePipeline(HasStrictTraits):
+    """A simple pipeline for subprocess commands, based on scikit-learn
+    pipeline functionality that can sequentially apply a list of bash
     commands using subprocess and retain the standard output/error."""
 
     # --------------------
     #  Regular Attributes
     # --------------------
 
-    #: List of tuples (name, IBaseProcess) objects that are chained,
+    #: List of tuples (name, IProcess) objects that are chained,
     #: in the order in which they are chained.
-    steps = List(Tuple(Unicode, IBaseProcess))
+    steps = List(Tuple(Str, IProcess))
 
-    #: Output from the most recent Gromacs run
+    #: Output from the most recent pipeline run
     run_output = Dict()
+
+    #: Whether or not to perform a 'dry run' i.e. build the
+    #: command but do not call subprocess to run it
+    dry_run = Bool()
 
     # --------------------
     #      Properties
@@ -91,13 +96,23 @@ class GromacsPipeline(BaseGromacsProcess):
         """Appends step to `self.steps` attribute"""
         self.steps.append(step)
 
+    def recall_stderr(self):
+        """Returns all stderr messages as a dictionary"""
+        return {name: process.recall_stderr()
+                for name, process in self.steps}
+
+    def recall_stdout(self):
+        """Returns all stdout messages as a dictionary"""
+        return {name: process.recall_stdout()
+                for name, process in self.steps}
+
     def bash_script(self):
         """Returns all terminal commands for steps
 
         Returns
         -------
         pipeline_commands : str
-            Generated Gromacs commands as a string
+            Generated bash commands as a string
         """
         bash_script = ''
 

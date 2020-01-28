@@ -1,6 +1,6 @@
 from unittest import mock, TestCase
 
-from force_gromacs.tests.probe_classes import ProbeGromacsFragment
+from force_gromacs.tests.probe_classes.chemicals import ProbeGromacsFragment
 
 
 class TestFragment(TestCase):

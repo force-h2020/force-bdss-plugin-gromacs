@@ -1,7 +1,7 @@
 from unittest import TestCase
 
-from force_gromacs.database.molecule import Molecule
-from force_gromacs.tests.probe_classes import (
+from force_gromacs.chemicals.molecule import Molecule
+from force_gromacs.tests.probe_classes.chemicals import (
     ProbeGromacsFragment
 )
 
