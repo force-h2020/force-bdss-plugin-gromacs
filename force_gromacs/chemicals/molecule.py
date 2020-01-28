@@ -5,7 +5,7 @@ from traits.api import (
 
 from force_bdss.api import DataValue
 
-from force_gromacs.database.i_fragment import IFragment
+from force_gromacs.chemicals.i_fragment import IFragment
 
 
 class Molecule(HasStrictTraits):

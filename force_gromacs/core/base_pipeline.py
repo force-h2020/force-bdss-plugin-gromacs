@@ -1,11 +1,13 @@
 from traits.api import (
-    List, Tuple, Str, on_trait_change, Dict, Property, Interface
+    HasStrictTraits, List, Tuple, Str, on_trait_change,
+    Dict, Property, provides, Bool
 )
 
 from force_gromacs.core.i_process import IProcess
 
 
-class BasePipeline(Interface):
+@provides(IProcess)
+class BasePipeline(HasStrictTraits):
     """A simple pipeline for subprocess commands, based on scikit-learn
     pipeline functionality that can sequentially apply a list of bash
     commands using subprocess and retain the standard output/error."""
@@ -20,6 +22,10 @@ class BasePipeline(Interface):
 
     #: Output from the most recent pipeline run
     run_output = Dict()
+
+    #: Whether or not to perform a 'dry run' i.e. build the
+    #: command but do not call subprocess to run it
+    dry_run = Bool()
 
     # --------------------
     #      Properties
@@ -89,6 +95,16 @@ class BasePipeline(Interface):
     def append(self, step):
         """Appends step to `self.steps` attribute"""
         self.steps.append(step)
+
+    def recall_stderr(self):
+        """Returns all stderr messages as a dictionary"""
+        return {name: process.recall_stderr()
+                for name, process in self.steps}
+
+    def recall_stdout(self):
+        """Returns all stdout messages as a dictionary"""
+        return {name: process.recall_stdout()
+                for name, process in self.steps}
 
     def bash_script(self):
         """Returns all terminal commands for steps

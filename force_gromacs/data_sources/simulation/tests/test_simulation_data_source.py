@@ -4,8 +4,12 @@ from traits.testing.unittest_tools import UnittestTools
 
 from force_bdss.api import DataValue
 
-from force_gromacs.tests.probe_classes import (
-    ProbeSimulationBuilder, ProbeMolecule, ProbeGromacsPipeline
+from force_gromacs.tests.probe_classes.chemicals import ProbeMolecule
+from force_gromacs.tests.probe_classes.simulation_builders import (
+    ProbeSimulationBuilder
+)
+from force_gromacs.tests.probe_classes.pipelines import (
+    ProbeGromacsPipeline
 )
 from force_gromacs.data_sources.simulation.simulation_factory import (
     SimulationFactory

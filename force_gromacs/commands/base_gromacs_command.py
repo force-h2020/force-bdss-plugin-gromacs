@@ -5,7 +5,7 @@ from traits.api import (
     Unicode, Enum, Set, Dict, List, Property, on_trait_change
 )
 
-from .base_process import BaseProcess
+from force_gromacs.core.base_process import BaseProcess
 
 
 class BaseGromacsCommand(BaseProcess):

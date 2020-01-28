@@ -1,4 +1,4 @@
-from traits.api import Interface, Bool, HasStrictTraits
+from traits.api import Interface, Bool
 
 
 class IProcess(Interface):
