@@ -2,17 +2,17 @@ from unittest import TestCase
 
 from force_gromacs.data_sources.molecule import Molecule
 from force_gromacs.tests.probe_classes import (
-    ProbeFragment
+    ProbeGromacsFragment
 )
 
 
 class TestMolecule(TestCase):
 
     def setUp(self):
-        self.water = ProbeFragment()
-        self.positive_ion = ProbeFragment(
+        self.water = ProbeGromacsFragment()
+        self.positive_ion = ProbeGromacsFragment(
             name='Positive Ion', symbol='PI')
-        self.negative_ion = ProbeFragment(
+        self.negative_ion = ProbeGromacsFragment(
             name='Negative Ion', symbol='NI')
 
         self.molecule = Molecule(

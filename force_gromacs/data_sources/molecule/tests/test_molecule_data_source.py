@@ -4,7 +4,7 @@ from force_bdss.api import DataValue
 
 from force_gromacs.gromacs_plugin import GromacsPlugin
 from force_gromacs.tests.probe_classes import (
-    ProbeFragment, data, mock_method
+    ProbeGromacsFragment, data, mock_method
 )
 
 
@@ -12,9 +12,9 @@ class TestMoleculeDataSource(TestCase):
 
     def setUp(self):
 
-        self.positive_ion = ProbeFragment(
+        self.positive_ion = ProbeGromacsFragment(
             name='Positive Ion', symbol='PI')
-        self.negative_ion = ProbeFragment(
+        self.negative_ion = ProbeGromacsFragment(
             name='Negative Ion', symbol='NI')
 
         self.input_values = [self.positive_ion,
