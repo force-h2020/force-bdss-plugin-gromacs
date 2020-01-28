@@ -1,4 +1,4 @@
-from force_gromacs.core.base_pipeline import BasePipeline
+from force_gromacs.pipelines.base_pipeline import BasePipeline
 
 
 class GromacsPipeline(BasePipeline):

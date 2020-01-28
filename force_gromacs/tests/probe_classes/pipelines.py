@@ -3,10 +3,10 @@ from traits.api import HasStrictTraits, Bool, provides
 from force_gromacs.commands.gromacs_commands import (
     Gromacs_solvate, Gromacs_genion
 )
-from force_gromacs.io.gromacs_file_tree_builder import (
-    GromacsFileTreeBuilder
+from force_gromacs.io.file_tree_builder import (
+    FileTreeBuilder
 )
-from force_gromacs.core.base_pipeline import BasePipeline
+from force_gromacs.pipelines.base_pipeline import BasePipeline
 from force_gromacs.core.i_process import IProcess
 from force_gromacs.io.gromacs_topology_writer import (
     GromacsTopologyWriter
@@ -51,7 +51,7 @@ class ProbeGromacsPipeline(GromacsPipeline):
         steps = [
             (
                 'file_tree',
-                GromacsFileTreeBuilder(
+                FileTreeBuilder(
                     directory='./test_experiment',
                     folders=[
                         '1_build', '2_minimize', '3_production'

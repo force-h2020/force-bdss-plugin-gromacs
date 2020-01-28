@@ -8,7 +8,7 @@ from force_gromacs.core.base_process import BaseProcess
 log = logging.getLogger(__name__)
 
 
-class GromacsFileTreeBuilder(BaseProcess):
+class FileTreeBuilder(BaseProcess):
     """Class builds file trees for a Gromacs experiment"""
 
     # --------------------
