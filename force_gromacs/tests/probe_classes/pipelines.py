@@ -31,7 +31,7 @@ class ProbeProcess(HasStrictTraits):
         return ''
 
     def run(self):
-        pass
+        return 0
 
 
 class ProbePipeline(BasePipeline):

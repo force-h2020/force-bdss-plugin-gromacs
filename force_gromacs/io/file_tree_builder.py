@@ -1,7 +1,7 @@
 import logging
 import os
 
-from traits.api import List, Unicode
+from traits.api import List, Str
 
 from force_gromacs.core.base_process import BaseProcess
 
@@ -17,10 +17,10 @@ class FileTreeBuilder(BaseProcess):
 
     #: Location to create file tree in. (By default, the
     #: current working directory)
-    directory = Unicode()
+    directory = Str()
 
     #: Folders to be created in the base directory
-    folders = List(Unicode)
+    folders = List(Str)
 
     # --------------------
     #   Private Methods

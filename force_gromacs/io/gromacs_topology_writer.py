@@ -1,7 +1,7 @@
 import os
 
 from traits.api import (
-    HasTraits, List, Unicode, Dict, Int, provides
+    HasTraits, List, Str, Dict, Int, provides
 )
 
 from force_gromacs.core.i_process import IProcess
@@ -16,15 +16,15 @@ class GromacsTopologyWriter(HasTraits):
     # --------------------
 
     #: Reference name for the Gromacs simulation
-    sim_name = Unicode()
+    sim_name = Str()
 
     #: List of Gromacs topology files to be included
-    topologies = List(Unicode)
+    topologies = List(Str)
 
     #: Dictionary containing keys referring to molecular symbols
     #: referenced from the files in `topologies`, with values determining
     #: the number of each molecule to be included in the simulation
-    fragment_dict = Dict(Unicode, Int)
+    fragment_dict = Dict(Str, Int)
 
     # --------------------
     #  Regular Attributes
@@ -32,10 +32,10 @@ class GromacsTopologyWriter(HasTraits):
 
     #: Location to create topology in. (By default, the
     #: current working directory)
-    directory = Unicode()
+    directory = Str()
 
     #: Name of the Gromacs topology file to be created
-    top_name = Unicode()
+    top_name = Str()
 
     # ------------------
     #      Defaults

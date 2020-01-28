@@ -1,5 +1,5 @@
 from traits.api import (
-    HasTraits, Unicode, Int, Bool, Instance, Dict, provides
+    HasTraits, Str, Int, Bool, Instance, Dict, provides
 )
 
 from force_gromacs.pipelines.gromacs_pipeline import GromacsPipeline
@@ -18,17 +18,17 @@ class BaseGromacsSimulationBuilder(HasTraits):
     # --------------------
 
     #: Reference name of simulation
-    name = Unicode()
+    name = Str()
 
     #: Particle size of simulation
     size = Int()
 
     #: Location to create simulation file tree in. (By default,
     #: the current working directory)
-    directory = Unicode('.')
+    directory = Str('.')
 
     #: Location of MARTINI bead parameter file
-    martini_parameters = Unicode()
+    martini_parameters = Str()
 
     #: Whether or not to perform an MPI parallel run
     mpi_run = Bool(False)
@@ -50,28 +50,28 @@ class BaseGromacsSimulationBuilder(HasTraits):
     topology_data = Dict()
 
     #: Base folder for simulation data
-    _folder = Unicode()
+    _folder = Str()
 
     #: Output coordinate file name
-    _coord_file = Unicode()
+    _coord_file = Str()
 
     #: Output binary file name
-    _binary_file = Unicode()
+    _binary_file = Str()
 
     #: Output topology file name
-    _top_file = Unicode()
+    _top_file = Str()
 
     #: Output energy file name
-    _energy_file = Unicode()
+    _energy_file = Str()
 
     #: Output trajectory file name
-    _traj_file = Unicode()
+    _traj_file = Str()
 
     #: Output log file name
-    _log_file = Unicode()
+    _log_file = Str()
 
     #: Output state file name
-    _state_file = Unicode()
+    _state_file = Str()
 
     # --------------------
     #      Defaults
