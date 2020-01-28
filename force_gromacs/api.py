@@ -12,8 +12,8 @@ from .commands.gromacs_file_tree_builder import GromacsFileTreeBuilder # noqa
 from .core.base_gromacs_command import BaseGromacsCommand # noqa
 from .core.base_gromacs_process import BaseGromacsProcess # noqa
 
-from .data_sources.fragment.fragment import Fragment # noqa
-from .data_sources.molecule.molecule import Molecule # noqa
+from .data_sources.fragment.gromacs_fragment import GromacsFragment as Fragment # noqa
+from .database.molecule import Molecule # noqa
 
 from .io.gromacs_coordinate_reader import GromacsCoordinateReader # noqa
 from .io.gromacs_topology_reader import GromacsTopologyReader # noqa

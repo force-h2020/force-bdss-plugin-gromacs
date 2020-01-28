@@ -2,7 +2,7 @@ import copy
 
 from force_bdss.api import BaseDataSource, DataValue, Slot
 
-from force_gromacs.data_sources.molecule import (
+from force_gromacs.database.molecule import (
     Molecule
 )
 
