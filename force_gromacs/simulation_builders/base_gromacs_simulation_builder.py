@@ -2,11 +2,10 @@ from traits.api import (
     HasTraits, Unicode, Int, Bool, Instance, Dict, provides
 )
 
-from force_gromacs.pipelines.gromacs_pipeline import (
-    GromacsPipeline
+from force_gromacs.pipelines.gromacs_pipeline import GromacsPipeline
+from force_gromacs.simulation_builders.i_simulation_builder import (
+    ISimulationBuilder
 )
-
-from force_gromacs.simulation_builders.i_simulation_builder import ISimulationBuilder
 
 
 @provides(ISimulationBuilder)
