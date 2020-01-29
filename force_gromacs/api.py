@@ -1,4 +1,4 @@
-from .chemicals.gromacs_fragment import GromacsFragment as Fragment # noqa
+from .chemicals.gromacs_fragment import GromacsFragment # noqa
 from .chemicals.i_fragment import IFragment # noqa
 from .chemicals.molecule import Molecule # noqa
 
