@@ -9,14 +9,11 @@ from force_gromacs.core.i_process import IProcess
 
 @provides(IProcess)
 class GromacsTopologyWriter(HasTraits):
-    """  Class writes Gromacs topology file"""
+    """Class writes Gromacs topology file"""
 
     # --------------------
     #  Required Attributes
     # --------------------
-
-    #: Reference name for the Gromacs simulation
-    sim_name = Str()
 
     #: List of Gromacs topology files to be included
     topologies = List(Str)
@@ -26,25 +23,34 @@ class GromacsTopologyWriter(HasTraits):
     #: the number of each molecule to be included in the simulation
     fragment_dict = Dict(Str, Int)
 
-    # --------------------
-    #  Regular Attributes
-    # --------------------
+    # ------------------------------
+    #  Required / Regular Attributes
+    # ------------------------------
 
-    #: Location to create topology in. (By default, the
-    #: current working directory)
+    #: Location to create topology file in. If not provided,
+    #: a default value including sim_name attribute will be used.
     directory = Str()
 
-    #: Name of the Gromacs topology file to be created
+    #: Name of the Gromacs topology file to be created. If not provided,
+    #: a default value including sim_name attribute will be used.
     top_name = Str()
+
+    #: Reference name for the Gromacs simulation. Can be used to define
+    #: default values of directory and top_name attributes
+    sim_name = Str()
 
     # ------------------
     #      Defaults
     # ------------------
 
     def _directory_default(self):
+        """If directory is not defined, use current directory
+        with sim_name as default directory"""
         return f"{os.path.curdir}/{self.sim_name}"
 
     def _top_name_default(self):
+        """If topology file name is not defined, use sim_name with
+        .top extension as default file name"""
         return f"{self.sim_name}_topol.top"
 
     # ------------------
