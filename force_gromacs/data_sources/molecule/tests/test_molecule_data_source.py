@@ -72,14 +72,8 @@ class TestMoleculeDataSource(TestCase):
         self.model.n_fragments = 2
         self.model.fragment_numbers = [2, 3]
 
-        parameters = [
-            DataValue(type='FRAGMENT', value=value)
-            for value in self.input_values
-        ]
-        parameters += [DataValue(type='NOTHING', value=0)]
-
-        self.data_source._assign_stoichiometry(self.model,
-                                               parameters)
+        self.data_source._assign_stoichiometry(
+            self.model, self.input_values)
 
         self.assertEqual(2, self.positive_ion.number)
         self.assertEqual(3, self.negative_ion.number)
