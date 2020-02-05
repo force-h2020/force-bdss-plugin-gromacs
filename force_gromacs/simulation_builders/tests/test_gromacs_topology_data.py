@@ -16,7 +16,7 @@ class TestGromacsTopologyData(TestCase):
 
     def test__init__(self):
 
-        self.assertListEqual([], self.topology_data.topology_files)
+        self.assertListEqual([], self.topology_data.molecule_files)
         self.assertDictEqual({}, self.topology_data.fragment_ledger)
 
     def test_add_fragment(self):
@@ -56,30 +56,30 @@ class TestGromacsTopologyData(TestCase):
 
     def test_add_topology_file(self):
 
-        self.topology_data.add_topology_file('some_top.itp')
-        self.assertListEqual(['some_top.itp'], self.topology_data.topology_files)
+        self.topology_data.add_molecule_file('some_top.itp')
+        self.assertListEqual(['some_top.itp'], self.topology_data.molecule_files)
 
         # Don't add duplicate items
-        self.topology_data.add_topology_file('some_top.itp')
-        self.assertListEqual(['some_top.itp'], self.topology_data.topology_files)
+        self.topology_data.add_molecule_file('some_top.itp')
+        self.assertListEqual(['some_top.itp'], self.topology_data.molecule_files)
 
     def test_remove_topology_files(self):
 
-        self.topology_data.topology_files = ['some_top.itp']
+        self.topology_data.molecule_files = ['some_top.itp']
 
-        self.topology_data.remove_topology_file('some_top.itp')
-        self.assertListEqual([], self.topology_data.topology_files)
+        self.topology_data.remove_molecule_file('some_top.itp')
+        self.assertListEqual([], self.topology_data.molecule_files)
 
         # Don't fail if topology is not present
-        self.topology_data.remove_topology_file('some_top.itp')
-        self.assertListEqual([], self.topology_data.topology_files)
+        self.topology_data.remove_molecule_file('some_top.itp')
+        self.assertListEqual([], self.topology_data.molecule_files)
 
     def test_verify(self):
 
         self.topology_data.fragment_ledger = {'I': 10}
         self.assertFalse(self.topology_data.verify())
 
-        self.topology_data.topology_files = ['some_top.itp']
+        self.topology_data.molecule_files = ['some_top.itp']
         self.assertFalse(self.topology_data.verify())
 
         mock_open = mock.mock_open(read_data=" ")

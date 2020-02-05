@@ -62,7 +62,7 @@ class GromacsTopologyWriter(HasTraits):
         top_file = ""
 
         # Add topology files at beginning
-        for topology in self.topology_data.topology_files:
+        for topology in self.topology_data.molecule_files:
             top_file += '#include "{}"\n'.format(topology)
 
         # Include reference to simulation name

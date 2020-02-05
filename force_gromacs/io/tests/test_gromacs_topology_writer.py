@@ -17,7 +17,7 @@ class TestGromacsTopologyWriter(TestCase):
     def setUp(self):
 
         topology_data = GromacsTopologyData(
-            topology_files=['test_surf_1.itp', 'test_surf_2.itp',
+            molecule_files=['test_surf_1.itp', 'test_surf_2.itp',
                             'test_salt.itp', 'test_solv.itp'],
             fragment_ledger={
                 'PS': 1200,

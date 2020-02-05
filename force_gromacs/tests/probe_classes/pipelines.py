@@ -91,7 +91,7 @@ class ProbeGromacsPipeline(GromacsPipeline):
                 'top_file',
                 GromacsTopologyWriter(
                     topology_data=GromacsTopologyData(
-                        topology_files=['test_top.itp'],
+                        molecule_files=['test_top.itp'],
                         fragment_ledger={'S': 30}
                     ),
                     top_name='test_topology.top',

@@ -10,12 +10,12 @@ class GromacsTopologyData(HasStrictTraits):
     simulation chemical topologies. These describe the molecular
     models included within the system.
 
-    Note: we presume all forcefield parameters for each fragment are
-    contained within seperate '.itp' files"""
+    Note: we presume all forcefield parameters for each molecular fragment
+    are contained within seperate '.itp' files"""
 
-    #: List of Gromacs include topology files (.itp) containing model
-    # information
-    topology_files = List(File)
+    #: List of Gromacs include molecule topology files (.itp) containing
+    #: forcefield model information for each fragment
+    molecule_files = List(File)
 
     #: Data referring to each fragment species used in this
     #: simulation. These include the keys corresponding to models
@@ -33,16 +33,16 @@ class GromacsTopologyData(HasStrictTraits):
     #    Public Methods
     # --------------------
 
-    def add_topology_file(self, topology_file):
+    def add_molecule_file(self, molecule_file):
         """Adds topology file to topology_files list if not
         already included"""
-        if topology_file not in self.topology_files:
-            self.topology_files.append(topology_file)
+        if molecule_file not in self.molecule_files:
+            self.molecule_files.append(molecule_file)
 
-    def remove_topology_file(self, topology_file):
+    def remove_molecule_file(self, molecule_file):
         """Removes topology file from topology_files list if present"""
-        if topology_file in self.topology_files:
-            self.topology_files.remove(topology_file)
+        if molecule_file in self.molecule_files:
+            self.molecule_files.remove(molecule_file)
 
     def add_fragment(self, symbol, number=0):
         """Adds fragment symbol and number to `fragment_ledger` if not
@@ -74,9 +74,9 @@ class GromacsTopologyData(HasStrictTraits):
         # Build cache of fragment types included in topology files
         fragment_cache = []
 
-        for topology_file in self.topology_files:
+        for molecule_file in self.molecule_files:
             try:
-                data = self._reader.read(topology_file)
+                data = self._reader.read(molecule_file)
             except IOError:
                 return False
             fragment_cache.extend(list(data.keys()))
