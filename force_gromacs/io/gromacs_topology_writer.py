@@ -1,10 +1,13 @@
 import os
 
 from traits.api import (
-    HasTraits, List, Str, Dict, Int, provides
+    HasTraits, Directory, Str, Instance, provides
 )
 
 from force_gromacs.core.i_process import IProcess
+from force_gromacs.simulation_builders.gromacs_topology_data import (
+    GromacsTopologyData
+)
 
 
 @provides(IProcess)
@@ -15,13 +18,9 @@ class GromacsTopologyWriter(HasTraits):
     #  Required Attributes
     # --------------------
 
-    #: List of Gromacs topology files to be included
-    topologies = List(Str)
-
-    #: Dictionary containing keys referring to molecular symbols
-    #: referenced from the files in `topologies`, with values determining
-    #: the number of each molecule to be included in the simulation
-    fragment_dict = Dict(Str, Int)
+    #: GromacsTopologyData object containing information regarding
+    #: all topology files required and fragments present in simulation
+    topology_data = Instance(GromacsTopologyData)
 
     # ------------------------------
     #  Required / Regular Attributes
@@ -29,7 +28,7 @@ class GromacsTopologyWriter(HasTraits):
 
     #: Location to create topology file in. If not provided,
     #: a default value including sim_name attribute will be used.
-    directory = Str()
+    directory = Directory()
 
     #: Name of the Gromacs topology file to be created. If not provided,
     #: a default value including sim_name attribute will be used.
@@ -53,25 +52,25 @@ class GromacsTopologyWriter(HasTraits):
         .top extension as default file name"""
         return f"{self.sim_name}_topol.top"
 
-    # ------------------
-    #  Private Methods
-    # ------------------
+    # --------------------
+    #    Private Methods
+    # --------------------
 
     def _create_simulation_top(self):
         """Builds human readable topology file for Gromacs simulation"""
 
         top_file = ""
-        included_topologies = []
-        for topology in self.topologies:
-            if topology not in included_topologies:
-                top_file += '#include "{}"\n'.format(topology)
-                included_topologies.append(topology)
 
-        top_file += '\n[ system ]\n'
-        top_file += self.sim_name + '\n'
+        # Add topology files at beginning
+        for topology in self.topology_data.topology_files:
+            top_file += '#include "{}"\n'.format(topology)
 
+        # Include reference to simulation name
+        top_file += f'\n[ system ]\n{self.sim_name}\n'
+
+        # Add fragment symbols and numbers files at end
         top_file += '\n[ molecules ]\n'
-        for symbol, n_mol in self.fragment_dict.items():
+        for symbol, n_mol in self.topology_data.fragment_ledger.items():
             top_file += '{} {}\n'.format(symbol, n_mol)
 
         return top_file

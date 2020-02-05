@@ -8,8 +8,8 @@ log = logging.getLogger(__name__)
 
 
 class GromacsTopologyReader(BaseFileReader):
-    """Class parses Gromacs file and returns data required for
-    each molecular type listed.
+    """Class parses Gromacs topology (.top) file and returns data
+    required for each molecular type listed.
     """
 
     # --------------------
@@ -64,7 +64,7 @@ class GromacsTopologyReader(BaseFileReader):
                        if "moleculetype" in line]
 
         if len(mol_indices) == 0:
-            raise RuntimeError(
+            raise IOError(
                 'Gromacs topology file does not include any'
                 ' molecule types'
             )

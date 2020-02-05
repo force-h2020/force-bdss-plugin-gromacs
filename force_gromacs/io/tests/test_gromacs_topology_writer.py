@@ -3,6 +3,9 @@ from unittest import TestCase, mock
 from force_gromacs.io.gromacs_topology_writer import (
     GromacsTopologyWriter
 )
+from force_gromacs.simulation_builders.gromacs_topology_data import (
+    GromacsTopologyData
+)
 
 GROMACS_WRITER_OPEN_PATH = (
     "force_gromacs.io.gromacs_topology_writer.open"
@@ -13,16 +16,19 @@ class TestGromacsTopologyWriter(TestCase):
 
     def setUp(self):
 
-        roster = {'PS': 1200,
-                  'SS': 480,
-                  'S': 200,
-                  'So': 2120}
-
+        topology_data = GromacsTopologyData(
+            topology_files=['test_surf_1.itp', 'test_surf_2.itp',
+                            'test_salt.itp', 'test_solv.itp'],
+            fragment_ledger={
+                'PS': 1200,
+                'SS': 480,
+                'S': 200,
+                'So': 2120
+            }
+        )
         self.writer = GromacsTopologyWriter(
+            topology_data=topology_data,
             sim_name='test_experiment',
-            topologies=['test_surf_1.itp', 'test_surf_2.itp',
-                        'test_salt.itp', 'test_solv.itp'],
-            fragment_dict=roster,
             top_name='test_top.itp',
             dry_run=True
         )

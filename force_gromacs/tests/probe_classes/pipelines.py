@@ -11,6 +11,9 @@ from force_gromacs.core.i_process import IProcess
 from force_gromacs.io.gromacs_topology_writer import (
     GromacsTopologyWriter
 )
+from force_gromacs.simulation_builders.gromacs_topology_data import (
+    GromacsTopologyData
+)
 from force_gromacs.pipelines.gromacs_pipeline import (
     GromacsPipeline
 )
@@ -87,10 +90,12 @@ class ProbeGromacsPipeline(GromacsPipeline):
             (
                 'top_file',
                 GromacsTopologyWriter(
+                    topology_data=GromacsTopologyData(
+                        topology_files=['test_top.itp'],
+                        fragment_ledger={'S': 30}
+                    ),
                     top_name='test_topology.top',
-                    sim_name='test_experiment',
-                    topologies=['test_top.itp'],
-                    fragment_dict={'S': 30}
+                    sim_name='test_experiment'
                 )
             )
         ]

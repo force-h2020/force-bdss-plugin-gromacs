@@ -1,5 +1,7 @@
+from force_gromacs.simulation_builders.gromacs_topology_data import GromacsTopologyData
 from traits.api import (
-    HasTraits, Str, Int, Bool, Instance, Dict, provides
+    HasTraits, Str, Int, Bool, Instance, Directory,
+    File, provides
 )
 
 from force_gromacs.pipelines.gromacs_pipeline import GromacsPipeline
@@ -43,88 +45,75 @@ class BaseGromacsSimulationBuilder(HasTraits):
     #  Regular Attributes
     # --------------------
 
-    #: GromacsPipeline object to be constructed
-    pipeline = Instance(GromacsPipeline)
-
     #: Current data to be included in human readable topology file
-    topology_data = Dict()
+    topology_data = Instance(GromacsTopologyData)
 
     #: Base folder for simulation data
-    _folder = Str()
+    folder = Directory()
 
     #: Output coordinate file name
-    _coord_file = Str()
+    coord_file = File()
 
     #: Output binary file name
-    _binary_file = Str()
+    binary_file = File()
 
     #: Output topology file name
-    _top_file = Str()
+    top_file = File()
 
     #: Output energy file name
-    _energy_file = Str()
+    energy_file = File()
 
     #: Output trajectory file name
-    _traj_file = Str()
+    traj_file = File()
 
     #: Output log file name
-    _log_file = Str()
+    log_file = File()
 
     #: Output state file name
-    _state_file = Str()
+    state_file = File()
+
+    # --------------------
+    #  Private Attributes
+    # --------------------
+
+    #: GromacsPipeline object to be constructed. Kept as a private
+    #: attribute, since should only be obtained as a completed instance
+    #: via `build_pipeline`
+    _pipeline = Instance(GromacsPipeline)
 
     # --------------------
     #      Defaults
     # --------------------
 
-    def _pipeline_default(self):
-        return GromacsPipeline(dry_run=self.dry_run)
-
     def _topology_data_default(self):
-        return {'topologies': [],
-                'fragment_dict': {}}
+        return GromacsTopologyData()
 
-    def __folder_default(self):
+    def _folder_default(self):
         return '/'.join([self.directory, self.name])
 
-    def __coord_file_default(self):
+    def _coord_file_default(self):
         return self.name + '_coord.gro'
 
-    def __binary_file_default(self):
+    def _binary_file_default(self):
         return self.name + '_topol.tpr'
 
-    def __top_file_default(self):
+    def _top_file_default(self):
         return self.name + '_topol.top'
 
-    def __energy_file_default(self):
+    def _energy_file_default(self):
         return self.name + '_ener.edr'
 
-    def __traj_file_default(self):
+    def _traj_file_default(self):
         return self.name + '_traj'
 
-    def __log_file_default(self):
+    def _log_file_default(self):
         return self.name + '_md.log'
 
-    def __state_file_default(self):
+    def _state_file_default(self):
         return self.name + '_state.cpt'
 
-    # --------------------
-    #    Private Methods
-    # --------------------
-
-    def _update_topology_data(self, topology=None, symbol=None, n_mol=0):
-        """Updates attribute _topology_data, which stores data to write
-        to a human readable Gromacs topology file"""
-
-        if topology is not None:
-            if topology not in self.topology_data['topologies']:
-                self.topology_data['topologies'].append(topology)
-
-        if symbol is not None:
-            if symbol not in self.topology_data['fragment_dict']:
-                self.topology_data['fragment_dict'][symbol] = 0
-
-            self.topology_data['fragment_dict'][symbol] += n_mol
+    def __pipeline_default(self):
+        return GromacsPipeline(dry_run=self.dry_run)
 
     # --------------------
     #    Public Methods

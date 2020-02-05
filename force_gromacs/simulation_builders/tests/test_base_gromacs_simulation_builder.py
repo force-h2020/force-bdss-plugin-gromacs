@@ -3,6 +3,9 @@ from unittest import TestCase
 from force_gromacs.simulation_builders.base_gromacs_simulation_builder import (
     BaseGromacsSimulationBuilder
 )
+from force_gromacs.simulation_builders.gromacs_topology_data import (
+    GromacsTopologyData
+)
 from force_gromacs.pipelines.gromacs_pipeline import GromacsPipeline
 
 
@@ -33,83 +36,35 @@ class TestGromacsSimulationBuilder(TestCase):
         self.assertTrue(self.sim_builder.dry_run)
 
         self.assertEqual(
-            'test_experiment_coord.gro', self.sim_builder._coord_file
+            'test_experiment_coord.gro', self.sim_builder.coord_file
         )
         self.assertEqual(
-            'test_experiment_topol.tpr', self.sim_builder._binary_file
+            'test_experiment_topol.tpr', self.sim_builder.binary_file
         )
         self.assertEqual(
-            'test_experiment_topol.top', self.sim_builder._top_file
+            'test_experiment_topol.top', self.sim_builder.top_file
         )
         self.assertEqual(
-            'test_experiment_ener.edr', self.sim_builder._energy_file
+            'test_experiment_ener.edr', self.sim_builder.energy_file
         )
         self.assertEqual(
-            'test_experiment_traj', self.sim_builder._traj_file
+            'test_experiment_traj', self.sim_builder.traj_file
         )
         self.assertEqual(
-            'test_experiment_md.log', self.sim_builder._log_file
+            'test_experiment_md.log', self.sim_builder.log_file
         )
         self.assertEqual(
-            'test_experiment_state.cpt', self.sim_builder._state_file
+            'test_experiment_state.cpt', self.sim_builder.state_file
         )
 
         self.assertIsInstance(
-            self.sim_builder.pipeline, GromacsPipeline
+            self.sim_builder._pipeline, GromacsPipeline
         )
         self.assertEqual(
-            self.sim_builder.dry_run, self.sim_builder.pipeline.dry_run
+            self.sim_builder.dry_run, self.sim_builder._pipeline.dry_run
         )
-
-        self.assertEqual(
-            {'topologies': [],
-             'fragment_dict': {}},
-            self.sim_builder.topology_data
-        )
-
-    def test__update_topology_data(self):
-
-        self.sim_builder._update_topology_data('some_top.itp', 'Mol', 10)
-        self.assertEqual(
-            ['some_top.itp'], self.sim_builder.topology_data['topologies']
-        )
-        self.assertEqual(
-            {'Mol': 10}, self.sim_builder.topology_data['fragment_dict']
-        )
-
-        self.sim_builder._update_topology_data('some_other_top.itp', 'At', 10)
-        self.assertEqual(
-            ['some_top.itp',
-             'some_other_top.itp'],
-            self.sim_builder.topology_data['topologies']
-        )
-        self.assertEqual(
-            {'Mol': 10,
-             'At': 10}, self.sim_builder.topology_data['fragment_dict']
-        )
-
-        self.sim_builder._update_topology_data('and_another_top.itp')
-        self.assertEqual(
-            ['some_top.itp',
-             'some_other_top.itp',
-             'and_another_top.itp'],
-            self.sim_builder.topology_data['topologies']
-        )
-        self.assertEqual(
-            {'Mol': 10,
-             'At': 10}, self.sim_builder.topology_data['fragment_dict']
-        )
-
-        self.sim_builder._update_topology_data(symbol='Mol', n_mol=100)
-        self.assertEqual(
-            ['some_top.itp',
-             'some_other_top.itp',
-             'and_another_top.itp'],
-            self.sim_builder.topology_data['topologies']
-        )
-        self.assertEqual(
-            {'Mol': 110,
-             'At': 10}, self.sim_builder.topology_data['fragment_dict']
+        self.assertIsInstance(
+            self.sim_builder.topology_data, GromacsTopologyData
         )
 
     def test_not_implemented_methods(self):

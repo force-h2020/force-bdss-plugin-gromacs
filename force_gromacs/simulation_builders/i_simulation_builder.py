@@ -1,4 +1,4 @@
-from traits.api import Interface, Str, Int, Bool
+from traits.api import Interface, Str, Int, Bool, Directory
 
 
 class ISimulationBuilder(Interface):
@@ -15,7 +15,7 @@ class ISimulationBuilder(Interface):
     size = Int()
 
     #: Location to create simulation file tree in.
-    directory = Str()
+    directory = Directory()
 
     #: Whether or not to perform an MPI parallel run
     mpi_run = Bool()
