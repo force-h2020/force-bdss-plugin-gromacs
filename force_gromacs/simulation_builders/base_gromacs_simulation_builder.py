@@ -48,8 +48,11 @@ class BaseGromacsSimulationBuilder(HasTraits):
     #  Regular Attributes
     # --------------------
 
+    #: Folder to create for beginning of simulation file tree
+    folder = Directory()
+
     #: Current data to be included in human readable topology file
-    topology_data = GromacsTopologyData()
+    topology_data = Instance(GromacsTopologyData)
 
     #: GromacsFileRegistry containing instructions how to format each file
     #: type
@@ -70,6 +73,9 @@ class BaseGromacsSimulationBuilder(HasTraits):
 
     def _folder_default(self):
         return '/'.join([self.directory, self.name])
+
+    def _topology_data_default(self):
+        return GromacsTopologyData()
 
     def _file_registry_default(self):
         return GromacsFileRegistry(prefix=self.name)

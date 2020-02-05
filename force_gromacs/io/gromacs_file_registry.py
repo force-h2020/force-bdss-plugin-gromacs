@@ -43,7 +43,8 @@ class GromacsFileRegistry(FileRegistry):
             'compressed trajectory': 'xtc',
             'trajectory': 'trr',
             'molecule': 'itp',
-            'index': 'ndx'
+            'index': 'ndx',
+            'parameter': 'mdp'
         }
 
     def _get_coord_file(self):

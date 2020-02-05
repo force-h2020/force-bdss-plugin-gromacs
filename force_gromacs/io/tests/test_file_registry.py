@@ -8,7 +8,8 @@ class TestFileRegistry(TestCase):
     def setUp(self):
 
         self.file_registry = FileRegistry(
-            extensions={'coordinate': 'gro'}
+            extensions={'coordinate': 'gro',
+                        'generic': 'ext'}
         )
 
     def test_format_file_name(self):
@@ -28,5 +29,11 @@ class TestFileRegistry(TestCase):
         file_name = '/path/to/some/.hidden_file_prefix'
         self.assertEqual(
             '/path/to/some/.hidden_file_prefix.gro',
+            self.file_registry.format_file_name(file_name, 'coordinate')
+        )
+
+        file_name = '/path/to/some/file_w_._prefix'
+        self.assertEqual(
+            '/path/to/some/file_w_._prefix.gro',
             self.file_registry.format_file_name(file_name, 'coordinate')
         )
