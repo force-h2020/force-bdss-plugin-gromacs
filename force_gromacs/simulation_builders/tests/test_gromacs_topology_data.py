@@ -57,11 +57,13 @@ class TestGromacsTopologyData(TestCase):
     def test_add_topology_file(self):
 
         self.topology_data.add_molecule_file('some_top.itp')
-        self.assertListEqual(['some_top.itp'], self.topology_data.molecule_files)
+        self.assertListEqual(['some_top.itp'],
+                             self.topology_data.molecule_files)
 
         # Don't add duplicate items
         self.topology_data.add_molecule_file('some_top.itp')
-        self.assertListEqual(['some_top.itp'], self.topology_data.molecule_files)
+        self.assertListEqual(['some_top.itp'],
+                             self.topology_data.molecule_files)
 
     def test_remove_topology_files(self):
 

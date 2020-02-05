@@ -1,6 +1,6 @@
 from traits.api import (
     HasTraits, Str, Int, Bool, Instance, Directory,
-    File, provides
+    provides
 )
 
 from force_gromacs.io.gromacs_file_registry import GromacsFileRegistry
