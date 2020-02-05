@@ -36,25 +36,32 @@ class TestGromacsSimulationBuilder(TestCase):
         self.assertTrue(self.sim_builder.dry_run)
 
         self.assertEqual(
-            'test_experiment_coord.gro', self.sim_builder.coord_file
+            'test_experiment_coord.gro',
+            self.sim_builder.file_registry.coord_file
         )
         self.assertEqual(
-            'test_experiment_topol.tpr', self.sim_builder.binary_file
+            'test_experiment_topol.tpr',
+            self.sim_builder.file_registry.binary_file
         )
         self.assertEqual(
-            'test_experiment_topol.top', self.sim_builder.top_file
+            'test_experiment_topol.top',
+            self.sim_builder.file_registry.top_file
         )
         self.assertEqual(
-            'test_experiment_ener.edr', self.sim_builder.energy_file
+            'test_experiment_ener.edr',
+            self.sim_builder.file_registry.energy_file
         )
         self.assertEqual(
-            'test_experiment_traj', self.sim_builder.traj_file
+            'test_experiment_traj.trr',
+            self.sim_builder.file_registry.traj_file
         )
         self.assertEqual(
-            'test_experiment_md.log', self.sim_builder.log_file
+            'test_experiment_md.log',
+            self.sim_builder.file_registry.log_file
         )
         self.assertEqual(
-            'test_experiment_state.cpt', self.sim_builder.state_file
+            'test_experiment_state.cpt',
+            self.sim_builder.file_registry.state_file
         )
 
         self.assertIsInstance(

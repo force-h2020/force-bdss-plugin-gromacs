@@ -1,10 +1,13 @@
-from force_gromacs.simulation_builders.gromacs_topology_data import GromacsTopologyData
 from traits.api import (
     HasTraits, Str, Int, Bool, Instance, Directory,
     File, provides
 )
 
+from force_gromacs.io.gromacs_file_registry import GromacsFileRegistry
 from force_gromacs.pipelines.gromacs_pipeline import GromacsPipeline
+from force_gromacs.simulation_builders.gromacs_topology_data import (
+    GromacsTopologyData
+)
 from force_gromacs.simulation_builders.i_simulation_builder import (
     ISimulationBuilder
 )
@@ -27,7 +30,7 @@ class BaseGromacsSimulationBuilder(HasTraits):
 
     #: Location to create simulation file tree in. (By default,
     #: the current working directory)
-    directory = Str('.')
+    directory = Directory('.')
 
     #: Location of MARTINI bead parameter file
     martini_parameters = Str()
@@ -46,31 +49,11 @@ class BaseGromacsSimulationBuilder(HasTraits):
     # --------------------
 
     #: Current data to be included in human readable topology file
-    topology_data = Instance(GromacsTopologyData)
+    topology_data = GromacsTopologyData()
 
-    #: Base folder for simulation data
-    folder = Directory()
-
-    #: Output coordinate file name
-    coord_file = File()
-
-    #: Output binary file name
-    binary_file = File()
-
-    #: Output topology file name
-    top_file = File()
-
-    #: Output energy file name
-    energy_file = File()
-
-    #: Output trajectory file name
-    traj_file = File()
-
-    #: Output log file name
-    log_file = File()
-
-    #: Output state file name
-    state_file = File()
+    #: GromacsFileRegistry containing instructions how to format each file
+    #: type
+    file_registry = Instance(GromacsFileRegistry)
 
     # --------------------
     #  Private Attributes
@@ -85,32 +68,11 @@ class BaseGromacsSimulationBuilder(HasTraits):
     #      Defaults
     # --------------------
 
-    def _topology_data_default(self):
-        return GromacsTopologyData()
-
     def _folder_default(self):
         return '/'.join([self.directory, self.name])
 
-    def _coord_file_default(self):
-        return self.name + '_coord.gro'
-
-    def _binary_file_default(self):
-        return self.name + '_topol.tpr'
-
-    def _top_file_default(self):
-        return self.name + '_topol.top'
-
-    def _energy_file_default(self):
-        return self.name + '_ener.edr'
-
-    def _traj_file_default(self):
-        return self.name + '_traj'
-
-    def _log_file_default(self):
-        return self.name + '_md.log'
-
-    def _state_file_default(self):
-        return self.name + '_state.cpt'
+    def _file_registry_default(self):
+        return GromacsFileRegistry(prefix=self.name)
 
     def __pipeline_default(self):
         return GromacsPipeline(dry_run=self.dry_run)
