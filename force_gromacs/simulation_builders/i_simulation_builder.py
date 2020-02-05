@@ -1,6 +1,6 @@
 from traits.api import Interface, Str, Int, Bool, Directory, Instance
 
-from force_gromacs.io.file_registry import FileRegistry
+from force_gromacs.io.base_file_registry import BaseFileRegistry
 
 
 class ISimulationBuilder(Interface):
@@ -28,9 +28,9 @@ class ISimulationBuilder(Interface):
     #: Whether or not to perform a dry run
     dry_run = Bool()
 
-    #: FileRegistry containing instructions how to format each file
+    #: BaseFileRegistry containing instructions how to format each file
     #: type
-    file_registry = Instance(FileRegistry)
+    file_registry = Instance(BaseFileRegistry)
 
     def build_pipeline(self):
         """Method to be implemented that returns a `GromacsPipeline`

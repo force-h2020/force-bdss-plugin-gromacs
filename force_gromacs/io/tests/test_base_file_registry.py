@@ -1,13 +1,13 @@
 from unittest import TestCase
 
-from force_gromacs.io.file_registry import FileRegistry
+from force_gromacs.io.base_file_registry import BaseFileRegistry
 
 
-class TestFileRegistry(TestCase):
+class TestBaseFileRegistry(TestCase):
 
     def setUp(self):
 
-        self.file_registry = FileRegistry(
+        self.file_registry = BaseFileRegistry(
             extensions={'coordinate': 'gro',
                         'generic': 'ext'}
         )

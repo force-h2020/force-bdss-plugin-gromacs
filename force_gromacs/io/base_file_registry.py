@@ -3,7 +3,10 @@ import os
 from traits.api import HasStrictTraits, Dict, Str
 
 
-class FileRegistry(HasStrictTraits):
+class BaseFileRegistry(HasStrictTraits):
+    """Helper class that can edit file names to possess
+    a suitable format for different simulation software
+    requirements"""
 
     #: Registry of extensions for each simulation file type
     extensions = Dict(Str, Str)
@@ -12,7 +15,7 @@ class FileRegistry(HasStrictTraits):
         """Return formatted name depending on file type"""
 
         # Remove any existing file extensions that are recognised
-        # by this FileRegisty
+        # by this class
         prefix, ext = os.path.splitext(file_name)
         if ext.strip('.') in self.extensions.values():
             file_name = prefix

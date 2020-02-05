@@ -16,7 +16,7 @@ from .commands.base_gromacs_command import BaseGromacsCommand # noqa
 from .core.base_process import BaseProcess # noqa
 from .core.i_process import IProcess # noqa
 
-from .io.file_registry import FileRegistry # noqa
+from .io.base_file_registry import BaseFileRegistry # noqa
 from .io.file_tree_builder import FileTreeBuilder # noqa
 from .io.gromacs_coordinate_reader import GromacsCoordinateReader # noqa
 from .io.gromacs_topology_reader import GromacsTopologyReader # noqa

@@ -1,9 +1,14 @@
 from traits.api import Str, Property
 
-from .file_registry import FileRegistry
+from .base_file_registry import BaseFileRegistry
 
 
-class GromacsFileRegistry(FileRegistry):
+class GromacsFileRegistry(BaseFileRegistry):
+    """A helper class to most common format file names
+    appropriately for Gromacs simulations. A comprehensive list of
+    posible file extensions is found at
+    http://manual.gromacs.org/documentation/2018/user-guide/file-formats.html # noqa
+    """
 
     #: Prefix to each file name
     prefix = Str()
