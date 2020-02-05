@@ -16,10 +16,12 @@ from .commands.base_gromacs_command import BaseGromacsCommand # noqa
 from .core.base_process import BaseProcess # noqa
 from .core.i_process import IProcess # noqa
 
+from .io.file_registry import FileRegistry # noqa
 from .io.file_tree_builder import FileTreeBuilder # noqa
 from .io.gromacs_coordinate_reader import GromacsCoordinateReader # noqa
 from .io.gromacs_topology_reader import GromacsTopologyReader # noqa
 from .io.gromacs_topology_writer import GromacsTopologyWriter # noqa
+from .io.gromacs_file_registry import GromacsFileRegistry # noqa
 
 from .notification_listeners.driver_events import SimulationProgressEvent # noqa
 
@@ -28,6 +30,7 @@ from .pipelines.gromacs_pipeline import GromacsPipeline # noqa
 
 from .simulation_builders.i_simulation_builder import ISimulationBuilder # noqa
 from .simulation_builders.base_gromacs_simulation_builder import BaseGromacsSimulationBuilder # noqa
+from .simulation_builders.gromacs_topology_data import GromacsTopologyData # noqa
 
 from .tools.distances import distance_matrix, batch_distance_matrix # noqa
 from .tools.positions import molecular_positions # noqa
