@@ -2,7 +2,13 @@ import subprocess
 import os
 
 from traits.api import (
-    Unicode, Enum, Set, Dict, List, Property, on_trait_change
+    Unicode,
+    Enum,
+    Set,
+    Dict,
+    List,
+    Property,
+    on_trait_change
 )
 
 from force_gromacs.core.base_process import BaseProcess
