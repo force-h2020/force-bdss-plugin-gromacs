@@ -3,10 +3,12 @@ subclasses:
 
 * :class:`Gromacs_genconf` provides a wrapper around Gromacs genconf command.
 * :class:`Gromacs_genbox` provides a wrapper around Gromacs genbox command.
+* :class:`Gromacs_solvate` provides a wrapper around Gromacs solvate command.
+* :class:`Gromacs_insert_molecules` provides a wrapper around Gromacs insert_molecules command. # noqa
 * :class:`Gromacs_grompp` provides a wrapper around Gromacs genmpp command.
 * :class:`Gromacs_genion` provides a wrapper around Gromacs genion command.
 * :class:`Gromacs_mdrun` provides a wrapper around Gromacs mdrun command.
-* :class:`Gromacs_mdrun` provides a wrapper around Gromacs mdrun command.
+* :class:`Gromacs_trjconv` provides a wrapper around Gromacs trjconv command.
 * :class:`Gromacs_select` provides a wrapper around Gromacs select command.
 
 The `name` and `flags` attributes of these subclasses have been overridden as
