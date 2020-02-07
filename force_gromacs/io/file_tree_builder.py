@@ -1,14 +1,14 @@
 import logging
 import os
 
-from traits.api import List, Unicode
+from traits.api import List, Str
 
-from force_gromacs.core.base_gromacs_process import BaseGromacsProcess
+from force_gromacs.core.base_process import BaseProcess
 
 log = logging.getLogger(__name__)
 
 
-class GromacsFileTreeBuilder(BaseGromacsProcess):
+class FileTreeBuilder(BaseProcess):
     """Class builds file trees for a Gromacs experiment"""
 
     # --------------------
@@ -17,10 +17,10 @@ class GromacsFileTreeBuilder(BaseGromacsProcess):
 
     #: Location to create file tree in. (By default, the
     #: current working directory)
-    directory = Unicode()
+    directory = Str()
 
     #: Folders to be created in the base directory
-    folders = List(Unicode)
+    folders = List(Str)
 
     # --------------------
     #   Private Methods
@@ -69,4 +69,5 @@ class GromacsFileTreeBuilder(BaseGromacsProcess):
         for directory in directory_list:
             self._make_directory(directory)
 
-        return self._returncode
+        # Provide successful return code
+        return 0

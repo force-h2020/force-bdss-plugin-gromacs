@@ -1,6 +1,6 @@
 from traits.api import (
-    HasTraits, Unicode, File, Int, List, Float, Property, Dict,
-    cached_property
+    HasStrictTraits, Str, File, Int, List, Float, Property, Dict,
+    cached_property, provides
 )
 
 from force_bdss.api import DataValue
@@ -9,8 +9,11 @@ from force_gromacs.io.gromacs_topology_reader import (
     GromacsTopologyReader
 )
 
+from force_gromacs.chemicals.i_fragment import IFragment
 
-class Fragment(HasTraits):
+
+@provides(IFragment)
+class GromacsFragment(HasStrictTraits):
     """Contains all input values for each molecular fragment. A
     fragment is defined as a part of a fragment that may become
     dissociated (i.e - an ion) and therefore requires its own set
@@ -21,7 +24,7 @@ class Fragment(HasTraits):
     # --------------------
 
     #: Symbol referring to fragment in Gromacs input files
-    symbol = Unicode()
+    symbol = Str()
 
     #: Gromacs topology '.itp' file
     topology = File()
@@ -34,7 +37,7 @@ class Fragment(HasTraits):
     # --------------------
 
     #: Human readable name for reference
-    name = Unicode()
+    name = Str()
 
     #: Stoichiometric number of molecular fragment
     number = Int(1)
@@ -47,7 +50,7 @@ class Fragment(HasTraits):
     _data = Property(Dict, depends_on='topology,symbol')
 
     #: List of atoms in Gromacs topology '.itp' file
-    atoms = Property(List(Unicode), depends_on='_data')
+    atoms = Property(List(Str), depends_on='_data')
 
     #: Molecular mass in Gromacs topology '.itp' file
     mass = Property(Float, depends_on='_data')

@@ -3,8 +3,8 @@ from unittest import TestCase, mock
 from force_bdss.api import DataValue
 
 from force_gromacs.gromacs_plugin import GromacsPlugin
-from force_gromacs.tests.probe_classes import (
-    ProbeFragment, data, mock_method
+from force_gromacs.tests.probe_classes.chemicals import (
+    ProbeGromacsFragment, data, mock_method
 )
 
 
@@ -12,9 +12,9 @@ class TestMoleculeDataSource(TestCase):
 
     def setUp(self):
 
-        self.positive_ion = ProbeFragment(
+        self.positive_ion = ProbeGromacsFragment(
             name='Positive Ion', symbol='PI')
-        self.negative_ion = ProbeFragment(
+        self.negative_ion = ProbeGromacsFragment(
             name='Negative Ion', symbol='NI')
 
         self.input_values = [self.positive_ion,
@@ -72,14 +72,8 @@ class TestMoleculeDataSource(TestCase):
         self.model.n_fragments = 2
         self.model.fragment_numbers = [2, 3]
 
-        parameters = [
-            DataValue(type='FRAGMENT', value=value)
-            for value in self.input_values
-        ]
-        parameters += [DataValue(type='NOTHING', value=0)]
-
-        self.data_source._assign_stoichiometry(self.model,
-                                               parameters)
+        self.data_source._assign_stoichiometry(
+            self.model, self.input_values)
 
         self.assertEqual(2, self.positive_ion.number)
         self.assertEqual(3, self.negative_ion.number)

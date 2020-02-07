@@ -3,10 +3,12 @@ subclasses:
 
 * :class:`Gromacs_genconf` provides a wrapper around Gromacs genconf command.
 * :class:`Gromacs_genbox` provides a wrapper around Gromacs genbox command.
+* :class:`Gromacs_solvate` provides a wrapper around Gromacs solvate command.
+* :class:`Gromacs_insert_molecules` provides a wrapper around Gromacs insert_molecules command. # noqa
 * :class:`Gromacs_grompp` provides a wrapper around Gromacs genmpp command.
 * :class:`Gromacs_genion` provides a wrapper around Gromacs genion command.
 * :class:`Gromacs_mdrun` provides a wrapper around Gromacs mdrun command.
-* :class:`Gromacs_mdrun` provides a wrapper around Gromacs mdrun command.
+* :class:`Gromacs_trjconv` provides a wrapper around Gromacs trjconv command.
 * :class:`Gromacs_select` provides a wrapper around Gromacs select command.
 
 The `name` and `flags` attributes of these subclasses have been overridden as
@@ -19,7 +21,7 @@ Note - all objects have been tested on both Gromacs versions 4.6.7 and 2019.4
 
 from traits.api import Unicode, ReadOnly, Property, Bool, Int
 
-from force_gromacs.core.base_gromacs_command import BaseGromacsCommand
+from force_gromacs.commands.base_gromacs_command import BaseGromacsCommand
 
 
 class Gromacs_genconf(BaseGromacsCommand):
@@ -131,7 +133,8 @@ class Gromacs_mdrun(BaseGromacsCommand):
 
     #: List of accepted flags for Gromacs mdrun command
     flags = ReadOnly(['-s', '-g', '-e', '-o', '-x', '-c',
-                      '-cpo'])
+                      '-cpo', '-cpi', '-rerun', '-ei',
+                      '-awh', '-mp', '-mn', '-'])
 
     def _get_name(self):
         """Returns correct name syntax, depending on MPI run

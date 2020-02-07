@@ -1,8 +1,8 @@
-from traits.api import HasTraits, ReadOnly
+from traits.api import HasStrictTraits, ReadOnly
 
 
-class BaseFileReader(HasTraits):
-    """Class parses Gromacs input files and returns data
+class BaseFileReader(HasStrictTraits):
+    """Class parses input files and returns data
     required for each molecular type listed.
     """
 

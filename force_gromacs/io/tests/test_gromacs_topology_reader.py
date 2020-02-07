@@ -87,7 +87,7 @@ class TestGromacsTopologyReader(TestCase):
              '1 F 1 I I 1 1.0 24'], mol_sections[1])
 
         with self.assertRaisesRegex(
-                RuntimeError,
+                IOError,
                 'Gromacs topology file does not include any'
                 ' molecule types'):
             self.reader._get_molecule_sections([])
@@ -142,7 +142,7 @@ class TestGromacsTopologyReader(TestCase):
                     FILE_READER_OPEN_PATH, mock_open,
                     create=True),\
                 testfixtures.LogCapture() as capture:
-            with self.assertRaises(RuntimeError):
+            with self.assertRaises(IOError):
                 self.reader.read(
                     'this_file_is_empty.itp'
                 )

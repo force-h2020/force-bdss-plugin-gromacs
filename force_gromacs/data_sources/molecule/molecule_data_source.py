@@ -2,13 +2,11 @@ import copy
 
 from force_bdss.api import BaseDataSource, DataValue, Slot
 
-from force_gromacs.data_sources.molecule import (
-    Molecule
-)
+from force_gromacs.chemicals.molecule import Molecule
 
 
 class MoleculeDataSource(BaseDataSource):
-    """Class that collates a set of molecular `Fragment` instances into
+    """Class that collates a set of molecular `IFragment` instances into
     a single chemical `Molecule`.
     """
 
@@ -18,12 +16,8 @@ class MoleculeDataSource(BaseDataSource):
         for parameter in parameters:
             parameter.value = copy.copy(parameter.value)
 
-    def _assign_stoichiometry(self, model, parameters):
-        """Assign stoichiometric number to each `Fragment` present in
-        parameters"""
-
-        fragments = [parameter.value for parameter in parameters
-                     if parameter.type == 'FRAGMENT']
+    def _assign_stoichiometry(self, model, fragments):
+        """Assign stoichiometric number to a list of IFragment instances"""
 
         for number, fragment in zip(model.fragment_numbers, fragments):
             fragment.number = number
@@ -32,14 +26,14 @@ class MoleculeDataSource(BaseDataSource):
         """Takes in all constituent fragments and assigns stoichiometric
         numbers to produce a Molecule object"""
 
-        # Make a copy of any `FragmentDataSource`, so that stoichiometric
+        # Make a copy of any `IFragment` instances, so that stoichiometric
         # numbers are only assigned locally
         self._make_local_parameter_copy(parameters)
 
-        self._assign_stoichiometry(model, parameters)
-
         fragments = [parameter.value for parameter in parameters
                      if parameter.type == 'FRAGMENT']
+
+        self._assign_stoichiometry(model, fragments)
 
         molecule = Molecule(
             fragments=fragments

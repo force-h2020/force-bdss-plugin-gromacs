@@ -1,13 +1,16 @@
-from traits.api import HasTraits, Bool, Int, Bytes
+from traits.api import HasStrictTraits, Bool, Int, Bytes, provides
+
+from .i_process import IProcess
 
 
-class BaseGromacsProcess(HasTraits):
-    """Base class for objects that can generate and call Gromacs
-    commands, typically via the subprocess library. Attributes
-    and methods to be implemented provide standard functionalities
-    for using subprocess."""
+@provides(IProcess)
+class BaseProcess(HasStrictTraits):
+    """Base class for objects that can generate and call
+    command line executables via the subprocess library.
+    Attributes and methods to be implemented provide standard
+    functionalities for using subprocess."""
 
-    #: Whether or not to perform a 'dry run' i.e. build the Gromacs
+    #: Whether or not to perform a 'dry run' i.e. build the bash
     #: command but do not call subprocess to run it
     dry_run = Bool(True)
 
@@ -21,11 +24,11 @@ class BaseGromacsProcess(HasTraits):
     _stdout = Bytes()
 
     def recall_stderr(self):
-        """Returns latest stderr message as Unicode"""
+        """Returns latest stderr message as unicode"""
         return self._stderr.decode('unicode_escape')
 
     def recall_stdout(self):
-        """Returns latest stdout message as Unicode"""
+        """Returns latest stdout message as unicode"""
         return self._stdout.decode('unicode_escape')
 
     def bash_script(self):
@@ -38,7 +41,7 @@ class BaseGromacsProcess(HasTraits):
         )
 
     def run(self):
-        """Method to be implemented that will either call a Gromacs
+        """Method to be implemented that will either call a
         command using the subprocess library or perform the equivalent
         operation during runtime."""
         raise NotImplementedError(

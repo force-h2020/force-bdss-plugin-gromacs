@@ -95,8 +95,12 @@ class TestHPCWriter(TestCase, UnittestTools):
         )
         self.assertEqual(
             {
-                'bash_script':
-                    '# experiment_5.0\nmdrun -s test_topol.tpr\n'
+                'id': 'force_gromacs.notification_listeners'
+                      '.driver_events.SimulationProgressEvent',
+                'model_data': {
+                    'bash_script':
+                        '# experiment_5.0\nmdrun -s test_topol.tpr\n'
+                }
             },
             event.__getstate__()
         )

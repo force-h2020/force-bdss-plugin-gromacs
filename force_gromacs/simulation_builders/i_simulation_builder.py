@@ -1,4 +1,6 @@
-from traits.api import Interface, Unicode, Int, Bool
+from traits.api import Interface, Str, Int, Bool, Directory, Instance
+
+from force_gromacs.io.base_file_registry import BaseFileRegistry
 
 
 class ISimulationBuilder(Interface):
@@ -9,13 +11,13 @@ class ISimulationBuilder(Interface):
     # --------------------
 
     #: Reference name of simulation
-    name = Unicode()
+    name = Str()
 
     #: Particle size of simulation
     size = Int()
 
     #: Location to create simulation file tree in.
-    directory = Unicode()
+    directory = Directory()
 
     #: Whether or not to perform an MPI parallel run
     mpi_run = Bool()
@@ -25,6 +27,10 @@ class ISimulationBuilder(Interface):
 
     #: Whether or not to perform a dry run
     dry_run = Bool()
+
+    #: BaseFileRegistry containing instructions how to format each file
+    #: type
+    file_registry = Instance(BaseFileRegistry)
 
     def build_pipeline(self):
         """Method to be implemented that returns a `GromacsPipeline`

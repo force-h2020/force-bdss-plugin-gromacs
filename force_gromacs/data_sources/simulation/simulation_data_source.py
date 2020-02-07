@@ -4,7 +4,7 @@ from force_bdss.api import (
     BaseDataSource, DataValue, Slot, Instance
 )
 
-from force_gromacs.pipeline.i_simulation_builder import (
+from force_gromacs.simulation_builders.i_simulation_builder import (
     ISimulationBuilder)
 
 
