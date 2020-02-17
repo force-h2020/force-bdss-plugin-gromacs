@@ -1,5 +1,8 @@
 from unittest import mock
 
+from traits.api import HasStrictTraits, Str, Float, provides
+
+from force_gromacs.chemicals.i_particle import IParticle
 from force_gromacs.chemicals.molecule import Molecule
 from force_gromacs.chemicals.gromacs_fragment import GromacsFragment
 
@@ -26,6 +29,19 @@ mock_method = (
     "force_gromacs.io.gromacs_topology_reader"
     ".GromacsTopologyReader.read"
 )
+
+
+@provides(IParticle)
+class ProbeParticle(HasStrictTraits):
+
+    symbol = Str()
+
+    mass = Float()
+
+    charge = Float()
+
+    def get_data_values(self):
+        return []
 
 
 class ProbeGromacsFragment(GromacsFragment):

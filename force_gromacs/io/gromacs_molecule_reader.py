@@ -1,8 +1,5 @@
 import logging
 
-from force_gromacs.chemicals.atom import Atom
-from force_gromacs.chemicals.molecule_graph import MoleculeGraph
-
 from .base_file_reader import BaseFileReader
 
 log = logging.getLogger(__name__)
@@ -89,54 +86,6 @@ class GromacsMoleculeReader(BaseFileReader):
 
         return index, symbol, mol_label, at_label, charge, mass
 
-
-    def _get_molecules(self, file_lines):
-
-        mol_sections = self._get_molecule_sections(file_lines)
-
-        molecules = [
-            self._create_molecule(section)
-            for section in mol_sections
-        ]
-
-        return molecules
-
-    def _create_molecule(self, section):
-
-        print(section)
-
-        # Get symbols that correspond to each molecule type
-        name = section[1].split()[0]
-        molecule = MoleculeGraph(tag=name)
-
-        # Find file location of atom list for target molecule
-        atom_indices = [index + 1 for index, line
-                        in enumerate(section) if "atoms" in line]
-
-        atoms_index = atom_indices[0]
-
-        # Read the name, charge and mass of each atom/bead, which should
-        # be included at indices 4, 6 and 7 respectively
-        for line in section[atoms_index:]:
-            if line.startswith('['):
-                break
-            else:
-                (index, symbol, mol_label,
-                 at_label, charge, mass) = self._parse_atom_line(line)
-
-                print(symbol, charge, mass)
-
-                molecule.add_particle(
-                    symbol=symbol,
-                    charge=charge,
-                    mass=mass,
-                    tag=at_label
-                )
-
-        print(molecule.graph.nodes.data())
-
-        return molecule
-
     def _get_data(self, file_lines):
         """ Load data for each target molecule type in Gromacs topology
 
@@ -185,12 +134,12 @@ class GromacsMoleculeReader(BaseFileReader):
                 if line.startswith('['):
                     break
                 else:
-                    file_line = line.split(self._comment)[0]
-                    file_line = file_line.split()
+                    (_, _, _,
+                     at_label, charge, mass) = self._parse_atom_line(line)
 
-                    atoms.append(file_line[4])
-                    charges.append(float(file_line[6]))
-                    masses.append(float(file_line[7]))
+                    atoms.append(at_label)
+                    charges.append(charge)
+                    masses.append(mass)
 
             mol_symbols.append(symbol)
             mol_atoms.append(atoms)

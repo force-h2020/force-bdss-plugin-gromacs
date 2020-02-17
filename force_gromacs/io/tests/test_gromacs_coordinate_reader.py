@@ -63,7 +63,7 @@ class TestGromacsCoordinateReader(TestCase):
         self.assertEqual((2, 3,), data['dim'].shape)
 
     def test__get_data(self):
-        file_lines = trajectory.split('\n')
+        file_lines = self.reader._read_file(gromacs_coordinate_file)
 
         mol_ref, atom_ref, coord, dim = self.reader._get_data(file_lines)
 

@@ -23,7 +23,7 @@ class TestFragmentDataSource(TestCase):
                      ' W 1\n', '\n' '[ atoms]\n', ';\n',
                      '1 P 1 W W 1 0 18.0 \n', '\n']
         mock_method = (
-            "force_gromacs.io.gromacs_topology_reader"
+            "force_gromacs.io.gromacs_molecule_reader"
             ".GromacsMoleculeReader._read_file")
 
         with mock.patch(mock_method) as mockreadtop:

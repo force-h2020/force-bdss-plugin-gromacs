@@ -5,8 +5,8 @@ from traits.api import (
 
 from force_bdss.api import DataValue
 
-from force_gromacs.io.gromacs_topology_reader import (
-    GromacsTopologyReader
+from force_gromacs.io.gromacs_molecule_reader import (
+    GromacsMoleculeReader
 )
 
 from force_gromacs.chemicals.i_fragment import IFragment
@@ -63,7 +63,7 @@ class GromacsFragment(HasStrictTraits):
     # --------------------
 
     #: Gromacs topology '.itp' file reader
-    _reader = GromacsTopologyReader()
+    _reader = GromacsMoleculeReader()
 
     @cached_property
     def _get__data(self):

@@ -144,17 +144,3 @@ class TestGromacsMoelculeReader(TestCase):
                  'ERROR',
                  'unable to load data from "this_file_is_empty.itp"')
             )
-
-    def test_read_graph(self):
-
-        molecules = self.reader._read(gromacs_molecule_file)
-
-        self.assertEqual(2, len(molecules))
-
-        self.assertEqual(3, molecules[0].number_of_particles())
-        self.assertEqual(2, molecules[0].number_of_elements())
-        self.assertEqual(1, molecules[0].number_of_fragments())
-
-        self.assertEqual(1, molecules[1].number_of_particles())
-        self.assertEqual(1, molecules[1].number_of_elements())
-        self.assertEqual(1, molecules[1].number_of_fragments())
