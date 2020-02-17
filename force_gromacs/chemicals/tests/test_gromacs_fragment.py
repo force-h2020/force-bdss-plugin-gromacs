@@ -3,7 +3,7 @@ from unittest import mock, TestCase
 from force_gromacs.tests.probe_classes.chemicals import ProbeGromacsFragment
 
 
-class TestFragment(TestCase):
+class TestGromacsFragment(TestCase):
 
     def setUp(self):
 
@@ -13,8 +13,8 @@ class TestFragment(TestCase):
             '1 P 1 W W 1 0 18.0 \n', '\n'
         ]
         self.mock_method = (
-            "force_gromacs.io.gromacs_topology_reader"
-            ".GromacsTopologyReader._read_file")
+            "force_gromacs.io.gromacs_molecule_reader"
+            ".GromacsMoleculeReader._read_file")
 
         with mock.patch(self.mock_method) as mockreadtop:
             mockreadtop.return_value = self.top_lines

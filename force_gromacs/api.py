@@ -1,5 +1,5 @@
 from .chemicals.gromacs_fragment import GromacsFragment # noqa
-from .chemicals.i_fragment import IFragment # noqa
+from .chemicals.base_particle_group import IParticleGroup # noqa
 from .chemicals.molecule import Molecule # noqa
 
 from .commands.gromacs_commands import Gromacs_mdrun # noqa

@@ -26,8 +26,8 @@ data = {
 }
 
 mock_method = (
-    "force_gromacs.io.gromacs_topology_reader"
-    ".GromacsTopologyReader.read"
+    "force_gromacs.io.gromacs_molecule_reader"
+    ".GromacsMoleculeReader.read"
 )
 
 

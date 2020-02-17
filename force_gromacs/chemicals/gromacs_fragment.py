@@ -9,11 +9,12 @@ from force_gromacs.io.gromacs_molecule_reader import (
     GromacsMoleculeReader
 )
 
-from force_gromacs.chemicals.i_fragment import IFragment
+from .base_particle_group import BaseParticleGroup
+from .i_fragment import IFragment
 
 
 @provides(IFragment)
-class GromacsFragment(HasStrictTraits):
+class GromacsFragment(BaseParticleGroup):
     """Contains all input values for each molecular fragment. A
     fragment is defined as a part of a fragment that may become
     dissociated (i.e - an ion) and therefore requires its own set
