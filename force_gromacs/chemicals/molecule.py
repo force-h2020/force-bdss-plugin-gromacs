@@ -7,16 +7,18 @@ from force_bdss.api import DataValue
 
 from force_gromacs.chemicals.i_fragment import IFragment
 
+from .base_particle_group import BaseParticleGroup
 
-class Molecule(HasStrictTraits):
+
+class Molecule(BaseParticleGroup):
     """Class representing a neutral molecular species consisting of
-    one or more molecular `Fragments`"""
+    one or more molecular fragments"""
 
     # --------------------
     #  Required Attributes
     # --------------------
 
-    #: List of molecular fragments that make up this fragment.
+    #: List of molecular fragments that make up this molecule.
     fragments = List(IFragment)
 
     # --------------------
