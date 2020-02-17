@@ -1,24 +1,17 @@
 import logging
 
-from traits.api import ReadOnly
+from force_gromacs.chemicals.atom import Atom
+from force_gromacs.chemicals.molecule_graph import MoleculeGraph
 
 from .base_file_reader import BaseFileReader
 
 log = logging.getLogger(__name__)
 
 
-class GromacsTopologyReader(BaseFileReader):
-    """Class parses Gromacs topology (.top) file and returns data
-    required for each molecular type listed.
+class GromacsMoleculeReader(BaseFileReader):
+    """Class parses Gromacs molecule topology (.itp) file and
+    returns data required for each molecular type listed.
     """
-
-    # --------------------
-    # Protected Attributes
-    # --------------------
-
-    #: Character representing a _comment in a Gromacs topology file
-    _comment = ReadOnly(';')
-
     # ------------------
     #     Defaults
     # ------------------
@@ -27,19 +20,22 @@ class GromacsTopologyReader(BaseFileReader):
         """Default extension for this reader subclass"""
         return 'itp'
 
+    def __comment_default(self):
+        """Default extension for this reader subclass"""
+        return ';'
+
     # ------------------
     #  Private Methods
     # ------------------
 
     def _remove_comments(self, file_lines):
-        """Removes comments and whitespace from parsed topology
-        file lines"""
+        """If any in-line comments exists, then truncate
+        line at point of comment"""
 
-        file_lines = [line.split(self._comment)[0] for line in file_lines
-                      if not line.startswith(self._comment)]
+        file_lines = super()._remove_comments(file_lines)
 
-        file_lines = [line.strip() for line in file_lines
-                      if not line.isspace()]
+        file_lines = [line.split(self._comment)[0].strip()
+                      for line in file_lines]
 
         return file_lines
 
@@ -78,6 +74,68 @@ class GromacsTopologyReader(BaseFileReader):
             mol_sections.append(file_lines[start:end])
 
         return mol_sections
+
+    def _parse_atom_line(self, line):
+
+        file_line = line.split(self._comment)[0]
+        file_line = file_line.split()
+
+        index = int(file_line[0])
+        symbol = file_line[1]
+        mol_label = file_line[3]
+        at_label = file_line[4]
+        charge = float(file_line[6])
+        mass = float(file_line[7])
+
+        return index, symbol, mol_label, at_label, charge, mass
+
+
+    def _get_molecules(self, file_lines):
+
+        mol_sections = self._get_molecule_sections(file_lines)
+
+        molecules = [
+            self._create_molecule(section)
+            for section in mol_sections
+        ]
+
+        return molecules
+
+    def _create_molecule(self, section):
+
+        print(section)
+
+        # Get symbols that correspond to each molecule type
+        name = section[1].split()[0]
+        molecule = MoleculeGraph(tag=name)
+
+        # Find file location of atom list for target molecule
+        atom_indices = [index + 1 for index, line
+                        in enumerate(section) if "atoms" in line]
+
+        atoms_index = atom_indices[0]
+
+        # Read the name, charge and mass of each atom/bead, which should
+        # be included at indices 4, 6 and 7 respectively
+        for line in section[atoms_index:]:
+            if line.startswith('['):
+                break
+            else:
+                (index, symbol, mol_label,
+                 at_label, charge, mass) = self._parse_atom_line(line)
+
+                print(symbol, charge, mass)
+
+                molecule.add_particle(
+                    symbol=symbol,
+                    charge=charge,
+                    mass=mass,
+                    tag=at_label
+                )
+
+        print(molecule.graph.nodes.data())
+
+        return molecule
 
     def _get_data(self, file_lines):
         """ Load data for each target molecule type in Gromacs topology
@@ -187,3 +245,21 @@ class GromacsTopologyReader(BaseFileReader):
         }
 
         return data
+
+    def _read(self, file_path):
+
+        try:
+            file_lines = self._read_file(file_path)
+        except IOError as e:
+            log.exception('unable to open "{}"'.format(file_path))
+            raise e
+
+        file_lines = self._remove_comments(file_lines)
+
+        try:
+            molecules = self._get_molecules(file_lines)
+        except Exception as e:
+            log.exception('unable to load data from "{}"'.format(file_path))
+            raise e
+
+        return molecules

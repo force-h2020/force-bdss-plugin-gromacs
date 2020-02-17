@@ -24,7 +24,7 @@ class TestFragmentDataSource(TestCase):
                      '1 P 1 W W 1 0 18.0 \n', '\n']
         mock_method = (
             "force_gromacs.io.gromacs_topology_reader"
-            ".GromacsTopologyReader._read_file")
+            ".GromacsMoleculeReader._read_file")
 
         with mock.patch(mock_method) as mockreadtop:
             mockreadtop.return_value = top_lines

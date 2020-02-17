@@ -21,6 +21,10 @@ class GromacsCoordinateReader(BaseFileReader):
         """Default extension for this reader subclass"""
         return 'gro'
 
+    def __comment_default(self):
+        """Default extension for this reader subclass"""
+        return '#'
+
     # ------------------
     #  Private Methods
     # ------------------

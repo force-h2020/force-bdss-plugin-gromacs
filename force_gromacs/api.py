@@ -19,7 +19,7 @@ from .core.i_process import IProcess # noqa
 from .io.base_file_registry import BaseFileRegistry # noqa
 from .io.file_tree_builder import FileTreeBuilder # noqa
 from .io.gromacs_coordinate_reader import GromacsCoordinateReader # noqa
-from .io.gromacs_topology_reader import GromacsTopologyReader # noqa
+from .io.gromacs_molecule_reader import GromacsMoleculeReader # noqa
 from .io.gromacs_topology_writer import GromacsTopologyWriter # noqa
 from .io.gromacs_file_registry import GromacsFileRegistry # noqa
 

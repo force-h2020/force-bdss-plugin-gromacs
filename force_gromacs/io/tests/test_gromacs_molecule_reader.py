@@ -2,9 +2,10 @@ from unittest import TestCase, mock
 
 import testfixtures
 
-from force_gromacs.io.gromacs_topology_reader import (
-    GromacsTopologyReader
+from force_gromacs.io.gromacs_molecule_reader import (
+    GromacsMoleculeReader
 )
+from force_gromacs.tests.fixtures import gromacs_molecule_file
 
 FILE_READER_OPEN_PATH = (
     "force_gromacs.io.base_file_reader.open"
@@ -16,7 +17,7 @@ top_file = """;Solvent
              So 1
              [atoms]
              ;
-             1 T 1 So So 1 0 18.0
+             1 T 1 So So 1 0 18.0 ; extra info
              ; Ion
              [ moleculetype ]
              ;
@@ -26,32 +27,34 @@ top_file = """;Solvent
              1 F 1 I I 1 1.0 24"""
 
 
-class TestGromacsTopologyReader(TestCase):
+class TestGromacsMoelculeReader(TestCase):
 
     def setUp(self):
 
-        self.reader = GromacsTopologyReader()
+        self.reader = GromacsMoleculeReader()
+        self.cleaned_lines = [
+            '[moleculetype]', 'So 1', '[atoms]',
+            '1 T 1 So So 1 0 18.0',
+            '[ moleculetype ]', 'I 1', '[ atoms ]',
+            '1 F 1 I I 1 1.0 24'
+        ]
 
-    def test_basic_function(self):
-        mock_open = mock.mock_open(read_data=top_file)
+    def test_read(self):
 
-        with mock.patch(FILE_READER_OPEN_PATH, mock_open,
-                        create=True):
+        data = self.reader.read(gromacs_molecule_file)
 
-            data = self.reader.read('test_top.itp')
+        self.assertEqual(2, len(data))
+        self.assertIn('So', data.keys())
+        self.assertIn('I', data.keys())
 
-            self.assertEqual(2, len(data))
-            self.assertIn('So', data.keys())
-            self.assertIn('I', data.keys())
+        self.assertEqual(['O', 'H1', 'H2'], data['So']['atoms'])
+        self.assertEqual(['I'], data['I']['atoms'])
 
-            self.assertEqual(['So'], data['So']['atoms'])
-            self.assertEqual(['I'], data['I']['atoms'])
+        self.assertEqual([18.0, 1.0, 1.0], data['So']['masses'])
+        self.assertEqual([24], data['I']['masses'])
 
-            self.assertEqual([18.0], data['So']['masses'])
-            self.assertEqual([24], data['I']['masses'])
-
-            self.assertEqual([0], data['So']['charges'])
-            self.assertEqual([1], data['I']['charges'])
+        self.assertEqual([-2, 1, 1], data['So']['charges'])
+        self.assertEqual([1], data['I']['charges'])
 
     def test__remove_comments(self):
         top_lines = top_file.split('\n')
@@ -69,14 +72,9 @@ class TestGromacsTopologyReader(TestCase):
         self.assertEqual('1 F 1 I I 1 1.0 24', cleaned_lines[7])
 
     def test__get_molecule_sections(self):
-        cleaned_lines = [
-            '[moleculetype]', 'So 1', '[atoms]',
-            '1 T 1 So So 1 0 18.0',
-            '[ moleculetype ]', 'I 1', '[ atoms ]',
-            '1 F 1 I I 1 1.0 24'
-        ]
 
-        mol_sections = self.reader._get_molecule_sections(cleaned_lines)
+        mol_sections = self.reader._get_molecule_sections(
+            self.cleaned_lines)
 
         self.assertEqual(2, len(mol_sections))
         self.assertListEqual(
@@ -93,15 +91,10 @@ class TestGromacsTopologyReader(TestCase):
             self.reader._get_molecule_sections([])
 
     def test__get_data(self):
-        cleaned_lines = [
-            '[moleculetype]', 'So 1', '[atoms]',
-            '1 T 1 So So 1 0 18.0',
-            '[ moleculetype ]', 'I 1', '[ atoms ]',
-            '1 F 1 I I 1 1.0 24'
-        ]
 
         (symbols, atoms,
-         charges, masses) = self.reader._get_data(cleaned_lines)
+         charges, masses) = self.reader._get_data(
+            self.cleaned_lines)
 
         self.assertEqual(2, len(symbols))
         self.assertEqual(2, len(atoms))
@@ -132,7 +125,7 @@ class TestGromacsTopologyReader(TestCase):
                     'this_file_should_not_exist.itp'
                 )
             capture.check(
-                ('force_gromacs.io.gromacs_topology_reader',
+                ('force_gromacs.io.gromacs_molecule_reader',
                  'ERROR',
                  'unable to open "this_file_should_not_exist.itp"')
             )
@@ -147,7 +140,21 @@ class TestGromacsTopologyReader(TestCase):
                     'this_file_is_empty.itp'
                 )
             capture.check(
-                ('force_gromacs.io.gromacs_topology_reader',
+                ('force_gromacs.io.gromacs_molecule_reader',
                  'ERROR',
                  'unable to load data from "this_file_is_empty.itp"')
             )
+
+    def test_read_graph(self):
+
+        molecules = self.reader._read(gromacs_molecule_file)
+
+        self.assertEqual(2, len(molecules))
+
+        self.assertEqual(3, molecules[0].number_of_particles())
+        self.assertEqual(2, molecules[0].number_of_elements())
+        self.assertEqual(1, molecules[0].number_of_fragments())
+
+        self.assertEqual(1, molecules[1].number_of_particles())
+        self.assertEqual(1, molecules[1].number_of_elements())
+        self.assertEqual(1, molecules[1].number_of_fragments())

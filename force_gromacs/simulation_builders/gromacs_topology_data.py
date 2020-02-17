@@ -1,7 +1,7 @@
 from traits.api import HasStrictTraits, List, File, Dict, Str, Int
 
-from force_gromacs.io.gromacs_topology_reader import (
-    GromacsTopologyReader
+from force_gromacs.io.gromacs_molecule_reader import (
+    GromacsMoleculeReader
 )
 
 
@@ -27,7 +27,7 @@ class GromacsTopologyData(HasStrictTraits):
     # --------------------
 
     #: Reader required to parse .itp files
-    _reader = GromacsTopologyReader()
+    _reader = GromacsMoleculeReader()
 
     # --------------------
     #    Public Methods

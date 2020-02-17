@@ -1,0 +1,27 @@
+;Some header line to be ignored
+
+; Solvent
+[moleculetype]
+;
+So 3
+
+[atoms]
+;
+1 O 1 WAT O   1  -2 18.0 ; extra info
+1 H 1 WAT H1  2  1 1.0 ; extra info
+1 H 1 WAT H2  3  1 1.0 ; extra info
+
+[bonds]
+1  2
+2  3
+
+[angles]
+1  2  3
+
+; Ion
+[ moleculetype ]
+;
+I 1
+[ atoms ]
+;
+1 F 1 I I 1 1.0 24
