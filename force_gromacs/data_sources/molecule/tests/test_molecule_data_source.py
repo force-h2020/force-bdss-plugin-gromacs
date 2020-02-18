@@ -4,8 +4,11 @@ from force_bdss.api import DataValue
 
 from force_gromacs.gromacs_plugin import GromacsPlugin
 from force_gromacs.tests.probe_classes.chemicals import (
-    ProbeGromacsFragment, data, mock_method
+    ProbeGromacsFragment, data
 )
+
+mock_method = ('force_gromacs.io.gromacs_molecule_reader'
+               '.GromacsMoleculeReader.read')
 
 
 class TestMoleculeDataSource(TestCase):
