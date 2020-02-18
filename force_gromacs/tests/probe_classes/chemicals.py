@@ -34,17 +34,18 @@ data = {
 }
 
 
-def particle_generator(key):
+def particle_generator(dictionary, key):
     """Simple generator to provide input details for each
     GromacsParticle instance in a ProbeGromacsFragment"""
-    inner_keys = [
+
+    data = dictionary[key]
+
+    keys = [
         'elements', 'ids', 'indices',
         'charges', 'masses'
     ]
 
-    generator = tuple(
-        data[key][inner_key] for inner_key in inner_keys
-    )
+    generator = tuple(data[key] for key in keys)
 
     for element, id, index, charge, mass in zip(*generator):
         yield element, id, index, charge, mass
@@ -61,8 +62,18 @@ class ProbeParticle(HasStrictTraits):
 
 
 class ProbeGromacsFragment(GromacsFragment):
-    def __init__(self, name="Water", symbol='W'):
-        generator = particle_generator(symbol)
+
+    database = data
+
+    def __init__(
+            self,
+            name="Water",
+            symbol='W',
+            topology="test_top.itp",
+            coordinate="test_coord.gro"
+    ):
+        generator = particle_generator(self.database, symbol)
+
         particles = [
             GromacsParticle(
                 element=element, index=index, id=id,
@@ -70,14 +81,16 @@ class ProbeGromacsFragment(GromacsFragment):
             )
             for element, id, index, charge, mass in generator
         ]
-        bonds = data[symbol]['bonds']
+
+        bonds = self.database[symbol]['bonds']
+
         super(ProbeGromacsFragment, self).__init__(
             name=name,
             symbol=symbol,
             particles=particles,
             bonds=bonds,
-            topology="test_top.itp",
-            coordinate="test_coord.gro"
+            topology=topology,
+            coordinate=coordinate
         )
 
 
