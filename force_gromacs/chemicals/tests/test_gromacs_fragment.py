@@ -1,4 +1,4 @@
-from unittest import mock, TestCase
+from unittest import TestCase
 
 from force_gromacs.tests.probe_classes.chemicals import ProbeGromacsFragment
 
@@ -7,24 +7,13 @@ class TestGromacsFragment(TestCase):
 
     def setUp(self):
 
-        self.top_lines = [
-            '; Water \n', '[moleculetype]\n', ';\n',
-            ' W 1\n', '\n' '[ atoms]\n', ';\n',
-            '1 P 1 W W 1 0 18.0 \n', '\n'
-        ]
-        self.mock_method = (
-            "force_gromacs.io.gromacs_molecule_reader"
-            ".GromacsMoleculeReader._read_file")
-
-        with mock.patch(self.mock_method) as mockreadtop:
-            mockreadtop.return_value = self.top_lines
-            self.fragment = ProbeGromacsFragment()
+        self.fragment = ProbeGromacsFragment()
 
     def test___init__(self):
 
         self.assertEqual("Water", self.fragment.name)
         self.assertEqual("W", self.fragment.symbol)
-        self.assertEqual(["W"], self.fragment.atoms)
+        self.assertEqual(["O", "H1", "H2"], self.fragment.atoms)
         self.assertEqual(18.0, self.fragment.mass)
         self.assertEqual(0, self.fragment.charge)
         self.assertEqual("test_top.itp", self.fragment.topology)
@@ -33,7 +22,7 @@ class TestGromacsFragment(TestCase):
     def test_get_masses(self):
 
         masses = self.fragment.get_masses()
-        self.assertListEqual([18], masses)
+        self.assertListEqual([16, 1, 1], masses)
 
     def test_get_data_values(self):
 
@@ -43,7 +32,7 @@ class TestGromacsFragment(TestCase):
         self.assertEqual("NAME", data[0].type)
         self.assertEqual("W", data[1].value)
         self.assertEqual("SYMBOL", data[1].type)
-        self.assertEqual(["W"], data[2].value)
+        self.assertEqual(["O", "H1", "H2"], data[2].value)
         self.assertEqual("ATOMS", data[2].type)
         self.assertEqual(18.0, data[3].value)
         self.assertEqual("MASS", data[3].type)

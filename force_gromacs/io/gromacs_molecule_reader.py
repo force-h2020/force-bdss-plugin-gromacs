@@ -75,19 +75,36 @@ class GromacsMoleculeReader(BaseFileReader):
 
         return mol_sections
 
-    def _parse_atom_line(self, line):
-
+    def _parse_line(self, line):
+        """Separate each value from the line"""
         file_line = line.split(self._comment)[0]
         file_line = file_line.split()
 
+        return file_line
+
+    def _parse_atom_line(self, line):
+        """Parse line in gromacs molecule file that refers to an atom"""
+        file_line = self._parse_line(line)
+
         index = int(file_line[0])
-        symbol = file_line[1]
+        element = file_line[1]
         mol_label = file_line[3]
         at_label = file_line[4]
+        at_index = int(file_line[5])
         charge = float(file_line[6])
         mass = float(file_line[7])
 
-        return index, symbol, mol_label, at_label, charge, mass
+        return index, element, mol_label, at_label, at_index, charge, mass
+
+    def _parse_bond_line(self, line):
+        """Parse line in gromacs molecule file that refers to bond
+        between two atoms"""
+        file_line = self._parse_line(line)
+
+        atom_1 = int(file_line[0])
+        atom_2 = int(file_line[1])
+
+        return atom_1, atom_2
 
     def _get_data(self, file_lines):
         """ Load data for each target molecule type in Gromacs topology
@@ -120,22 +137,37 @@ class GromacsMoleculeReader(BaseFileReader):
             atom_indices = [index + 1 for index, line
                             in enumerate(section) if "atoms" in line]
 
-            atoms_index = atom_indices[0]
-
             # Read the name, charge and mass of each atom/bead, which should
             # be included at indices 4, 6 and 7 respectively
-            particles = []
-            for line in section[atoms_index:]:
-                if line.startswith('['):
-                    break
-                else:
-                    (_, _, _,
-                     at_label, charge, mass) = self._parse_atom_line(line)
-                    particles.append(
-                        GromacsParticle(
-                            id=at_label, charge=charge, mass=mass)
-                    )
-            fragment.particles = particles
+            for atoms_index in atom_indices:
+                for line in section[atoms_index:]:
+                    if line.startswith('['):
+                        break
+                    else:
+                        (_, element, _, at_label,
+                         at_index, charge, mass) = self._parse_atom_line(line)
+                        fragment.particles.append(
+                            GromacsParticle(
+                                index=at_index,
+                                id=at_label,
+                                element=element,
+                                charge=charge,
+                                mass=mass)
+                        )
+
+            # Find file location of atom list for target molecule
+            bond_indices = [index + 1 for index, line
+                            in enumerate(section) if "bonds" in line]
+
+            # Read the atom indices of each bond
+            for bonds_index in bond_indices:
+                for line in section[bonds_index:]:
+                    if line.startswith('['):
+                        break
+                    else:
+                        bond = self._parse_bond_line(line)
+                        fragment.bonds.append(bond)
+
             fragments.append(fragment)
 
         return fragments

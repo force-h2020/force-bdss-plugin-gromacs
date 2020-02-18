@@ -58,6 +58,10 @@ class TestGromacsMoelculeReader(TestCase):
         self.assertEqual(0, fragments[0].charge)
         self.assertEqual(1, fragments[1].charge)
 
+        self.assertListEqual(
+            [(1, 2), (2, 3)], fragments[0].bonds)
+        self.assertListEqual([], fragments[1].bonds)
+
         self.assertEqual(gromacs_molecule_file, fragments[0].topology)
         self.assertEqual(gromacs_molecule_file, fragments[1].topology)
 
