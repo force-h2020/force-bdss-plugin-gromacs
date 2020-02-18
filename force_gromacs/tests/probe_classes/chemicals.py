@@ -59,9 +59,6 @@ class ProbeParticle(HasStrictTraits):
 
     charge = Float()
 
-    def get_data_values(self):
-        return []
-
 
 class ProbeGromacsFragment(GromacsFragment):
     def __init__(self, name="Water", symbol='W'):
