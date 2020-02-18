@@ -26,6 +26,19 @@ class TestGromacsCoordinateReader(TestCase):
 
         self.reader = GromacsCoordinateReader()
 
+    def test_no_comments(self):
+
+        self.assertIsNone(self.reader._comment)
+
+        file_lines = ['# this file',
+                      '; should be returned',
+                      'the ! same']
+
+        self.assertListEqual(
+            file_lines,
+            self.reader._remove_comments(file_lines)
+        )
+
     def test_basic_function(self):
 
         data = self.reader.read(gromacs_coordinate_file)
