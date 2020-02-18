@@ -41,20 +41,25 @@ class TestGromacsMoelculeReader(TestCase):
 
     def test_read(self):
 
-        data = self.reader.read(gromacs_molecule_file)
+        fragments = self.reader.read(gromacs_molecule_file)
 
-        self.assertEqual(2, len(data))
-        self.assertIn('So', data.keys())
-        self.assertIn('I', data.keys())
+        self.assertEqual(2, len(fragments))
+        self.assertListEqual(
+            ['So', 'I'],
+            [fragment.symbol for fragment in fragments]
+        )
 
-        self.assertEqual(['O', 'H1', 'H2'], data['So']['atoms'])
-        self.assertEqual(['I'], data['I']['atoms'])
+        self.assertEqual(['O', 'H1', 'H2'], fragments[0].atoms)
+        self.assertEqual(['I'], fragments[1].atoms)
 
-        self.assertEqual([18.0, 1.0, 1.0], data['So']['masses'])
-        self.assertEqual([24], data['I']['masses'])
+        self.assertEqual(20, fragments[0].mass)
+        self.assertEqual(24, fragments[1].mass)
 
-        self.assertEqual([-2, 1, 1], data['So']['charges'])
-        self.assertEqual([1], data['I']['charges'])
+        self.assertEqual(0, fragments[0].charge)
+        self.assertEqual(1, fragments[1].charge)
+
+        self.assertEqual(gromacs_molecule_file, fragments[0].topology)
+        self.assertEqual(gromacs_molecule_file, fragments[1].topology)
 
     def test__remove_comments(self):
         top_lines = top_file.split('\n')
@@ -92,19 +97,37 @@ class TestGromacsMoelculeReader(TestCase):
 
     def test__get_data(self):
 
-        (symbols, atoms,
-         charges, masses) = self.reader._get_data(
+        fragments = self.reader._get_data(
             self.cleaned_lines)
 
-        self.assertEqual(2, len(symbols))
-        self.assertEqual(2, len(atoms))
-        self.assertEqual(2, len(charges))
-        self.assertEqual(2, len(masses))
+        self.assertEqual(2, len(fragments))
 
-        self.assertListEqual(['So', 'I'], symbols)
-        self.assertListEqual([['So'], ['I']], atoms)
-        self.assertListEqual([[0], [1]], charges)
-        self.assertListEqual([[18.0], [24]], masses)
+        self.assertEqual(
+            ['So'],
+            [particle.id for particle in fragments[0].particles]
+        )
+        self.assertEqual(
+            ['I'],
+            [particle.id for particle in fragments[1].particles]
+        )
+
+        self.assertEqual(
+            [0],
+            [particle.charge for particle in fragments[0].particles]
+        )
+        self.assertEqual(
+            [1],
+            [particle.charge for particle in fragments[1].particles]
+        )
+
+        self.assertEqual(
+            [18],
+            [particle.mass for particle in fragments[0].particles]
+        )
+        self.assertEqual(
+            [24],
+            [particle.mass for particle in fragments[1].particles]
+        )
 
     def test_check_file_types(self):
 

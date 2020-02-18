@@ -1,6 +1,6 @@
 from force_bdss.api import BaseDataSource, DataValue, Slot
 
-from force_gromacs.chemicals.gromacs_fragment import GromacsFragment
+from force_gromacs.io.gromacs_molecule_reader import GromacsMoleculeReader
 
 
 class FragmentDataSource(BaseDataSource):
@@ -10,6 +10,8 @@ class FragmentDataSource(BaseDataSource):
     are not necessary for atoms or molecules represented by single beads.
     """
 
+    _reader = GromacsMoleculeReader()
+
     def run(self, model, parameters):
         """Simply wraps all user input in a `GromacsFragment` object for further
         processing. Consequently, it is expected that either this method
@@ -17,12 +19,22 @@ class FragmentDataSource(BaseDataSource):
         of additional `DataSource` objects can perform this in the next
         `ExecutionLayer`"""
 
-        fragment = GromacsFragment(
-            name=model.name,
-            symbol=model.symbol,
-            topology=model.topology,
-            coordinate=model.coordinate
+        fragments = self._reader.read(
+            model.topology
         )
+
+        index = [
+            index for index, fragment in enumerate(fragments)
+            if fragment.symbol == model.symbol
+        ][0]
+
+        fragment = fragments[index]
+
+        if model.name:
+            fragment.name = model.name
+
+        if model.coordinate:
+            fragment.coordinate = model.coordinate
 
         return [
             DataValue(type="FRAGMENT", value=fragment)]

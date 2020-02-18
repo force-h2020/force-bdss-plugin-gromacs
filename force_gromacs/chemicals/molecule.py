@@ -41,7 +41,7 @@ class Molecule(BaseParticleGroup):
     #: Molecular mass of all molecular fragments
     charge = Property(Float, depends_on='fragments.[charge,number]')
 
-    #: Check to ensure the fragment is electronically neutral
+    #: Check to ensure the molecule is electronically neutral
     neutral = Property(Bool, depends_on='charge')
 
     # --------------------

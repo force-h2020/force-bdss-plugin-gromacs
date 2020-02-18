@@ -1,5 +1,8 @@
 import logging
 
+from force_gromacs.chemicals.gromacs_fragment import GromacsFragment
+from force_gromacs.chemicals.gromacs_particle import GromacsParticle
+
 from .base_file_reader import BaseFileReader
 
 log = logging.getLogger(__name__)
@@ -96,28 +99,22 @@ class GromacsMoleculeReader(BaseFileReader):
 
         Returns
         -------
-        mol_symbols : list of str
-            List of atoms in each target molecular type
-        mol_atoms : list of list of str
-            List of atoms in each target molecular type
-        mol_charges : list of list of int
-            List of electronic charges corresponding to each target molecular
-            type
-        mol_masses : list of list of float
-            List of atomic masses corresponding to each target molecular type
+        fragments : list of GromacsFragment
+            List of GromacsFragment instances representing molecular fragment
         """
 
         mol_sections = self._get_molecule_sections(file_lines)
 
-        mol_symbols = []
-        mol_atoms = []
-        mol_charges = []
-        mol_masses = []
+        fragments = []
 
         for section in mol_sections:
 
             # Get symbols that correspond to each molecule type
             symbol = section[1].split()[0]
+
+            fragment = GromacsFragment(
+                symbol=symbol
+            )
 
             # Find file location of atom list for target molecule
             atom_indices = [index + 1 for index, line
@@ -127,26 +124,21 @@ class GromacsMoleculeReader(BaseFileReader):
 
             # Read the name, charge and mass of each atom/bead, which should
             # be included at indices 4, 6 and 7 respectively
-            atoms = []
-            charges = []
-            masses = []
+            particles = []
             for line in section[atoms_index:]:
                 if line.startswith('['):
                     break
                 else:
                     (_, _, _,
                      at_label, charge, mass) = self._parse_atom_line(line)
+                    particles.append(
+                        GromacsParticle(
+                            id=at_label, charge=charge, mass=mass)
+                    )
+            fragment.particles = particles
+            fragments.append(fragment)
 
-                    atoms.append(at_label)
-                    charges.append(charge)
-                    masses.append(mass)
-
-            mol_symbols.append(symbol)
-            mol_atoms.append(atoms)
-            mol_charges.append(charges)
-            mol_masses.append(masses)
-
-        return mol_symbols, mol_atoms, mol_charges, mol_masses
+        return fragments
 
     # ------------------
     #   Public Methods
@@ -179,36 +171,12 @@ class GromacsMoleculeReader(BaseFileReader):
         file_lines = self._remove_comments(file_lines)
 
         try:
-            iterator = self._get_data(file_lines)
+            fragments = self._get_data(file_lines)
         except Exception as e:
             log.exception('unable to load data from "{}"'.format(file_path))
             raise e
 
-        data = {
-            symbol: {
-                'atoms': atoms,
-                'charges': charges,
-                'masses': masses
-            }
-            for symbol, atoms, charges, masses in zip(*iterator)
-        }
+        for fragment in fragments:
+            fragment.topology = file_path
 
-        return data
-
-    def _read(self, file_path):
-
-        try:
-            file_lines = self._read_file(file_path)
-        except IOError as e:
-            log.exception('unable to open "{}"'.format(file_path))
-            raise e
-
-        file_lines = self._remove_comments(file_lines)
-
-        try:
-            molecules = self._get_molecules(file_lines)
-        except Exception as e:
-            log.exception('unable to load data from "{}"'.format(file_path))
-            raise e
-
-        return molecules
+        return fragments
