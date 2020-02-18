@@ -1,5 +1,5 @@
 from traits.api import (
-    HasStrictTraits, List, Unicode, Float, Property,
+    List, Unicode, Float, Property,
     Bool, cached_property, Int
 )
 

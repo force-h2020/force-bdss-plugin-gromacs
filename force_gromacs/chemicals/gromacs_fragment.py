@@ -1,7 +1,4 @@
-from traits.api import (
-    HasStrictTraits, Str, File, Int, List, Float, Property, Dict,
-    cached_property, provides
-)
+from traits.api import Str, File, Int, List, Property, provides
 
 from force_bdss.api import DataValue
 

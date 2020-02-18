@@ -1,5 +1,3 @@
-from unittest import mock
-
 from traits.api import HasStrictTraits, Str, Float, provides
 
 from force_gromacs.chemicals.i_particle import IParticle
@@ -25,11 +23,6 @@ data = {
         'masses': [35]
     }
 }
-
-mock_method = (
-    "force_gromacs.io.gromacs_molecule_reader"
-    ".GromacsMoleculeReader.read"
-)
 
 
 @provides(IParticle)

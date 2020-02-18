@@ -1,4 +1,4 @@
-from traits.api import HasStrictTraits, Str, Array, Float, provides
+from traits.api import HasStrictTraits, Str, Float, provides
 
 from .i_particle import IParticle
 
