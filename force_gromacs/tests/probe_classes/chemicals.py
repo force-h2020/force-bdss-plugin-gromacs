@@ -8,21 +8,46 @@ from force_gromacs.chemicals.gromacs_fragment import GromacsFragment
 
 data = {
     'W': {
-        'atoms': ['W'],
-        'charges': [0],
-        'masses': [18]
+        'elements': ['O', 'H', 'H'],
+        'ids': ['O', 'H1', 'H2'],
+        'indices': [1, 2, 3],
+        'charges': [-2, 1, 1],
+        'masses': [16, 1, 1],
+        'bonds': [(1, 2), (2, 3)]
     },
     'PI': {
-        'atoms': ['PI'],
+        'elements': ['PI'],
+        'ids': ['PI'],
+        'indices': [1],
         'charges': [1],
-        'masses': [23]
+        'masses': [23],
+        'bonds': []
     },
     'NI': {
-        'atoms': ['NI'],
+        'elements': ['NI'],
+        'ids': ['NI'],
+        'indices': [1],
         'charges': [-1],
-        'masses': [35]
+        'masses': [35],
+        'bonds': []
     }
 }
+
+
+def particle_generator(key):
+    """Simple generator to provide input details for each
+    GromacsParticle instance in a ProbeGromacsFragment"""
+    inner_keys = [
+        'elements', 'ids', 'indices',
+        'charges', 'masses'
+    ]
+
+    generator = tuple(
+        data[key][inner_key] for inner_key in inner_keys
+    )
+
+    for element, id, index, charge, mass in zip(*generator):
+        yield element, id, index, charge, mass
 
 
 @provides(IParticle)
@@ -40,17 +65,20 @@ class ProbeParticle(HasStrictTraits):
 
 class ProbeGromacsFragment(GromacsFragment):
     def __init__(self, name="Water", symbol='W'):
-        iterator = tuple(data[symbol].values())
+        generator = particle_generator(symbol)
         particles = [
             GromacsParticle(
-                id=atom, charge=charge, mass=mass
+                element=element, index=index, id=id,
+                charge=charge, mass=mass
             )
-            for atom, charge, mass in zip(*iterator)
+            for element, id, index, charge, mass in generator
         ]
+        bonds = data[symbol]['bonds']
         super(ProbeGromacsFragment, self).__init__(
             name=name,
             symbol=symbol,
             particles=particles,
+            bonds=bonds,
             topology="test_top.itp",
             coordinate="test_coord.gro"
         )
