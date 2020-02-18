@@ -30,39 +30,6 @@ class TestGromacsFragment(TestCase):
         self.assertEqual("test_top.itp", self.fragment.topology)
         self.assertEqual("test_coord.gro", self.fragment.coordinate)
 
-        self.assertEqual(
-            {'atoms': ['W'], 'charges': [0], 'masses': [18]},
-            self.fragment._data
-        )
-
-    def test_get__data(self):
-
-        self.fragment.topology = ''
-        self.assertIsNone(self.fragment.atoms)
-        self.assertIsNone(self.fragment.mass)
-        self.assertIsNone(self.fragment.charge)
-        self.assertIsNone(self.fragment.get_masses())
-
-        with mock.patch(self.mock_method) as mockreadtop:
-            mockreadtop.return_value = self.top_lines
-            self.fragment.topology = 'test_top.itp'
-            self.fragment.symbol = ''
-
-        self.assertEqual("Water", self.fragment.name)
-        self.assertIsNone(self.fragment.atoms)
-        self.assertIsNone(self.fragment.mass)
-        self.assertIsNone(self.fragment.charge)
-        self.assertIsNone(self.fragment.get_masses())
-
-        with mock.patch(self.mock_method) as mockreadtop:
-            mockreadtop.return_value = self.top_lines
-            self.fragment.symbol = 'W'
-
-        self.assertEqual(["W"], self.fragment.atoms)
-        self.assertEqual(18.0, self.fragment.mass)
-        self.assertEqual(0, self.fragment.charge)
-        self.assertListEqual([18], self.fragment.get_masses())
-
     def test_get_masses(self):
 
         masses = self.fragment.get_masses()

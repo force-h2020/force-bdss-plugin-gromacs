@@ -4,6 +4,7 @@ from traits.api import HasStrictTraits, Str, Float, provides
 
 from force_gromacs.chemicals.i_particle import IParticle
 from force_gromacs.chemicals.molecule import Molecule
+from force_gromacs.chemicals.gromacs_particle import GromacsParticle
 from force_gromacs.chemicals.gromacs_fragment import GromacsFragment
 
 
@@ -46,34 +47,37 @@ class ProbeParticle(HasStrictTraits):
 
 class ProbeGromacsFragment(GromacsFragment):
     def __init__(self, name="Water", symbol='W'):
-
-        with mock.patch(mock_method) as mockreadtop:
-            mockreadtop.return_value = data
-            super(ProbeGromacsFragment, self).__init__(
-                name=name,
-                symbol=symbol,
-                topology="test_top.itp",
-                coordinate="test_coord.gro"
+        iterator = tuple(data[symbol].values())
+        particles = [
+            GromacsParticle(
+                id=atom, charge=charge, mass=mass
             )
+            for atom, charge, mass in zip(*iterator)
+        ]
+        super(ProbeGromacsFragment, self).__init__(
+            name=name,
+            symbol=symbol,
+            particles=particles,
+            topology="test_top.itp",
+            coordinate="test_coord.gro"
+        )
 
 
 class ProbeMolecule(Molecule):
 
     def __init__(self, name):
-        with mock.patch(mock_method) as mockreadtop:
-            mockreadtop.return_value = data
-            if name == 'Water':
-                fragments = [
-                    ProbeGromacsFragment(name='Water',
-                                         symbol='W')
-                ]
-            elif name == 'Salt':
-                fragments = [
-                    ProbeGromacsFragment(name='Positive Ion',
-                                         symbol='PI'),
-                    ProbeGromacsFragment(name='Negative Ion',
-                                         symbol='NI')
-                ]
+        if name == 'Water':
+            fragments = [
+                ProbeGromacsFragment(name='Water',
+                                     symbol='W')
+            ]
+        elif name == 'Salt':
+            fragments = [
+                ProbeGromacsFragment(name='Positive Ion',
+                                     symbol='PI'),
+                ProbeGromacsFragment(name='Negative Ion',
+                                     symbol='NI')
+            ]
 
         super(ProbeMolecule, self).__init__(
             name=name,

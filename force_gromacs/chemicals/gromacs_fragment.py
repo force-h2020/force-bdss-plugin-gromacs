@@ -5,10 +5,6 @@ from traits.api import (
 
 from force_bdss.api import DataValue
 
-from force_gromacs.io.gromacs_molecule_reader import (
-    GromacsMoleculeReader
-)
-
 from .base_particle_group import BaseParticleGroup
 from .i_fragment import IFragment
 
@@ -47,45 +43,13 @@ class GromacsFragment(BaseParticleGroup):
     #     Properties
     # --------------------
 
-    #: Parsed Gromacs topology data of fragment
-    _data = Property(Dict, depends_on='topology,symbol')
-
     #: List of atoms in Gromacs topology '.itp' file
-    atoms = Property(List(Str), depends_on='_data')
-
-    #: Molecular mass in Gromacs topology '.itp' file
-    mass = Property(Float, depends_on='_data')
-
-    #: Molecular charge in Gromacs topology '.itp' file
-    charge = Property(Float, depends_on='_data')
-
-    # --------------------
-    #  Private Attributes
-    # --------------------
-
-    #: Gromacs topology '.itp' file reader
-    _reader = GromacsMoleculeReader()
-
-    @cached_property
-    def _get__data(self):
-        if self.topology:
-            data = self._reader.read(self.topology)
-            try:
-                return data[self.symbol]
-            except Exception:
-                return
+    atoms = Property(List(Str), depends_on='particles.id')
 
     def _get_atoms(self):
-        if self._data:
-            return self._data['atoms']
-
-    def _get_mass(self):
-        if self._data:
-            return sum(self._data['masses'])
-
-    def _get_charge(self):
-        if self._data:
-            return sum(self._data['charges'])
+        return [
+            particle.id
+            for particle in self.particles]
 
     # --------------------
     #   Public Methods
@@ -93,8 +57,7 @@ class GromacsFragment(BaseParticleGroup):
 
     def get_masses(self):
         """Return list of atomic masses"""
-        if self._data:
-            return self._data['masses']
+        return [particle.mass for particle in self.particles]
 
     def get_data_values(self):
         """Return a list containing all DataValues stored in class"""
