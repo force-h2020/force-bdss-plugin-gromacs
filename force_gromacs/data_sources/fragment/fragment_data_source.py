@@ -3,6 +3,10 @@ from force_bdss.api import BaseDataSource, DataValue, Slot
 from force_gromacs.io.gromacs_molecule_reader import GromacsMoleculeReader
 
 
+class MissingFragmentException(Exception):
+    pass
+
+
 class FragmentDataSource(BaseDataSource):
     """Class takes in all data required to define each
     separate molecular fragment in a Gromacs experiment. Gromacs topology
@@ -19,22 +23,28 @@ class FragmentDataSource(BaseDataSource):
         of additional `DataSource` objects can perform this in the next
         `ExecutionLayer`"""
 
+        # Obtain all fragments present in topology file
         fragments = self._reader.read(
             model.topology
         )
 
-        index = [
+        # Search for fragment with symbol referenced in model
+        indices = [
             index for index, fragment in enumerate(fragments)
             if fragment.symbol == model.symbol
-        ][0]
+        ]
+        if indices:
+            fragment = fragments[indices[0]]
+        else:
+            raise MissingFragmentException(
+                f'Fragment with symbol {model.symbol} has not'
+                f'been found in Gromacs topology file {model.topology}'
+            )
 
-        fragment = fragments[index]
-
-        if model.name:
-            fragment.name = model.name
-
-        if model.coordinate:
-            fragment.coordinate = model.coordinate
+        # Assign a human readable name and Gromacs coordinate file
+        # to the fragment that are contributed by model
+        fragment.name = model.name
+        fragment.coordinate = model.coordinate
 
         return [
             DataValue(type="FRAGMENT", value=fragment)]

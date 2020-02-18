@@ -52,7 +52,7 @@ class TestGromacsMoelculeReader(TestCase):
         self.assertEqual(['O', 'H1', 'H2'], fragments[0].atoms)
         self.assertEqual(['I'], fragments[1].atoms)
 
-        self.assertEqual(20, fragments[0].mass)
+        self.assertEqual(18, fragments[0].mass)
         self.assertEqual(24, fragments[1].mass)
 
         self.assertEqual(0, fragments[0].charge)
