@@ -58,6 +58,11 @@ class BaseFileReader(HasStrictTraits):
         """Removes comments and whitespace lines from parsed
         topology file"""
 
+        # If no comments are allowed, return original file
+        # lines
+        if self._comment is None:
+            return file_lines
+
         file_lines = [
             line.strip()
             for line in file_lines
