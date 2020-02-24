@@ -1,16 +1,14 @@
 from traits.api import (
     List, Unicode, Float, Property,
-    Bool, cached_property, Int
+    Bool, cached_property, Int, HasStrictTraits
 )
 
 from force_bdss.api import DataValue
 
 from force_gromacs.chemicals.i_fragment import IFragment
 
-from .base_particle_group import BaseParticleGroup
 
-
-class Molecule(BaseParticleGroup):
+class Molecule(HasStrictTraits):
     """Class representing a neutral molecular species consisting of
     one or more molecular fragments"""
 
