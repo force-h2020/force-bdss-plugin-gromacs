@@ -34,8 +34,8 @@ class GromacsFragment(BaseParticleGroup):
     #: Human readable name for reference
     name = Str()
 
-    #: Stoichiometric number of molecular fragment
-    number = Int(1)
+    #: Stoichiometric number of fragments in molecule
+    stoichiometry = Int(1)
 
     # --------------------
     #     Properties

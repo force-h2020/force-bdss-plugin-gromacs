@@ -21,7 +21,7 @@ class MoleculeDataSource(BaseDataSource):
         instances"""
 
         for number, fragment in zip(model.fragment_numbers, fragments):
-            fragment.number = number
+            fragment.stoichiometry = number
 
     def run(self, model, parameters):
         """Takes in all constituent fragments and assigns stoichiometric

@@ -78,8 +78,8 @@ class TestMoleculeDataSource(TestCase):
         self.data_source._assign_stoichiometry(
             self.model, self.input_values)
 
-        self.assertEqual(2, self.positive_ion.number)
-        self.assertEqual(3, self.negative_ion.number)
+        self.assertEqual(2, self.positive_ion.stoichiometry)
+        self.assertEqual(3, self.negative_ion.stoichiometry)
 
     def test_update_fragment_numbers(self):
 

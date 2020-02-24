@@ -38,11 +38,11 @@ class TestMolecule(TestCase):
         self.assertEqual(0, self.molecule.charge)
         self.assertTrue(self.molecule.neutral)
 
-        self.molecule.fragments[1].number = 2
+        self.molecule.fragments[1].stoichiometry = 2
         self.assertEqual(1, self.molecule.charge)
         self.assertFalse(self.molecule.neutral)
 
-        self.molecule.fragments[2].number = 2
+        self.molecule.fragments[2].stoichiometry = 2
         self.assertEqual(0, self.molecule.charge)
         self.assertTrue(self.molecule.neutral)
 
@@ -64,10 +64,10 @@ class TestMolecule(TestCase):
         self.molecule.fragments.append(self.negative_ion)
         self.assertEqual(76, self.molecule.mass)
 
-        self.molecule.fragments[1].number = 2
+        self.molecule.fragments[1].stoichiometry = 2
         self.assertEqual(99, self.molecule.mass)
 
-        self.molecule.fragments[2].number = 2
+        self.molecule.fragments[2].stoichiometry = 2
         self.assertEqual(134, self.molecule.mass)
 
     def test_get_data_values(self):

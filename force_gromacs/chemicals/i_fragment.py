@@ -15,5 +15,5 @@ class IFragment(IParticleGroup):
     the stoichiometric number of each fragment in the molecule
     """
 
-    #: Stoichiometric number of molecular fragment
-    number = Int(1)
+    #: Stoichiometric number of fragments in molecule
+    stoichiometry = Int(1)

@@ -34,10 +34,12 @@ class Molecule(HasStrictTraits):
     # --------------------
 
     #: Molecular mass of all molecular fragments
-    mass = Property(Float, depends_on='fragments.[mass,number]')
+    mass = Property(
+        Float, depends_on='fragments.[mass,stoichiometry]')
 
     #: Molecular mass of all molecular fragments
-    charge = Property(Float, depends_on='fragments.[charge,number]')
+    charge = Property(
+        Float, depends_on='fragments.[charge,stoichiometry]')
 
     #: Check to ensure the molecule is electronically neutral
     neutral = Property(Bool, depends_on='charge')
@@ -65,12 +67,12 @@ class Molecule(HasStrictTraits):
 
     @cached_property
     def _get_mass(self):
-        return sum([fragment.mass * fragment.number
+        return sum([fragment.mass * fragment.stoichiometry
                     for fragment in self.fragments])
 
     @cached_property
     def _get_charge(self):
-        return sum([fragment.charge * fragment.number
+        return sum([fragment.charge * fragment.stoichiometry
                     for fragment in self.fragments])
 
     def _get_neutral(self):
