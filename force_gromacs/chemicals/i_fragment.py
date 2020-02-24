@@ -1,4 +1,4 @@
-from traits.api import List, Int
+from traits.api import Int
 
 from .i_particle_group import IParticleGroup
 
