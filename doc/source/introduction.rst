@@ -7,13 +7,13 @@ such as proteins, lipids and nucleic acids.
 A cross-platform distribution is available as an egg from EDM, currently
 supporting version `2019.4 <http://manual.gromacs.org/documentation/2019-current/index.html>`_
 
-Particle Library Design
+Chemicals Module Design
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 The Force Gromacs wrapper is built on top of a small library defining a hierarchical
-collection of generic chemical species. It is build for extensibility, providing base
-traits classes as well as the interfaces for these objects that could be fulfilled by
-objects in an external package.
+collection of generic chemical species, ``force_gromacs.chemicals``.
+It is build for extensibility, providing base traits classes as well as the interfaces
+for these objects that could be fulfilled by objects in an external package.
 
 The lowest object in this hierarchy is the ``IParticle``, which defines a very simple
 interface for a class that possesses both ``mass`` and ``charge`` attributes. A particle
