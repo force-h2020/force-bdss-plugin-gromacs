@@ -33,11 +33,11 @@ class FragmentDataSource(BaseDataSource):
         ]
         try:
             fragment = fragments[indices[0]]
-        except IndexError:
+        except IndexError as e:
             raise MissingFragmentException(
                 f'Fragment with symbol {model.symbol} has not'
                 f'been found in Gromacs topology file {model.topology}'
-            )
+            ) from e
 
         # Assign a human readable name and Gromacs coordinate file
         # to the fragment that are contributed by model
