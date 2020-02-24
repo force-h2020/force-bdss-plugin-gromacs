@@ -8,10 +8,11 @@ from .i_fragment import IFragment
 
 @provides(IFragment)
 class GromacsFragment(BaseParticleGroup):
-    """Contains all input values for each molecular fragment. A
-    fragment is defined as a part of a fragment that may become
-    dissociated (i.e - an ion) and therefore requires its own set
-    of chemical / structural information"""
+    """Contains all input values for a molecular fragment, as defined
+    by Gromacs input scripts. Also contains useful routines for
+    postprocessing Gromacs files, such as returning a list of atom
+    references and masses.
+    """
 
     # --------------------
     #  Required Attributes
