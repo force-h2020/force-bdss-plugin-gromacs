@@ -39,10 +39,10 @@ class BaseParticleGroup(HasStrictTraits):
     # --------------------
 
     #: Total mass of group
-    mass = Property(Float, depends_on='particles')
+    mass = Property(Float, depends_on='particles.mass')
 
     #: Total charge of group
-    charge = Property(Float, depends_on='particles')
+    charge = Property(Float, depends_on='particles.charge')
 
     def _get_mass(self):
         return sum([

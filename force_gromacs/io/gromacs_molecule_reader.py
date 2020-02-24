@@ -129,9 +129,7 @@ class GromacsMoleculeReader(BaseFileReader):
             # Get symbols that correspond to each molecule type
             symbol = section[1].split()[0]
 
-            fragment = GromacsFragment(
-                symbol=symbol
-            )
+            fragment = GromacsFragment(symbol=symbol)
 
             # Find file location of atom list for target molecule
             atom_indices = [index + 1 for index, line

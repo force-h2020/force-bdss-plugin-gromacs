@@ -24,18 +24,16 @@ class FragmentDataSource(BaseDataSource):
         `ExecutionLayer`"""
 
         # Obtain all fragments present in topology file
-        fragments = self._reader.read(
-            model.topology
-        )
+        fragments = self._reader.read(model.topology)
 
         # Search for fragment with symbol referenced in model
         indices = [
             index for index, fragment in enumerate(fragments)
             if fragment.symbol == model.symbol
         ]
-        if indices:
+        try:
             fragment = fragments[indices[0]]
-        else:
+        except IndexError:
             raise MissingFragmentException(
                 f'Fragment with symbol {model.symbol} has not'
                 f'been found in Gromacs topology file {model.topology}'
@@ -46,8 +44,7 @@ class FragmentDataSource(BaseDataSource):
         fragment.name = model.name
         fragment.coordinate = model.coordinate
 
-        return [
-            DataValue(type="FRAGMENT", value=fragment)]
+        return [DataValue(type="FRAGMENT", value=fragment)]
 
     def slots(self, model):
         return (

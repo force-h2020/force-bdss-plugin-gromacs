@@ -44,9 +44,7 @@ class GromacsFragment(BaseParticleGroup):
     atoms = Property(List(Str), depends_on='particles.id')
 
     def _get_atoms(self):
-        return [
-            particle.id
-            for particle in self.particles]
+        return [particle.id for particle in self.particles]
 
     # --------------------
     #   Public Methods
