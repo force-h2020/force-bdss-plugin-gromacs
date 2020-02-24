@@ -11,13 +11,16 @@ from traits.api import (
 from force_bdss.api import DataValue
 
 from .i_particle import IParticle
+from .i_particle_group import IParticleGroup
 
 
-@provides(IParticle)
+@provides(IParticleGroup)
 class BaseParticleGroup(HasStrictTraits):
-    """Contains all input values for each particle group. A
-    group can be defined as a single atom or collection of covalently
-    bonded atoms who therefore behave as a fixed body"""
+    """Contains all input values for each particle group. Here, a
+    group can be defined as a single atom or collection of
+    covalently bonded atoms who therefore behave as a fixed body.
+    Therefore we also explicitly include a list of indices referring
+    to bonds between pairs of particles"""
 
     # --------------------
     #  Regular Attributes

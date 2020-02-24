@@ -7,7 +7,7 @@ class IParticle(Interface):
     particle may include an atom, molecule or ion"""
 
     #: Particle mass of fragment in g / mol
-    mass = Float
+    mass = Float()
 
     #: Particle charge of fragment
-    charge = Float
+    charge = Float()
