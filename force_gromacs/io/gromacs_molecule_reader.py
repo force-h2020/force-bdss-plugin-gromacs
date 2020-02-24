@@ -1,24 +1,17 @@
 import logging
 
-from traits.api import ReadOnly
+from force_gromacs.chemicals.gromacs_fragment import GromacsFragment
+from force_gromacs.chemicals.gromacs_particle import GromacsParticle
 
 from .base_file_reader import BaseFileReader
 
 log = logging.getLogger(__name__)
 
 
-class GromacsTopologyReader(BaseFileReader):
-    """Class parses Gromacs topology (.top) file and returns data
-    required for each molecular type listed.
+class GromacsMoleculeReader(BaseFileReader):
+    """Class parses Gromacs molecule topology (.itp) file and
+    returns data required for each molecular type listed.
     """
-
-    # --------------------
-    # Protected Attributes
-    # --------------------
-
-    #: Character representing a _comment in a Gromacs topology file
-    _comment = ReadOnly(';')
-
     # ------------------
     #     Defaults
     # ------------------
@@ -27,19 +20,22 @@ class GromacsTopologyReader(BaseFileReader):
         """Default extension for this reader subclass"""
         return 'itp'
 
+    def __comment_default(self):
+        """Default extension for this reader subclass"""
+        return ';'
+
     # ------------------
     #  Private Methods
     # ------------------
 
     def _remove_comments(self, file_lines):
-        """Removes comments and whitespace from parsed topology
-        file lines"""
+        """If any in-line comments exists, then truncate
+        line at point of comment"""
 
-        file_lines = [line.split(self._comment)[0] for line in file_lines
-                      if not line.startswith(self._comment)]
+        file_lines = super()._remove_comments(file_lines)
 
-        file_lines = [line.strip() for line in file_lines
-                      if not line.isspace()]
+        file_lines = [line.split(self._comment)[0].strip()
+                      for line in file_lines]
 
         return file_lines
 
@@ -79,6 +75,37 @@ class GromacsTopologyReader(BaseFileReader):
 
         return mol_sections
 
+    def _parse_line(self, line):
+        """Separate each value from the line"""
+        file_line = line.split(self._comment)[0]
+        file_line = file_line.split()
+
+        return file_line
+
+    def _parse_atom_line(self, line):
+        """Parse line in gromacs molecule file that refers to an atom"""
+        file_line = self._parse_line(line)
+
+        index = int(file_line[0])
+        element = file_line[1]
+        mol_label = file_line[3]
+        at_label = file_line[4]
+        at_index = int(file_line[5])
+        charge = float(file_line[6])
+        mass = float(file_line[7])
+
+        return index, element, mol_label, at_label, at_index, charge, mass
+
+    def _parse_bond_line(self, line):
+        """Parse line in gromacs molecule file that refers to bond
+        between two atoms"""
+        file_line = self._parse_line(line)
+
+        atom_1 = int(file_line[0])
+        atom_2 = int(file_line[1])
+
+        return atom_1, atom_2
+
     def _get_data(self, file_lines):
         """ Load data for each target molecule type in Gromacs topology
 
@@ -89,57 +116,59 @@ class GromacsTopologyReader(BaseFileReader):
 
         Returns
         -------
-        mol_symbols : list of str
-            List of atoms in each target molecular type
-        mol_atoms : list of list of str
-            List of atoms in each target molecular type
-        mol_charges : list of list of int
-            List of electronic charges corresponding to each target molecular
-            type
-        mol_masses : list of list of float
-            List of atomic masses corresponding to each target molecular type
+        fragments : list of GromacsFragment
+            List of GromacsFragment instances representing molecular fragment
         """
 
         mol_sections = self._get_molecule_sections(file_lines)
 
-        mol_symbols = []
-        mol_atoms = []
-        mol_charges = []
-        mol_masses = []
+        fragments = []
 
         for section in mol_sections:
 
             # Get symbols that correspond to each molecule type
             symbol = section[1].split()[0]
 
+            fragment = GromacsFragment(symbol=symbol)
+
             # Find file location of atom list for target molecule
             atom_indices = [index + 1 for index, line
                             in enumerate(section) if "atoms" in line]
 
-            atoms_index = atom_indices[0]
-
             # Read the name, charge and mass of each atom/bead, which should
             # be included at indices 4, 6 and 7 respectively
-            atoms = []
-            charges = []
-            masses = []
-            for line in section[atoms_index:]:
-                if line.startswith('['):
-                    break
-                else:
-                    file_line = line.split(self._comment)[0]
-                    file_line = file_line.split()
+            for atoms_index in atom_indices:
+                for line in section[atoms_index:]:
+                    if line.startswith('['):
+                        break
+                    else:
+                        (_, element, _, at_label,
+                         at_index, charge, mass) = self._parse_atom_line(line)
+                        fragment.particles.append(
+                            GromacsParticle(
+                                index=at_index,
+                                id=at_label,
+                                element=element,
+                                charge=charge,
+                                mass=mass)
+                        )
 
-                    atoms.append(file_line[4])
-                    charges.append(float(file_line[6]))
-                    masses.append(float(file_line[7]))
+            # Find file location of atom list for target molecule
+            bond_indices = [index + 1 for index, line
+                            in enumerate(section) if "bonds" in line]
 
-            mol_symbols.append(symbol)
-            mol_atoms.append(atoms)
-            mol_charges.append(charges)
-            mol_masses.append(masses)
+            # Read the atom indices of each bond
+            for bonds_index in bond_indices:
+                for line in section[bonds_index:]:
+                    if line.startswith('['):
+                        break
+                    else:
+                        bond = self._parse_bond_line(line)
+                        fragment.bonds.append(bond)
 
-        return mol_symbols, mol_atoms, mol_charges, mol_masses
+            fragments.append(fragment)
+
+        return fragments
 
     # ------------------
     #   Public Methods
@@ -172,18 +201,12 @@ class GromacsTopologyReader(BaseFileReader):
         file_lines = self._remove_comments(file_lines)
 
         try:
-            iterator = self._get_data(file_lines)
+            fragments = self._get_data(file_lines)
         except Exception as e:
             log.exception('unable to load data from "{}"'.format(file_path))
             raise e
 
-        data = {
-            symbol: {
-                'atoms': atoms,
-                'charges': charges,
-                'masses': masses
-            }
-            for symbol, atoms, charges, masses in zip(*iterator)
-        }
+        for fragment in fragments:
+            fragment.topology = file_path
 
-        return data
+        return fragments

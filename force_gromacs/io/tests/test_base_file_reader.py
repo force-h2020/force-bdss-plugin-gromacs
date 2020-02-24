@@ -1,7 +1,8 @@
 from unittest import TestCase, mock
 
-from force_gromacs.io.base_file_reader import (
-    BaseFileReader
+from force_gromacs.io.base_file_reader import BaseFileReader
+from force_gromacs.tests.probe_classes.io import (
+    ProbeFileReader
 )
 from force_gromacs.tests.dummy_classes import dummy_function
 
@@ -12,17 +13,28 @@ CHECK_FILE_TYPES_PATH = (
     "force_gromacs.io.base_file_reader.BaseFileReader._check_file_types"
 )
 
+top_file = """# This is a comment
+              #
+              This line is fine
+              #
+              This line # should end here"""
+
 
 class TestBaseFileReader(TestCase):
 
     def setUp(self):
 
-        self.reader = BaseFileReader()
+        self.reader = ProbeFileReader()
 
-    def test___init__(self):
+    def test_not_implemented(self):
+
+        reader = BaseFileReader()
 
         with self.assertRaises(NotImplementedError):
-            self.assertIsNone(self.reader._ext)
+            self.assertIsNone(reader._ext)
+
+        with self.assertRaises(NotImplementedError):
+            self.assertIsNone(reader._comment)
 
     def test__read_file(self):
 
@@ -36,6 +48,15 @@ class TestBaseFileReader(TestCase):
                 'some_path'
             )
             mock_open.assert_called()
+
+    def test__remove_comments(self):
+        top_lines = top_file.split('\n')
+
+        cleaned_lines = self.reader._remove_comments(top_lines)
+
+        self.assertEqual(2, len(cleaned_lines))
+        self.assertEqual('This line is fine', cleaned_lines[0])
+        self.assertEqual('This line # should end here', cleaned_lines[1])
 
     def test__get_data(self):
 

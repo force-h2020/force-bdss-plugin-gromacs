@@ -6,7 +6,7 @@ from force_gromacs.chemicals.molecule import Molecule
 
 
 class MoleculeDataSource(BaseDataSource):
-    """Class that collates a set of molecular `IFragment` instances into
+    """Class that collates a set of molecular `IParticleGroup` instances into
     a single chemical `Molecule`.
     """
 
@@ -17,17 +17,18 @@ class MoleculeDataSource(BaseDataSource):
             parameter.value = copy.copy(parameter.value)
 
     def _assign_stoichiometry(self, model, fragments):
-        """Assign stoichiometric number to a list of IFragment instances"""
+        """Assign stoichiometric number to a list of IFragment
+        instances"""
 
         for number, fragment in zip(model.fragment_numbers, fragments):
-            fragment.number = number
+            fragment.stoichiometry = number
 
     def run(self, model, parameters):
         """Takes in all constituent fragments and assigns stoichiometric
         numbers to produce a Molecule object"""
 
-        # Make a copy of any `IFragment` instances, so that stoichiometric
-        # numbers are only assigned locally
+        # Make a copy of any `IFragment` instances, so that
+        # stoichiometric numbers are only assigned locally
         self._make_local_parameter_copy(parameters)
 
         fragments = [parameter.value for parameter in parameters

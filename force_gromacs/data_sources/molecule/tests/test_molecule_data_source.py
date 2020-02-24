@@ -4,8 +4,11 @@ from force_bdss.api import DataValue
 
 from force_gromacs.gromacs_plugin import GromacsPlugin
 from force_gromacs.tests.probe_classes.chemicals import (
-    ProbeGromacsFragment, data, mock_method
+    ProbeGromacsFragment, data
 )
+
+mock_method = ('force_gromacs.io.gromacs_molecule_reader'
+               '.GromacsMoleculeReader.read')
 
 
 class TestMoleculeDataSource(TestCase):
@@ -75,8 +78,8 @@ class TestMoleculeDataSource(TestCase):
         self.data_source._assign_stoichiometry(
             self.model, self.input_values)
 
-        self.assertEqual(2, self.positive_ion.number)
-        self.assertEqual(3, self.negative_ion.number)
+        self.assertEqual(2, self.positive_ion.stoichiometry)
+        self.assertEqual(3, self.negative_ion.stoichiometry)
 
     def test_update_fragment_numbers(self):
 

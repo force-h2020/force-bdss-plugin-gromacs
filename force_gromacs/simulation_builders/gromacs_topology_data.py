@@ -1,7 +1,7 @@
 from traits.api import HasStrictTraits, List, File, Dict, Str, Int
 
-from force_gromacs.io.gromacs_topology_reader import (
-    GromacsTopologyReader
+from force_gromacs.io.gromacs_molecule_reader import (
+    GromacsMoleculeReader
 )
 
 
@@ -27,7 +27,7 @@ class GromacsTopologyData(HasStrictTraits):
     # --------------------
 
     #: Reader required to parse .itp files
-    _reader = GromacsTopologyReader()
+    _reader = GromacsMoleculeReader()
 
     # --------------------
     #    Public Methods
@@ -76,10 +76,12 @@ class GromacsTopologyData(HasStrictTraits):
 
         for molecule_file in self.molecule_files:
             try:
-                data = self._reader.read(molecule_file)
+                fragments = self._reader.read(molecule_file)
             except IOError:
                 return False
-            fragment_cache.extend(list(data.keys()))
+            fragment_cache.extend(
+                [fragment.symbol for fragment in fragments]
+            )
 
         # Check that all fragments in ledger are represented
         for symbol in self.fragment_ledger.keys():

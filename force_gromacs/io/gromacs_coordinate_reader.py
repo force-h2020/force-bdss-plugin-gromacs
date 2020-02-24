@@ -21,6 +21,11 @@ class GromacsCoordinateReader(BaseFileReader):
         """Default extension for this reader subclass"""
         return 'gro'
 
+    def __comment_default(self):
+        """Explicitly confirm that no comments are accepted in
+        .gro coordinate files"""
+        return None
+
     # ------------------
     #  Private Methods
     # ------------------

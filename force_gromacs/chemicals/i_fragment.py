@@ -1,20 +1,19 @@
-from traits.api import Interface, List, Str, Float
+from traits.api import Int
+
+from .i_particle_group import IParticleGroup
 
 
-class IFragment(Interface):
+class IFragment(IParticleGroup):
     """Contains all input values for each molecular fragment. A
-    fragment is defined as a part of a fragment that may become
+    fragment is defined as a part of a molecule that may become
     dissociated (i.e - an ion) and therefore requires its own set
-    of chemical / structural information"""
+    of chemical / structural information.
 
-    #: List of atoms in molecular fragment
-    atoms = List(Str)
+    The only difference between an IFragment and IParticleGroup
+    is the notion that a fragment cannot be an isolated species;
+    if must exist within a molecule. Therefore we need to know
+    the stoichiometric number of each fragment in the molecule
+    """
 
-    #: Molecular mass of fragment in g / mol
-    mass = Float
-
-    #: Molecular charge of fragment
-    charge = Float
-
-    def get_data_values(self):
-        """Return a list containing all DataValues stored in class"""
+    #: Stoichiometric number of fragments in molecule
+    stoichiometry = Int(1)

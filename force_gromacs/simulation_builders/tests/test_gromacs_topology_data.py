@@ -3,7 +3,7 @@ from unittest import TestCase, mock
 from force_gromacs.simulation_builders.gromacs_topology_data import (
     GromacsTopologyData
 )
-from force_gromacs.io.tests.test_gromacs_topology_reader import (
+from force_gromacs.io.tests.test_gromacs_molecule_reader import (
     FILE_READER_OPEN_PATH, top_file
 )
 

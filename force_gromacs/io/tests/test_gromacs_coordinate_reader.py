@@ -1,33 +1,11 @@
-from unittest import TestCase, mock
+from unittest import TestCase
 
 import numpy as np
 
 from force_gromacs.io.gromacs_coordinate_reader import (
     GromacsCoordinateReader
 )
-
-FILE_READER_OPEN_PATH = (
-    "force_gromacs.io.base_file_reader.open"
-)
-
-trajectory = """Some header comment
-              6
-              1PS1    PS11  1   0.546   0.326   0.070
-              1PS1    PS12  2   0.285   0.135   0.310
-              2SS     SS1   3   0.212   0.178   0.770
-              2SS     SS2   4   0.166   0.422   1.173
-              3PI     PI    5   1.638   0.315   1.042
-              4NI     NI    6   1.680   0.707   1.028
-                4.36258   4.36258   4.36258
-              Some header comment
-              6
-              1PS1    PS11  1   0.546   0.326   0.070
-              1PS1    PS12  2   0.285   0.135   0.310
-              2SS     SS1   3   0.212   0.178   0.770
-              2SS     SS2   4   0.166   0.422   1.173
-              3PI     PI    5   1.638   0.315   1.042
-              4NI     NI    6   1.680   0.707   1.028
-                4.36258   4.36258   4.36258"""
+from force_gromacs.tests.fixtures import gromacs_coordinate_file
 
 
 class TestGromacsCoordinateReader(TestCase):
@@ -48,55 +26,57 @@ class TestGromacsCoordinateReader(TestCase):
 
         self.reader = GromacsCoordinateReader()
 
+    def test_no_comments(self):
+
+        self.assertIsNone(self.reader._comment)
+
+        file_lines = ['# this file',
+                      '; should be returned',
+                      'the ! same']
+
+        self.assertListEqual(
+            file_lines,
+            self.reader._remove_comments(file_lines)
+        )
+
     def test_basic_function(self):
 
-        mock_open = mock.mock_open(read_data=trajectory)
+        data = self.reader.read(gromacs_coordinate_file)
 
-        with mock.patch(FILE_READER_OPEN_PATH, mock_open,
-                        create=True):
+        self.assertEqual(4, len(data))
+        self.assertIn('mol_ref', data.keys())
+        self.assertIn('atom_ref', data.keys())
+        self.assertIn('coord', data.keys())
+        self.assertIn('dim', data.keys())
 
-            data = self.reader.read('test_coord.gro')
+        self.assertIsInstance(data['mol_ref'], list)
+        self.assertIsInstance(data['atom_ref'], list)
+        self.assertIsInstance(data['coord'], np.ndarray)
+        self.assertIsInstance(data['dim'], np.ndarray)
 
-            self.assertEqual(4, len(data))
-            self.assertIn('mol_ref', data.keys())
-            self.assertIn('atom_ref', data.keys())
-            self.assertIn('coord', data.keys())
-            self.assertIn('dim', data.keys())
+        self.assertEqual(6, len(data['mol_ref']))
+        self.assertEqual(6, len(data['atom_ref']))
+        self.assertEqual((2, 6, 3), data['coord'].shape)
+        self.assertEqual((2, 3,), data['dim'].shape)
 
-            self.assertIsInstance(data['mol_ref'], list)
-            self.assertIsInstance(data['atom_ref'], list)
-            self.assertIsInstance(data['coord'], np.ndarray)
-            self.assertIsInstance(data['dim'], np.ndarray)
+        data = self.reader.read(gromacs_coordinate_file, 1)
 
-            self.assertEqual(6, len(data['mol_ref']))
-            self.assertEqual(6, len(data['atom_ref']))
-            self.assertEqual((2, 6, 3), data['coord'].shape)
-            self.assertEqual((2, 3,), data['dim'].shape)
+        self.assertEqual(6, len(data['mol_ref']))
+        self.assertEqual(6, len(data['atom_ref']))
+        self.assertEqual((1, 6, 3), data['coord'].shape)
+        self.assertEqual((1, 3,), data['dim'].shape)
+        self.assertTrue(np.allclose(self.coord[:1], data['coord']))
+        self.assertTrue(np.allclose(self.dim[:1], data['dim']))
 
-        with mock.patch(FILE_READER_OPEN_PATH, mock_open,
-                        create=True):
+        data = self.reader.read(gromacs_coordinate_file, symbols=['PS1', 'SS'])
 
-            data = self.reader.read('test_coord.gro', 1)
-
-            self.assertEqual(6, len(data['mol_ref']))
-            self.assertEqual(6, len(data['atom_ref']))
-            self.assertEqual((1, 6, 3), data['coord'].shape)
-            self.assertEqual((1, 3,), data['dim'].shape)
-            self.assertTrue(np.allclose(self.coord[:1], data['coord']))
-            self.assertTrue(np.allclose(self.dim[:1], data['dim']))
-
-        with mock.patch(FILE_READER_OPEN_PATH, mock_open,
-                        create=True):
-
-            data = self.reader.read('test_coord.gro', symbols=['PS1', 'SS'])
-
-            self.assertEqual(4, len(data['mol_ref']))
-            self.assertEqual(4, len(data['atom_ref']))
-            self.assertEqual((2, 4, 3), data['coord'].shape)
-            self.assertEqual((2, 3,), data['dim'].shape)
+        self.assertEqual(4, len(data['mol_ref']))
+        self.assertEqual(4, len(data['atom_ref']))
+        self.assertEqual((2, 4, 3), data['coord'].shape)
+        self.assertEqual((2, 3,), data['dim'].shape)
 
     def test__get_data(self):
-        file_lines = trajectory.split('\n')
+        file_lines = self.reader._read_file(gromacs_coordinate_file)
 
         mol_ref, atom_ref, coord, dim = self.reader._get_data(file_lines)
 

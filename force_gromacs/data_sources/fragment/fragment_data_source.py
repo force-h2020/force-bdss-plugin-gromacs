@@ -1,6 +1,10 @@
 from force_bdss.api import BaseDataSource, DataValue, Slot
 
-from force_gromacs.chemicals.gromacs_fragment import GromacsFragment
+from force_gromacs.io.gromacs_molecule_reader import GromacsMoleculeReader
+
+
+class MissingFragmentException(Exception):
+    pass
 
 
 class FragmentDataSource(BaseDataSource):
@@ -10,6 +14,8 @@ class FragmentDataSource(BaseDataSource):
     are not necessary for atoms or molecules represented by single beads.
     """
 
+    _reader = GromacsMoleculeReader()
+
     def run(self, model, parameters):
         """Simply wraps all user input in a `GromacsFragment` object for further
         processing. Consequently, it is expected that either this method
@@ -17,15 +23,28 @@ class FragmentDataSource(BaseDataSource):
         of additional `DataSource` objects can perform this in the next
         `ExecutionLayer`"""
 
-        fragment = GromacsFragment(
-            name=model.name,
-            symbol=model.symbol,
-            topology=model.topology,
-            coordinate=model.coordinate
-        )
+        # Obtain all fragments present in topology file
+        fragments = self._reader.read(model.topology)
 
-        return [
-            DataValue(type="FRAGMENT", value=fragment)]
+        # Search for fragment with symbol referenced in model
+        indices = [
+            index for index, fragment in enumerate(fragments)
+            if fragment.symbol == model.symbol
+        ]
+        try:
+            fragment = fragments[indices[0]]
+        except IndexError as e:
+            raise MissingFragmentException(
+                f'Fragment with symbol {model.symbol} has not'
+                f'been found in Gromacs topology file {model.topology}'
+            ) from e
+
+        # Assign a human readable name and Gromacs coordinate file
+        # to the fragment that are contributed by model
+        fragment.name = model.name
+        fragment.coordinate = model.coordinate
+
+        return [DataValue(type="FRAGMENT", value=fragment)]
 
     def slots(self, model):
         return (

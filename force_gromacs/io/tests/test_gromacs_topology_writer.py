@@ -1,4 +1,5 @@
 from unittest import TestCase, mock
+import testfixtures
 
 from force_gromacs.io.gromacs_topology_writer import (
     GromacsTopologyWriter
@@ -71,14 +72,19 @@ class TestGromacsTopologyWriter(TestCase):
         self.assertEqual('So 2120', res[13])
         self.assertEqual('EOM', res[14])
 
-    def test_run(self):
+    def test_run_exceptions(self):
         mock_open = mock.mock_open()
 
-        with mock.patch(GROMACS_WRITER_OPEN_PATH, mock_open, create=True):
-            self.writer.run()
-            mock_open.assert_not_called()
+        with testfixtures.LogCapture():
+            with mock.patch(
+                    GROMACS_WRITER_OPEN_PATH,
+                    mock_open, create=True):
+                self.writer.run()
+                mock_open.assert_not_called()
 
-        self.writer.dry_run = False
-        with mock.patch(GROMACS_WRITER_OPEN_PATH, mock_open, create=True):
-            self.writer.run()
-            mock_open.assert_called_once()
+            self.writer.dry_run = False
+            with mock.patch(
+                    GROMACS_WRITER_OPEN_PATH,
+                    mock_open, create=True):
+                self.writer.run()
+                mock_open.assert_called_once()

@@ -1,5 +1,8 @@
+from .chemicals.base_particle_group import BaseParticleGroup # noqa
+from .chemicals.gromacs_particle import GromacsParticle # noqa
 from .chemicals.gromacs_fragment import GromacsFragment # noqa
 from .chemicals.i_fragment import IFragment # noqa
+from .chemicals.i_particle import IParticle # noqa
 from .chemicals.molecule import Molecule # noqa
 
 from .commands.gromacs_commands import Gromacs_mdrun # noqa
@@ -19,7 +22,7 @@ from .core.i_process import IProcess # noqa
 from .io.base_file_registry import BaseFileRegistry # noqa
 from .io.file_tree_builder import FileTreeBuilder # noqa
 from .io.gromacs_coordinate_reader import GromacsCoordinateReader # noqa
-from .io.gromacs_topology_reader import GromacsTopologyReader # noqa
+from .io.gromacs_molecule_reader import GromacsMoleculeReader # noqa
 from .io.gromacs_topology_writer import GromacsTopologyWriter # noqa
 from .io.gromacs_file_registry import GromacsFileRegistry # noqa
 

@@ -1,6 +1,12 @@
-from unittest import mock, TestCase
+from unittest import TestCase
 
 from force_gromacs.gromacs_plugin import GromacsPlugin
+from force_gromacs.data_sources.fragment.fragment_data_source import (
+    MissingFragmentException
+)
+from force_gromacs.tests.fixtures import (
+    gromacs_molecule_file
+)
 
 
 class TestFragmentDataSource(TestCase):
@@ -13,33 +19,30 @@ class TestFragmentDataSource(TestCase):
 
     def test_basic_function(self):
 
-        self.model.name = "Water"
-        self.model.symbol = "W"
-        self.model.topology = "test_top.itp"
+        self.model.name = "Solvent"
+        self.model.symbol = "So"
+        self.model.topology = gromacs_molecule_file
         self.model.coordinate = "test_coord.gro"
 
-        data_values = []
-        top_lines = ['; Water \n', '[moleculetype]\n', ';\n',
-                     ' W 1\n', '\n' '[ atoms]\n', ';\n',
-                     '1 P 1 W W 1 0 18.0 \n', '\n']
-        mock_method = (
-            "force_gromacs.io.gromacs_topology_reader"
-            ".GromacsTopologyReader._read_file")
+        res = self.data_source.run(self.model, [])
+        self.assertEqual("FRAGMENT", res[0].type)
 
-        with mock.patch(mock_method) as mockreadtop:
-            mockreadtop.return_value = top_lines
+        fragment = res[0].value
+        self.assertEqual("Solvent", fragment.name)
+        self.assertEqual("So", fragment.symbol)
+        self.assertEqual(["O", "H1", "H2"], fragment.atoms, )
+        self.assertEqual(18.0, fragment.mass, )
+        self.assertEqual(0, fragment.charge)
+        self.assertEqual(gromacs_molecule_file, fragment.topology)
+        self.assertEqual("test_coord.gro", fragment.coordinate)
 
-            res = self.data_source.run(self.model, data_values)
-            self.assertEqual("FRAGMENT", res[0].type)
+    def test_missing_fragment_error(self):
 
-            fragment = res[0].value
-            self.assertEqual("Water", fragment.name)
-            self.assertEqual("W", fragment.symbol)
-            self.assertEqual(["W"], fragment.atoms, )
-            self.assertEqual(18.0, fragment.mass, )
-            self.assertEqual(0, fragment.charge)
-            self.assertEqual("test_top.itp", fragment.topology)
-            self.assertEqual("test_coord.gro", fragment.coordinate)
+        self.model.symbol = "NotThere"
+        self.model.topology = gromacs_molecule_file
+
+        with self.assertRaises(MissingFragmentException):
+            self.data_source.run(self.model, [])
 
     def test___file_check(self):
 
