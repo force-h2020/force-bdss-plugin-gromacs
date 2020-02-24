@@ -1,4 +1,5 @@
 from .chemicals.base_particle_group import BaseParticleGroup # noqa
+from .chemicals.gromacs_particle import GromacsParticle # noqa
 from .chemicals.gromacs_fragment import GromacsFragment # noqa
 from .chemicals.i_fragment import IFragment # noqa
 from .chemicals.i_particle import IParticle # noqa
