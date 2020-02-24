@@ -7,7 +7,10 @@ from .i_particle import IParticle
 class GromacsParticle(HasStrictTraits):
     """Contains all input values for a particle species, defined in
     terms of classical mechanics by a mass and charge. An example
-    particle may include an atom, molecule or ion"""
+    particle may include an atom, molecule or ion.
+    Also includes Gromacs specific information, including particle id,
+    index and elemental symbol
+    """
 
     #: Index of particle in molecular .itp file
     index = Int()
@@ -19,7 +22,7 @@ class GromacsParticle(HasStrictTraits):
     element = Str()
 
     #: Particle mass of fragment in g / mol
-    mass = Float
+    mass = Float()
 
     #: Particle charge of fragment
-    charge = Float
+    charge = Float()
