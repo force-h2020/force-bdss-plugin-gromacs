@@ -1,10 +1,13 @@
 FORCE GROMACS Plugin Changelog
 ==============================
 
+Release 0.2.0
+-------------
+
 Release 0.1.0
 -------------
 
-Released:
+Released: 3 Mar 2020
 
 Release notes
 ~~~~~~~~~~~~~
