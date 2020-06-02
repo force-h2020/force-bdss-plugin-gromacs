@@ -1,3 +1,6 @@
+#  (C) Copyright 2010-2020 Enthought, Inc., Austin, TX
+#  All rights reserved.
+
 from .fragment.fragment_data_source import FragmentDataSource # noqa
 from .fragment.fragment_factory import FragmentFactory # noqa
 from .fragment.fragment_model import FragmentDataSourceModel # noqa

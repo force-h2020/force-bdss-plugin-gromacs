@@ -1,3 +1,6 @@
+#  (C) Copyright 2010-2020 Enthought, Inc., Austin, TX
+#  All rights reserved.
+
 from unittest import TestCase, mock
 
 from force_gromacs.simulation_builders.gromacs_topology_data import (

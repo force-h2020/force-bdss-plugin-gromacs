@@ -19,6 +19,9 @@ so in a similar way.
 Note - all objects have been tested on both Gromacs versions 4.6.7 and 2019.4
 """
 
+#  (C) Copyright 2010-2020 Enthought, Inc., Austin, TX
+#  All rights reserved.
+
 from traits.api import Unicode, ReadOnly, Property, Bool, Int
 
 from force_gromacs.commands.base_gromacs_command import BaseGromacsCommand

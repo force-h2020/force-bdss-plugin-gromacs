@@ -1,3 +1,6 @@
+#  (C) Copyright 2010-2020 Enthought, Inc., Austin, TX
+#  All rights reserved.
+
 from force_gromacs.simulation_builders.base_gromacs_simulation_builder import (
     BaseGromacsSimulationBuilder
 )

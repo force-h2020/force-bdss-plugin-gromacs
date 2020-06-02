@@ -1,3 +1,6 @@
+#  (C) Copyright 2010-2020 Enthought, Inc., Austin, TX
+#  All rights reserved.
+
 from traits.api import HasStrictTraits, Str, Float, provides, Int
 
 from .i_particle import IParticle
@@ -9,7 +12,7 @@ class GromacsParticle(HasStrictTraits):
     terms of classical mechanics by a mass and charge. An example
     particle may include an atom, molecule or ion.
     Also includes Gromacs specific information, including particle id,
-    index and elemental symbol
+    index and elemental symbol.
     """
 
     #: Index of particle in molecular .itp file
