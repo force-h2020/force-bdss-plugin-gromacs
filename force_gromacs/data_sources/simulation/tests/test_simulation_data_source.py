@@ -1,6 +1,7 @@
 #  (C) Copyright 2010-2020 Enthought, Inc., Austin, TX
 #  All rights reserved.
 
+import os
 from unittest import TestCase, mock
 
 from traits.testing.unittest_tools import UnittestTools
@@ -75,6 +76,12 @@ class TestSimulationDataSource(TestCase, UnittestTools):
 
         self.assertEqual(1, len(res))
         self.assertEqual('/path/to/trajectory.gro', res[0].value)
+
+    def test_default_traits(self):
+        self.assertEqual(
+            os.getcwd(),
+            self.model.output_directory
+        )
 
     def test__check_perform_simulation(self):
 
