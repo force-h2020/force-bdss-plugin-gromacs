@@ -122,7 +122,10 @@ class TestMoleculeDataSource(TestCase):
             messages
         )
         self.assertIn(
-            'The number of output slots is incorrect.',
+            "The number of output slots (1 values) returned by "
+            "'Gromacs Molecule' does not match the number of "
+            "user-defined names specified (0 values). "
+            "This is either a plugin error or a file error.",
             messages
         )
 
@@ -131,10 +134,16 @@ class TestMoleculeDataSource(TestCase):
         messages = [error.local_error for error in errors]
         self.assertEqual(2, len(messages))
         self.assertIn(
-            'The number of input slots is incorrect.',
+            "The number of input slots (1 values) returned by "
+            "'Gromacs Molecule' does not match the number of "
+            "user-defined names specified (0 values). "
+            "This is either a plugin error or a file error.",
             messages
         )
         self.assertIn(
-            'The number of output slots is incorrect.',
+            "The number of output slots (1 values) returned by "
+            "'Gromacs Molecule' does not match the number of "
+            "user-defined names specified (0 values). "
+            "This is either a plugin error or a file error.",
             messages
         )

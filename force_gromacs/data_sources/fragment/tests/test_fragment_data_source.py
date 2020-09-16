@@ -84,7 +84,10 @@ class TestFragmentDataSource(TestCase):
         messages = [error.local_error for error in errors]
         self.assertEqual(5, len(messages))
         self.assertIn(
-            'The number of output slots is incorrect.',
+            "The number of output slots (1 values) returned by "
+            "'Gromacs Molecular Fragment' does not match the number "
+            "of user-defined names specified (0 values). "
+            "This is either a plugin error or a file error.",
             messages
         )
         self.assertIn(
@@ -101,12 +104,8 @@ class TestFragmentDataSource(TestCase):
         errors = self.model.verify()
         messages = [error.local_error for error in errors]
         self.assertEqual(2, len(messages))
-        self.assertIn(
-            'The number of output slots is incorrect.',
-            messages
-        )
-        self.assertIn(
-            'File extension does not match required.',
+        self.assertNotIn(
+            'Gromacs file name is white space.',
             messages
         )
 
@@ -114,7 +113,7 @@ class TestFragmentDataSource(TestCase):
         errors = self.model.verify()
         messages = [error.local_error for error in errors]
         self.assertEqual(1, len(messages))
-        self.assertIn(
-            'The number of output slots is incorrect.',
+        self.assertNotIn(
+            'File extension does not match required.',
             messages
         )
