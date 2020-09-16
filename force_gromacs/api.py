@@ -1,3 +1,6 @@
+#  (C) Copyright 2010-2020 Enthought, Inc., Austin, TX
+#  All rights reserved.
+
 from .chemicals.base_particle_group import BaseParticleGroup # noqa
 from .chemicals.gromacs_particle import GromacsParticle # noqa
 from .chemicals.gromacs_fragment import GromacsFragment # noqa

@@ -1,3 +1,6 @@
+#  (C) Copyright 2010-2020 Enthought, Inc., Austin, TX
+#  All rights reserved.
+
 from traits.api import HasStrictTraits, Str, Float, provides
 
 from force_gromacs.chemicals.i_particle import IParticle

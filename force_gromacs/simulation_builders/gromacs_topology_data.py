@@ -1,3 +1,6 @@
+#  (C) Copyright 2010-2020 Enthought, Inc., Austin, TX
+#  All rights reserved.
+
 from traits.api import HasStrictTraits, List, File, Dict, Str, Int
 
 from force_gromacs.io.gromacs_molecule_reader import (
