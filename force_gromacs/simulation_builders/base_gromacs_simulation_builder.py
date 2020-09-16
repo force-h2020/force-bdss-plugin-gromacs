@@ -1,5 +1,6 @@
 #  (C) Copyright 2010-2020 Enthought, Inc., Austin, TX
 #  All rights reserved.
+import os
 
 from traits.api import (
     HasTraits, Str, Int, Bool, Instance, Directory,
@@ -75,7 +76,7 @@ class BaseGromacsSimulationBuilder(HasTraits):
     # --------------------
 
     def _folder_default(self):
-        return '/'.join([self.directory, self.name])
+        return os.path.join(self.directory, self.name)
 
     def _topology_data_default(self):
         return GromacsTopologyData()
