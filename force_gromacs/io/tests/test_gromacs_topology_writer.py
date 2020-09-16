@@ -1,6 +1,7 @@
 #  (C) Copyright 2010-2020 Enthought, Inc., Austin, TX
 #  All rights reserved.
 
+import os
 from unittest import TestCase, mock
 import testfixtures
 
@@ -57,11 +58,11 @@ class TestGromacsTopologyWriter(TestCase):
     def test_bash_script(self):
 
         bash_script = self.writer.bash_script()
+        file_path = os.path.join('.', 'test_experiment', 'test_top.itp')
 
         res = bash_script.split('\n')
         self.assertEqual(15, len(res))
-        self.assertEqual('cat <<EOM > ./test_experiment/test_top.itp',
-                         res[0])
+        self.assertEqual(f'cat <<EOM > {file_path}', res[0])
         self.assertEqual('#include "test_surf_1.itp"', res[1])
         self.assertEqual('#include "test_surf_2.itp"', res[2])
         self.assertEqual('#include "test_salt.itp"', res[3])

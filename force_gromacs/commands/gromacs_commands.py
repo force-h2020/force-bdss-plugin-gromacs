@@ -138,7 +138,7 @@ class Gromacs_mdrun(BaseGromacsCommand):
     flags = ReadOnly(['-s', '-g', '-e', '-o', '-x', '-c',
                       '-cpo', '-cpi', '-rerun', '-ei',
                       '-awh', '-mp', '-mn', '-cpnum',
-                      '-nocpnum', '-multidir',])
+                      '-nocpnum', '-multidir'])
 
     def _get_name(self):
         """Returns correct name syntax, depending on MPI run

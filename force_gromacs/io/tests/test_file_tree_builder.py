@@ -1,6 +1,7 @@
 #  (C) Copyright 2010-2020 Enthought, Inc., Austin, TX
 #  All rights reserved.
 
+import os
 from unittest import TestCase, mock
 
 from force_gromacs.io.file_tree_builder import (
@@ -48,13 +49,16 @@ class TestFileTreeBuilder(TestCase):
             'test_experiment_1', directory_list[0]
         )
         self.assertEqual(
-            'test_experiment_1/1_build', directory_list[1]
+            os.path.join('test_experiment_1', '1_build'),
+            directory_list[1]
         )
         self.assertEqual(
-            'test_experiment_1/2_minimize', directory_list[2]
+            os.path.join('test_experiment_1', '2_minimize'),
+            directory_list[2]
         )
         self.assertEqual(
-            'test_experiment_1/3_production', directory_list[3]
+            os.path.join('test_experiment_1', '3_production'),
+            directory_list[3]
         )
 
     def test_bash_script(self):
@@ -67,13 +71,16 @@ class TestFileTreeBuilder(TestCase):
             'mkdir test_experiment_1', res[0]
         )
         self.assertEqual(
-            'mkdir test_experiment_1/1_build', res[1]
+            'mkdir ' + os.path.join('test_experiment_1', '1_build'),
+            res[1]
         )
         self.assertEqual(
-            'mkdir test_experiment_1/2_minimize', res[2]
+            'mkdir ' + os.path.join('test_experiment_1', '2_minimize'),
+            res[2]
         )
         self.assertEqual(
-            'mkdir test_experiment_1/3_production', res[3]
+            'mkdir ' + os.path.join('test_experiment_1', '3_production'),
+            res[3]
         )
 
     def test_run(self):

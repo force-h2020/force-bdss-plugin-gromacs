@@ -58,7 +58,7 @@ class ProbeGromacsPipeline(GromacsPipeline):
             (
                 'file_tree',
                 FileTreeBuilder(
-                    directory='./test_experiment',
+                    directory='test_experiment',
                     folders=[
                         '1_build', '2_minimize', '3_production'
                     ],

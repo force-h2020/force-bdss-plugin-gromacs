@@ -1,6 +1,7 @@
 #  (C) Copyright 2010-2020 Enthought, Inc., Austin, TX
 #  All rights reserved.
 
+import os
 from unittest import TestCase
 
 from force_gromacs.tests.probe_classes.pipelines import (
@@ -19,16 +20,19 @@ class TestGromacsPipeline(TestCase):
         commands = self.pipeline.bash_script().split('\n')
 
         self.assertEqual(
-            'mkdir ./test_experiment', commands[0]
+            'mkdir test_experiment', commands[0]
         )
         self.assertEqual(
-            'mkdir ./test_experiment/1_build', commands[1]
+            'mkdir ' + os.path.join('test_experiment', '1_build'),
+            commands[1]
         )
         self.assertEqual(
-            'mkdir ./test_experiment/2_minimize', commands[2]
+            'mkdir ' + os.path.join('test_experiment', '2_minimize'),
+            commands[2]
         )
         self.assertEqual(
-            'mkdir ./test_experiment/3_production', commands[3]
+            'mkdir ' + os.path.join('test_experiment', '3_production'),
+            commands[3]
         )
 
         self.assertIn('solvate', commands[4])
@@ -44,8 +48,10 @@ class TestGromacsPipeline(TestCase):
         self.assertIn(' -pname test_coord_2.gro', commands[5])
         self.assertIn(' -pq 1', commands[5])
 
-        self.assertIn('cat <<EOM > ./test_experiment/test_topology.top',
-                      commands[6])
+        self.assertIn(
+            'cat <<EOM > ' + os.path.join(
+                os.path.curdir, 'test_experiment', 'test_topology.top'),
+            commands[6])
         self.assertIn('#include "test_top.itp', commands[7])
         self.assertIn('[ system ]', commands[9])
         self.assertIn('test_experiment', commands[10])
