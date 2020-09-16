@@ -90,7 +90,6 @@ class TestFragmentDataSource(TestCase):
             "The number of output slots (1 values) returned by"
             " 'Gromacs Molecular Fragment' does not match the "
             "number of user-defined names specified (0 values). "
-
             "This is either a plugin error or a file error.",
             messages
         )
