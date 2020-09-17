@@ -58,7 +58,8 @@ class TestGromacsTopologyWriter(TestCase):
     def test_bash_script(self):
 
         bash_script = self.writer.bash_script()
-        file_path = os.path.join('.', 'test_experiment', 'test_top.itp')
+        file_path = os.path.join(
+            os.path.curdir, 'test_experiment', 'test_top.itp')
 
         res = bash_script.split('\n')
         self.assertEqual(15, len(res))

@@ -1,6 +1,7 @@
 #  (C) Copyright 2010-2020 Enthought, Inc., Austin, TX
 #  All rights reserved.
 
+import os
 from unittest import TestCase
 
 from force_gromacs.simulation_builders.base_gromacs_simulation_builder import (
@@ -30,7 +31,10 @@ class TestGromacsSimulationBuilder(TestCase):
 
         self.assertEqual('test_experiment', self.sim_builder.name)
         self.assertEqual(100, self.sim_builder.size)
-        self.assertEqual('.', self.sim_builder.directory)
+        self.assertEqual(os.path.curdir, self.sim_builder.directory)
+        self.assertEqual(
+            os.path.join(os.path.curdir, 'test_experiment'),
+            self.sim_builder.folder)
         self.assertEqual(
             'test_martini.itp', self.sim_builder.martini_parameters
         )
