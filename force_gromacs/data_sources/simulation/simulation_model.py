@@ -1,7 +1,8 @@
 #  (C) Copyright 2010-2020 Enthought, Inc., Austin, TX
 #  All rights reserved.
+import os
 
-from traits.api import Unicode, Bool, Int, File
+from traits.api import Unicode, Bool, Int, File, Directory
 from traitsui.api import View, Item
 
 from force_bdss.api import BaseDataSourceModel, VerifierError
@@ -20,6 +21,9 @@ class SimulationDataSourceModel(BaseDataSourceModel):
 
     #: Name of simulation
     name = Unicode('simulation')
+
+    # Directory to store simulation output files
+    output_directory = Directory()
 
     #: Number of Molecules
     n_molecule_types = Int(
@@ -59,6 +63,7 @@ class SimulationDataSourceModel(BaseDataSourceModel):
 
     traits_view = View(
         Item('name'),
+        Item('output_directory'),
         Item("size"),
         Item('mpi_run'),
         Item("n_proc", visible_when='mpi_run'),
@@ -68,6 +73,14 @@ class SimulationDataSourceModel(BaseDataSourceModel):
         Item("ow_data", label='Overwrite simulation data'),
         Item("dry_run")
     )
+
+    # --------------------
+    #      Defaults
+    # --------------------
+
+    def _output_directory_default(self):
+        """Use working directory as default location for output data"""
+        return os.getcwd()
 
     # --------------------
     #   Private Methods

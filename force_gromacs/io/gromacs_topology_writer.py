@@ -48,7 +48,7 @@ class GromacsTopologyWriter(HasTraits):
     def _directory_default(self):
         """If directory is not defined, use current directory
         with sim_name as default directory"""
-        return f"{os.path.curdir}/{self.sim_name}"
+        return os.path.join(os.path.curdir, self.sim_name)
 
     def _top_name_default(self):
         """If topology file name is not defined, use sim_name with

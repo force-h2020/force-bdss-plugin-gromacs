@@ -44,7 +44,7 @@ class FileTreeBuilder(BaseProcess):
 
         for folder in self.folders:
             directory_list.append(
-                '/'.join([self.directory, folder])
+                os.path.join(self.directory, folder)
             )
 
         return directory_list
