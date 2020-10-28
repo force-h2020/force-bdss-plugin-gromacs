@@ -3,7 +3,7 @@
 import os
 
 from traits.api import Unicode, Bool, Int, File, Directory
-from traitsui.api import View, Item
+from traitsui.api import View, Item, Group, VGroup
 
 from force_bdss.api import BaseDataSourceModel, VerifierError
 
@@ -32,6 +32,9 @@ class SimulationDataSourceModel(BaseDataSourceModel):
 
     #: Total number of fragments in simulation
     size = Int(1000)
+
+    #: Number of time steps in the production simulation
+    n_steps = Int(1000)
 
     #: Whether or not to overwrite existing simulation data
     ow_data = Bool(False)
@@ -62,16 +65,33 @@ class SimulationDataSourceModel(BaseDataSourceModel):
     # --------------------
 
     traits_view = View(
-        Item('name'),
-        Item('output_directory'),
-        Item("size"),
-        Item('mpi_run'),
-        Item("n_proc", visible_when='mpi_run'),
-        Item('martini_parameters'),
-        Item('md_min_parameters'),
-        Item('md_prod_parameters'),
-        Item("ow_data", label='Overwrite simulation data'),
-        Item("dry_run")
+        Group(
+            Item("size", label='Number of particles'),
+            Item("n_steps", label='Number of time steps'),
+            Item('mpi_run', label='Use MPI?'),
+            Item("n_proc", label='Number of processes',
+                 visible_when='mpi_run'),
+            Item("dry_run"),
+            label='Simulation Parameters'
+        ),
+        Group(
+            VGroup(
+                Item('martini_parameters',
+                     label='MARTINI Parameter File'),
+                Item('md_min_parameters',
+                     label='Minimization Parameter File'),
+                Item('md_prod_parameters',
+                     label='Production run Parameter File'),
+                label='Input'
+            ),
+            VGroup(
+                Item("ow_data", label='Overwrite simulation data'),
+                Item('name', label='Simulation name'),
+                Item('output_directory'),
+                label='Output'
+            ),
+            label='Input / Output Files'
+        )
     )
 
     # --------------------

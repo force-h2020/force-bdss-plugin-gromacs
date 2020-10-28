@@ -32,6 +32,9 @@ class BaseGromacsSimulationBuilder(HasTraits):
     #: Particle size of simulation
     size = Int()
 
+    #: Length of simulation in time steps
+    n_steps = Int()
+
     #: Location to create simulation file tree in. (By default,
     #: the current working directory)
     directory = Directory('.')
