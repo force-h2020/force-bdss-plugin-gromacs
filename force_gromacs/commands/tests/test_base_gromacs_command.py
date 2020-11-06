@@ -15,16 +15,17 @@ class TestBaseGromacsCommand(TestCase):
     def setUp(self):
         # Create Gromacs command objects
         self.gromacs_command = BaseGromacsCommand(
-            flags=['-c', '-o', '-flag'],
+            flags=['-c', '-o', '-box', '-flag'],
             dry_run=True)
 
     def test___init__(self):
         self.assertEqual('gmx', self.gromacs_command.executable)
         self.assertListEqual(
-            ['-c', '-o', '-flag'], self.gromacs_command.flags
+            ['-c', '-o', '-box', '-flag'], self.gromacs_command.flags
         )
         self.assertEqual(
-            {'-c', '-o', '-flag', '-h'}, self.gromacs_command._flags)
+            {'-c', '-o', '-box', '-flag', '-h'},
+            self.gromacs_command._flags)
 
         self.assertTrue(self.gromacs_command.dry_run)
         self.assertEqual('', self.gromacs_command.user_input)
@@ -92,12 +93,14 @@ class TestBaseGromacsCommand(TestCase):
         self.gromacs_command.command_options = {
             '-c': 'coordinate',
             '-o': 'output',
+            '-box': [10, 10, 10],
             '-flag': True,
         }
         command = self.gromacs_command._build_command()
         self.assertIn('gmx', command)
         self.assertIn(' -c coordinate', command)
         self.assertIn(' -o output', command)
+        self.assertIn(' -box 10 10 10', command)
         self.assertIn(' -flag', command)
         self.assertNotIn('True', command)
 

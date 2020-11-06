@@ -4,7 +4,7 @@ import os
 
 from traits.api import (
     HasTraits, Str, Int, Bool, Instance, Directory,
-    provides
+    provides, List, Float
 )
 
 from force_gromacs.io.gromacs_file_registry import GromacsFileRegistry
@@ -31,6 +31,9 @@ class BaseGromacsSimulationBuilder(HasTraits):
 
     #: Particle size of simulation
     size = Int()
+
+    #: Simulation cell dimensions in nm
+    cell_dim = List(Float, value=[0, 0, 0], maxlen=3, minlen=3)
 
     #: Length of simulation in time steps
     n_steps = Int()

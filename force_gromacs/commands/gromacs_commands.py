@@ -139,7 +139,7 @@ class Gromacs_mdrun(BaseGromacsCommand):
                       '-cpo', '-cpi', '-rerun', '-ei',
                       '-awh', '-mp', '-mn', '-cpnum',
                       '-nocpnum', '-multidir', '-nsteps',
-                      '-maxh'])
+                      '-maxh', '-nt'])
 
     def _get_name(self):
         """Returns correct name syntax, depending on MPI run

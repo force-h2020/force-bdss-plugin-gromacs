@@ -103,6 +103,7 @@ class TestGromacsCommands(TestCase):
             '-nmol': 30,
             '-not_a_flag': 60,
             '-o': 'test_output.gro',
+            '-box': [10, 10, 10],
             '-try': True}
 
         self.insert_molecules.command_options = input_options
@@ -110,6 +111,7 @@ class TestGromacsCommands(TestCase):
         self.assertIn('insert-molecules', command)
         self.assertNotIn(' -cp test_coord.gro', command)
         self.assertIn(' -o test_output.gro', command)
+        self.assertIn(' -box 10 10 10', command)
         self.assertIn(' -try', command)
         self.assertIn(' -nmol 30', command)
         self.assertNotIn(' -not_a_flag 60', command)

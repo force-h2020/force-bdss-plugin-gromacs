@@ -129,9 +129,11 @@ class BaseGromacsCommand(BaseProcess):
         for flag, arg in self.command_options.items():
             if arg is None:
                 pass
-            elif type(arg) == bool:
+            elif isinstance(arg, bool):
                 command += ' {}'.format(flag)
             else:
+                if isinstance(arg, list):
+                    arg = ' '.join([str(item) for item in arg])
                 command += ' {} {}'.format(flag, arg)
 
         return command

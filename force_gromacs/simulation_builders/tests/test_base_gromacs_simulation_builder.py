@@ -31,6 +31,7 @@ class TestGromacsSimulationBuilder(TestCase):
 
         self.assertEqual('test_experiment', self.sim_builder.name)
         self.assertEqual(100, self.sim_builder.size)
+        self.assertListEqual([0, 0, 0], self.sim_builder.cell_dim)
         self.assertEqual(os.path.curdir, self.sim_builder.directory)
         self.assertEqual(
             os.path.join(os.path.curdir, 'test_experiment'),
