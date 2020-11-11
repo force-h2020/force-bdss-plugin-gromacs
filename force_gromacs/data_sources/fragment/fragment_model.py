@@ -26,12 +26,14 @@ class FragmentDataSourceModel(BaseDataSourceModel):
     #: Location of Gromacs topology file containing molecular data
     topology = File(
         desc='File path for Gromacs topology file',
+        exists=True,
         verify=True
     )
 
     #: Location of Gromacs coordinate file containing molecular data
     coordinate = File(
         desc='File path for Gromacs coordinate file',
+        exists=True,
         verify=True
     )
 

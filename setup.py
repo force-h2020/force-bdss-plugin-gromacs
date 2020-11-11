@@ -33,8 +33,5 @@ setup(
                 "force_gromacs.gromacs_plugin:GromacsPlugin"
             ]
         },
-    packages=find_packages(),
-    install_requires=[
-            "force_bdss >= 0.4.0",
-        ]
+    packages=find_packages()
 )

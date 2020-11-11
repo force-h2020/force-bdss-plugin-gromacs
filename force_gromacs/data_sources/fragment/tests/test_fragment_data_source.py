@@ -2,21 +2,23 @@
 #  All rights reserved.
 
 from unittest import TestCase
+from tempfile import NamedTemporaryFile
 
-from force_gromacs.gromacs_plugin import GromacsPlugin
+from force_gromacs.data_sources.fragment.fragment_factory import (
+    FragmentFactory)
 from force_gromacs.data_sources.fragment.fragment_data_source import (
     MissingFragmentException
 )
 from force_gromacs.tests.fixtures import (
-    gromacs_molecule_file
+    gromacs_molecule_file, gromacs_coordinate_file
 )
 
 
 class TestFragmentDataSource(TestCase):
 
     def setUp(self):
-        self.plugin = GromacsPlugin()
-        self.factory = self.plugin.data_source_factories[0]
+        self.factory = FragmentFactory(
+            plugin={'id': '0', 'name': 'test'})
         self.data_source = self.factory.create_data_source()
         self.model = self.factory.create_model()
 
@@ -25,7 +27,7 @@ class TestFragmentDataSource(TestCase):
         self.model.name = "Solvent"
         self.model.symbol = "So"
         self.model.topology = gromacs_molecule_file
-        self.model.coordinate = "test_coord.gro"
+        self.model.coordinate = gromacs_coordinate_file
 
         res = self.data_source.run(self.model, [])
         self.assertEqual("FRAGMENT", res[0].type)
@@ -37,7 +39,7 @@ class TestFragmentDataSource(TestCase):
         self.assertEqual(18.0, fragment.mass, )
         self.assertEqual(0, fragment.charge)
         self.assertEqual(gromacs_molecule_file, fragment.topology)
-        self.assertEqual("test_coord.gro", fragment.coordinate)
+        self.assertEqual(gromacs_coordinate_file, fragment.coordinate)
 
     def test_missing_fragment_error(self):
 
@@ -102,17 +104,18 @@ class TestFragmentDataSource(TestCase):
             messages
         )
 
-        self.model.topology = "test_top.itp"
-        self.model.coordinate = "test_coord.go"
-        errors = self.model.verify()
-        messages = [error.local_error for error in errors]
-        self.assertEqual(2, len(messages))
-        self.assertNotIn(
-            'Gromacs file name is white space.',
-            messages
-        )
+        with NamedTemporaryFile() as tmp_file:
+            self.model.topology = gromacs_molecule_file
+            self.model.coordinate = tmp_file.name
+            errors = self.model.verify()
+            messages = [error.local_error for error in errors]
+            self.assertEqual(2, len(messages))
+            self.assertNotIn(
+                'Gromacs file name is white space.',
+                messages
+            )
 
-        self.model.coordinate = "test_coord.gro"
+        self.model.coordinate = gromacs_coordinate_file
         errors = self.model.verify()
         messages = [error.local_error for error in errors]
         self.assertEqual(1, len(messages))

@@ -14,6 +14,7 @@ User Manual
    :maxdepth: 1
 
    Introduction <introduction>
+   BDSS Objects <bdss-objects>
 
 API Reference
 =============

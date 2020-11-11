@@ -9,6 +9,10 @@ FORCE BDSS GROMACS Plugin
    :target: http://codecov.io/github/force-h2020/force-bdss-plugin-gromacs?branch=master
    :alt: Coverage status
 
+.. image:: https://readthedocs.org/projects/force-gromacs/badge/?version=latest
+   :target: https://force-tutorial.readthedocs.io/projects/force-bdss-gromacs-plugin/en/latest/?badge=latest
+   :alt: Documentation Status
+
 This repository contains the implementation of a plugin for the Business Decision Support System (BDSS), contributing
 the `GROMACS <http://www.gromacs.org>`_ Molecular Dynamics package.
 It is implemented under the Formulations and Computational Engineering (FORCE) project within Horizon 2020
@@ -42,6 +46,9 @@ BDSS objects to be visible by both ``force-bdss`` and ``force-wfmanager`` applic
 Documentation
 -------------
 
-To build the Sphinx documentation in the ``doc/build`` directory run::
+Full documentation is being hosted at the `FORCE GROMACS ReadTheDocs page <https://force-tutorial.readthedocs.io/projects/force-bdss-gromacs-plugin>`_.
+
+Alternatively, to build the documentation locally in the ``doc/build`` directory, run::
 
     python -m ci docs
+
